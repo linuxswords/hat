@@ -72,8 +72,8 @@ func UpdateHandycap(c *gin.Context) {
 func DeleteHandycap(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	id, _ := strconv.Atoi(c.Param("id"))
-	if err := db.Delete(&models.Handycap{}, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Handycap not found"})
+	if err := db.Delete(&models.HandycapSet{}, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "HandycapSet not found"})
 		return
 	}
 	c.Status(http.StatusOK)

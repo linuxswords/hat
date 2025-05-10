@@ -14,7 +14,7 @@
                 <a href="/handycaps/edit/{{ .ID }}" class="text-primary">
                     <i class="bi bi-pencil-square"></i>
                 </a>
-                <a href="/handycaps/delete/{{ .ID }}" class="text-danger">
+                <a href="javascript:void(0);" onclick="deleteHandycap({{ .ID }})" class="text-danger">
                     <i class="bi bi-trash"></i>
                 </a>
             </td>

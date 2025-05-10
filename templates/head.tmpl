@@ -7,6 +7,26 @@
     <title>{{ block "title" . }}{{ .Title }}{{ end }}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+    <script>
+        function deleteHandycap(id) {
+            if (confirm('Are you sure you want to delete this handycap set?')) {
+                fetch(`/handycaps/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/handycaps';
+                    } else {
+                        alert('Failed to delete handycap set.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the handycap set.');
+                });
+            }
+        }
+    </script>
 </head>
 <body class="container">
     {{ template "nav" . }}
