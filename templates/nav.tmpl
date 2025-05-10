@@ -1,8 +1,14 @@
-<nav>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/participants">Participants</a></li>
-        <li><a href="/scores">Scores</a></li>
-        <li><a href="/results">Results</a></li>
-    </ul>
+{{ define "nav" }}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">HAT</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/participants">Participants</a></li>
+            <li class="nav-item"><a class="nav-link" href="/scores">Scores</a></li>
+            <li class="nav-item"><a class="nav-link" href="/results">Results</a></li>
+            <li class="nav-item"><a class="nav-link" href="/bowclasses">Bow Classes</a></li>
+        </ul>
+    </div>
 </nav>
+{{ end }}
