@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Handycap Set</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Add Handycap Set</h1>
+        <form method="post" action="/handycaps/add">
+            <div class="form-group">
+                <label for="name">Set Name</label>
+                <input type="text" class="form-control" id="name" name="Name" required>
+            </div>
+            {{range .BowClasses}}
+            <div class="form-group">
+                <label for="factor_{{.ID}}">{{.Name}} Factor</label>
+                <input type="number" step="0.01" class="form-control col-sm-2" id="factor_{{.ID}}" name="factor_{{.ID}}">
+            </div>
+            {{end}}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -41,7 +41,8 @@ func main() {
 
 	// Handycap routes
 	r.GET("/handycaps", handlers.ShowHandycapsPage)
-	r.POST("/handycaps", handlers.AddHandycap)
+	r.GET("/handycaps/add", handlers.AddHandycapSet)
+	r.POST("/handycaps/add", handlers.AddHandycapSet)
 	r.PUT("/handycaps/:id", handlers.UpdateHandycap)
 	r.DELETE("/handycaps/:id", handlers.DeleteHandycap)
 
