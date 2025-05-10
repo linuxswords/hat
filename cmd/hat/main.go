@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandicapSet{}, &models.Handicap{})
+	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.Handycap{})
 
 	r := gin.Default()
 	r.Use(func(c *gin.Context) {
@@ -38,6 +38,12 @@ func main() {
 	r.POST("/bowclasses", handlers.AddBowClass)
 	r.PUT("/bowclasses/:id", handlers.UpdateBowClass)
 	r.DELETE("/bowclasses/:id", handlers.DeleteBowClass)
+
+	// Handycap routes
+	r.GET("/handycaps", handlers.ShowHandycapsPage)
+	r.POST("/handycaps", handlers.AddHandycap)
+	r.PUT("/handycaps/:id", handlers.UpdateHandycap)
+	r.DELETE("/handycaps/:id", handlers.DeleteHandycap)
 
 	r.Run(":8987")
 }

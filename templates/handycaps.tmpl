@@ -1,0 +1,33 @@
+{{ define "content" }}
+<h1>{{ .Title }}</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Set Name</th>
+            <th>Handycaps</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .HandycapSets }}
+        <tr>
+            <td>{{ .Name }}</td>
+            <td>
+                <ul>
+                    {{ range .Handicaps }}
+                    <li>{{ .Name }}: {{ .Value }}</li>
+                    {{ end }}
+                </ul>
+            </td>
+            <td>
+                <a href="/handycaps/edit/{{ .ID }}">Edit</a>
+                <a href="/handycaps/delete/{{ .ID }}">Delete</a>
+            </td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+
+<a href="/handycaps">Add New Handycap</a>
+{{ end }}

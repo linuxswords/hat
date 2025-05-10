@@ -4,13 +4,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type HandicapSet struct {
+type HandycapSet struct {
 	gorm.Model
 	Name      string
-	Handicaps []Handicap
+	Handicaps []Handycap `gorm:"foreignKey:HandicapSetID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-type Handicap struct {
+type Handycap struct {
 	gorm.Model
 	BowClassID    uint
 	BowClass      BowClass
