@@ -19,8 +19,12 @@
             <td>{{ .Gender }}</td>
             <td>{{ .BowClass.Name }}</td>
             <td>
-                <a href="/archers/edit/{{ .ID }}">Edit</a>
-                <a href="/archers/delete/{{ .ID }}">Delete</a>
+                <a href="/archers/edit/{{ .ID }}" class="text-primary">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="/archers/delete/{{ .ID }}" class="text-danger">
+                    <i class="bi bi-trash"></i>
+                </a>
             </td>
         </tr>
         {{ end }}

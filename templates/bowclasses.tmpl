@@ -15,8 +15,12 @@
             <td>{{ .Code }}</td>
             <td>{{ .Name }}</td>
             <td>
-                <a href="/bowclasses/edit/{{ .ID }}">Edit</a>
-                <a href="/bowclasses/delete/{{ .ID }}">Delete</a>
+                <a href="/bowclasses/edit/{{ .ID }}" class="text-primary">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="/bowclasses/delete/{{ .ID }}" class="text-danger">
+                    <i class="bi bi-trash"></i>
+                </a>
             </td>
         </tr>
         {{ end }}
