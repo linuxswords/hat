@@ -1,6 +1,4 @@
-{{ define "content" }}
-<h1>{{ .Title }}</h1>
-
+{{ template "head" }}
 <table>
     <thead>
         <tr>
@@ -29,5 +27,5 @@
     </tbody>
 </table>
 
-<a href="/handycaps">Add New Handycap</a>
-{{ end }}
+<a footer="/handycaps">Add New Handycap</a>
+{{ template "footer" }}
