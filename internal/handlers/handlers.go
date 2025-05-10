@@ -6,12 +6,18 @@ import (
 )
 
 func ShowHomePage(c *gin.Context) {
-	c.String(http.StatusOK, "Welcome to the Archery Tournament System!")
+	c.HTML(http.StatusOK, "templates/index.tmpl", gin.H{
+		"Title":   "HAT - Home",
+		"Content": "Welcome to the Archery Tournament System!",
+	})
 }
 
 func ShowParticipantsPage(c *gin.Context) {
 	// Render a page to add participants
-	c.String(http.StatusOK, "Participants Page")
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"Title":   "HAT - Participants",
+		"Content": "Participants Page",
+	})
 }
 
 func AddParticipant(c *gin.Context) {
@@ -21,7 +27,10 @@ func AddParticipant(c *gin.Context) {
 
 func ShowScoresPage(c *gin.Context) {
 	// Render a page to add scores
-	c.String(http.StatusOK, "Scores Page")
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"Title":   "HAT - Scores",
+		"Content": "Scores Page",
+	})
 }
 
 func AddScore(c *gin.Context) {
@@ -31,12 +40,18 @@ func AddScore(c *gin.Context) {
 
 func ShowResultsPage(c *gin.Context) {
 	// Render a page to show results
-	c.String(http.StatusOK, "Results Page")
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"Title":   "HAT - Results",
+		"Content": "Results Page",
+	})
 }
 
 func ShowHandicapsPage(c *gin.Context) {
 	// Render a page to manage handicaps
-	c.String(http.StatusOK, "Handicaps Page")
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"Title":   "HAT - Handicaps",
+		"Content": "Handicaps Page",
+	})
 }
 
 func AddHandicap(c *gin.Context) {
