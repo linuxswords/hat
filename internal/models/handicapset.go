@@ -7,7 +7,7 @@ import (
 type HandycapSet struct {
 	gorm.Model
 	Name      string
-	Handicaps []Handycap `gorm:"foreignKey:HandicapSetID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Handycaps []Handycap `gorm:"foreignKey:HandycapSetID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Handycap struct {
@@ -15,6 +15,5 @@ type Handycap struct {
 	BowClassID    uint
 	BowClass      BowClass
 	Value         float64
-	HandicapSetID uint
-	Name          string
+	HandycapSetID uint
 }
