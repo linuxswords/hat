@@ -1,6 +1,6 @@
-module archery-tournament-system
+module github.com/linuxswords/hat
 
-go 1.20
+go 1.24.2
 
 require github.com/gin-gonic/gin v1.8.1
 

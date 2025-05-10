@@ -2,21 +2,22 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/linuxswords/hat/internal/handlers"
 )
 
 func main() {
 	r := gin.Default()
 
 	// Define routes
-	r.GET("/", showHomePage)
-	r.GET("/participants", showParticipantsPage)
-	r.POST("/participants", addParticipant)
-	r.GET("/scores", showScoresPage)
-	r.POST("/scores", addScore)
-	r.GET("/results", showResultsPage)
-	r.GET("/admin/handicaps", showHandicapsPage)
-	r.POST("/admin/handicaps", addHandicap)
+	r.GET("/", handlers.ShowHomePage)
+	r.GET("/participants", handlers.ShowParticipantsPage)
+	r.POST("/participants", handlers.AddParticipant)
+	r.GET("/scores", handlers.ShowScoresPage)
+	r.POST("/scores", handlers.AddScore)
+	r.GET("/results", handlers.ShowResultsPage)
+	r.GET("/admin/handicaps", handlers.ShowHandicapsPage)
+	r.POST("/admin/handicaps", handlers.AddHandicap)
 
 	// Start the server
-	r.Run(":8080")
+	r.Run(":8987")
 }

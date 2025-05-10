@@ -1,45 +1,45 @@
-package main
+package handlers
 
 import (
-	"net/http"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-func showHomePage(c *gin.Context) {
+func ShowHomePage(c *gin.Context) {
 	c.String(http.StatusOK, "Welcome to the Archery Tournament System!")
 }
 
-func showParticipantsPage(c *gin.Context) {
+func ShowParticipantsPage(c *gin.Context) {
 	// Render a page to add participants
 	c.String(http.StatusOK, "Participants Page")
 }
 
-func addParticipant(c *gin.Context) {
+func AddParticipant(c *gin.Context) {
 	// Logic to add a participant
 	c.String(http.StatusOK, "Participant added")
 }
 
-func showScoresPage(c *gin.Context) {
+func ShowScoresPage(c *gin.Context) {
 	// Render a page to add scores
 	c.String(http.StatusOK, "Scores Page")
 }
 
-func addScore(c *gin.Context) {
+func AddScore(c *gin.Context) {
 	// Logic to add a score
 	c.String(http.StatusOK, "Score added")
 }
 
-func showResultsPage(c *gin.Context) {
+func ShowResultsPage(c *gin.Context) {
 	// Render a page to show results
 	c.String(http.StatusOK, "Results Page")
 }
 
-func showHandicapsPage(c *gin.Context) {
+func ShowHandicapsPage(c *gin.Context) {
 	// Render a page to manage handicaps
 	c.String(http.StatusOK, "Handicaps Page")
 }
 
-func addHandicap(c *gin.Context) {
+func AddHandicap(c *gin.Context) {
 	// Logic to add a handicap
 	c.String(http.StatusOK, "Handicap added")
 }
