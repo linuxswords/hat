@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.BowClass{}, &models.Participant{}, &models.HandicapSet{}, &models.Handicap{})
+	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandicapSet{}, &models.Handicap{})
 
 	r := gin.Default()
 	r.Use(func(c *gin.Context) {
@@ -26,10 +26,10 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 	// Define routes
 	r.GET("/", handlers.ShowHomePage)
-	r.GET("/participants", handlers.ShowParticipantsPage)
-	r.POST("/participants", handlers.AddParticipant)
-	r.POST("/participants/edit/:id", handlers.UpdateParticipant)
-	r.POST("/participants/delete/:id", handlers.DeleteParticipant)
+	r.GET("/archers", handlers.ShowArchersPage)
+	r.POST("/archers", handlers.AddArcher)
+	r.POST("/archers/edit/:id", handlers.UpdateArcher)
+	r.POST("/archers/delete/:id", handlers.DeleteArcher)
 	r.POST("/scores", handlers.AddScore)
 	r.GET("/results", handlers.ShowResultsPage)
 

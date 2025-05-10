@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Participant struct {
+type Archer struct {
 	gorm.Model
 	BowClassID uint
 	BowClass   BowClass

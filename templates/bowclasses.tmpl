@@ -1,0 +1,33 @@
+{{ template "head" . }}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .BowClasses }}
+        <tr>
+            <td>{{ .ID }}</td>
+            <td>{{ .Code }}</td>
+            <td>{{ .Name }}</td>
+            <td>
+                <a href="/bowclasses/edit/{{ .ID }}">Edit</a>
+                <a href="/bowclasses/delete/{{ .ID }}">Delete</a>
+            </td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+<h2>Add New Bow Class</h2>
+<form action="/bowclasses" method="post">
+    <label for="code">Code:</label>
+    <input type="text" id="code" name="Code" required>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="Name" required>
+    <button type="submit">Add</button>
+</form>
+{{ template "footer" }}

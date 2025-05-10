@@ -1,0 +1,59 @@
+package handlers
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/linuxswords/hat/internal/models"
+	"gorm.io/gorm"
+	"net/http"
+	"strconv"
+)
+
+func ShowArchersPage(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	var archers []models.Archer
+	db.Preload("BowClass").Find(&archers)
+	var bowClasses []models.BowClass
+	db.Find(&bowClasses)
+	c.HTML(http.StatusOK, "archers.tmpl", gin.H{
+		"Title":      "Archers",
+		"Archers":    archers,
+		"BowClasses": bowClasses,
+	})
+}
+
+func AddArcher(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	var archer models.Archer
+	if err := c.ShouldBind(&archer); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	db.Create(&archer)
+	c.Redirect(http.StatusSeeOther, "/archers")
+}
+
+func UpdateArcher(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	id, _ := strconv.Atoi(c.Param("id"))
+	var archer models.Archer
+	if err := db.First(&archer, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
+		return
+	}
+	if err := c.ShouldBindJSON(&archer); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	db.Save(&archer)
+	c.JSON(http.StatusOK, archer)
+}
+
+func DeleteArcher(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	id, _ := strconv.Atoi(c.Param("id"))
+	if err := db.Delete(&models.Archer{}, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
+		return
+	}
+	c.Status(http.StatusOK)
+}

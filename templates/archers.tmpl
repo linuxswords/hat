@@ -1,0 +1,45 @@
+{{ template "head" . }}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Bow Class</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .Archers }}
+        <tr>
+            <td>{{ .ID }}</td>
+            <td>{{ .FirstName }}</td>
+            <td>{{ .LastName }}</td>
+            <td>{{ .Gender }}</td>
+            <td>{{ .BowClass.Name }}</td>
+            <td>
+                <a href="/archers/edit/{{ .ID }}">Edit</a>
+                <a href="/archers/delete/{{ .ID }}">Delete</a>
+            </td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+<h2>Add New Archer</h2>
+<form action="/archers" method="post">
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="FirstName" required>
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" name="LastName" required>
+    <label for="gender">Gender:</label>
+    <input type="text" id="gender" name="Gender" required>
+    <label for="bowClass">Bow Class:</label>
+    <select id="bowClass" name="BowClassID" required>
+        {{ range .BowClasses }}
+        <option value="{{ .ID }}">{{ .Name }}</option>
+        {{ end }}
+    </select>
+    <button type="submit">Add</button>
+</form>
+{{ template "footer" }}
