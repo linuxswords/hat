@@ -10,5 +10,4 @@ type Archer struct {
 	BowClass   BowClass
 	FirstName string   `gorm:"not null"`
 	LastName  string   `gorm:"not null"`
-	Gender    string   `gorm:"not null"`
 }
