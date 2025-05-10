@@ -2,9 +2,9 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -tags=dev -o tmp/hat ./cmd/hat
+cmd = "go build -o tmp/hat ./cmd/hat"
 bin = "tmp/hat"
-include_ext = ["go","tpl","templates","html"]
+include_ext = ["go","tpl","tmpl","html"]
 exclude_dir = ["tmp","spec","sdk/internal/sample-client"]
 delay = 1000
 stop_on_error = true
@@ -21,3 +21,4 @@ time = true
 [env]
 PORT = "8987"
 GOPROXY = "https://proxy.golang.org"
+

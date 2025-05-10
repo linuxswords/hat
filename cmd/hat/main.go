@@ -8,6 +8,7 @@ import (
 func main() {
 	r := gin.Default()
 
+	r.LoadHTMLGlob("templates/*")
 	// Define routes
 	r.GET("/", handlers.ShowHomePage)
 	r.GET("/participants", handlers.ShowParticipantsPage)

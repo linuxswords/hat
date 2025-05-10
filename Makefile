@@ -8,4 +8,4 @@ dev:
 	air -c air.toml
 
 start:
-	go run cmd/main/main.go
+	go run cmd/hat/main.go
