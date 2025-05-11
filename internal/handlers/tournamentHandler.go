@@ -16,10 +16,13 @@ func ShowTournamentsPage(c *gin.Context) {
 	db.Preload("HandycapSet").Preload("Archers").Find(&tournaments)
 	var handycapSets []models.HandycapSet
 	db.Find(&handycapSets)
+	var archers []models.Archer
+	db.Find(&archers)
 	c.HTML(http.StatusOK, "tournaments.tmpl", gin.H{
 		"Title":        "Tournaments",
 		"Tournaments":  tournaments,
 		"HandycapSets": handycapSets,
+		"Archers":      archers,
 	})
 }
 
@@ -36,6 +39,14 @@ func AddTournament(c *gin.Context) {
 	// 	return
 	// }
 	tournament.Date, _ = time.Parse("2006-01-02", c.PostForm("date"))
+	archerIDs := c.PostFormArray("archers")
+	for _, archerID := range archerIDs {
+		id, _ := strconv.Atoi(archerID)
+		var archer models.Archer
+		if err := db.First(&archer, id).Error; err == nil {
+			db.Model(&tournament).Association("Archers").Append(&archer)
+		}
+	}
 	db.Create(&tournament)
 	c.Redirect(http.StatusSeeOther, "/tournaments")
 }
