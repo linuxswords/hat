@@ -51,5 +51,11 @@ func main() {
 	r.PUT("/tournaments/:id", handlers.UpdateTournament)
 	r.DELETE("/tournaments/:id", handlers.DeleteTournament)
 
+	// API routes
+	api := r.Group("/api")
+	{
+		api.GET("/archers/tournament/:id", handlers.GetArchers)
+	}
+
 	r.Run(":8987")
 }

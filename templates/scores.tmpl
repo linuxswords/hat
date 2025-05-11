@@ -1,3 +1,84 @@
 {{ template "head" . }}
-{{ .Content }}
+
+<div id="wizard">
+    <!-- Step 1: Choose Tournament -->
+    <div id="step1">
+        <h2>Step 1: Choose a Tournament</h2>
+        <select id="tournamentSelect">
+            {{ range .Tournaments }}
+                <option value="{{ .ID }}">{{ .Name }}</option>
+            {{ end }}
+        </select>
+        <button onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 2: Enter Scores -->
+    <div id="step2" style="display:none;">
+        <h2>Step 2: Enter Scores</h2>
+        <div id="archersList">
+            <!-- Archer list with input fields will be populated dynamically -->
+        </div>
+        <button onclick="calculateResults()">Calculate Results</button>
+    </div>
+
+    <!-- Step 3: Display Results -->
+    <div id="step3" style="display:none;">
+        <h2>Step 3: Results</h2>
+        <div id="resultsList">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    let tournaments = [];
+    let archers = [];
+
+    async function fetchArchers() {
+        try {
+            const tournamentId = document.getElementById('tournamentSelect').value;
+            console.log('tournamentId', tournamentId)
+            const archerResponse = await fetch('/api/archers/tournament/' + tournamentId);
+            archers = await archerResponse.json();
+console.log('archers', archers)
+            const archersList = document.getElementById('archersList');
+            archersList.innerHTML = archers.map(a => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">${a.name}</h5>
+                        <p class="card-text">Bow Class: ${a.bowclassName} (${a.bowclassCode})</p>
+                        <p class="card-text">Factor: ${a.handycapFactor}</p>
+                        <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score">
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    function nextStep() {
+        document.getElementById('step' + currentStep).style.display = 'none';
+        currentStep++;
+        fetchArchers();
+        document.getElementById('step' + currentStep).style.display = 'block';
+    }
+
+    function calculateResults() {
+        const results = archers.map(archer => {
+            const score = parseFloat(document.getElementById('score_' + archer.id).value);
+            return {
+                name: archer.name,
+                totalScore: score * archer.handycapFactor
+            };
+        }).sort((a, b) => b.totalScore - a.totalScore);
+
+        const resultsList = document.getElementById('resultsList');
+        resultsList.innerHTML = results.map(result => `<div>${result.name}: ${result.totalScore}</div>`).join('');
+        nextStep();
+    }
+
+</script>
+
 {{ template "footer" }}

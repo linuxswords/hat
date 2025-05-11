@@ -11,14 +11,6 @@ func ShowHomePage(c *gin.Context) {
 		"Content": "Welcome to the Handycap Archery Tournament System!",
 	})
 }
-
-func ShowScoresPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-		"Title":   "HAT - Scores",
-		"Content": "Scores Page",
-	})
-}
-
 func AddScore(c *gin.Context) {
 	// Logic to add a score
 	c.String(http.StatusOK, "Score added")

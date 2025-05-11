@@ -12,7 +12,7 @@ import (
 func ShowHandycapsPage(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var handycapSets []models.HandycapSet
-	db.Preload("Handycaps").Find(&handycapSets)
+	db.Preload("HandycapEntries").Find(&handycapSets)
 	c.HTML(http.StatusOK, "handycaps.tmpl", gin.H{
 		"Title":        "Handycaps",
 		"HandycapSets": handycapSets,

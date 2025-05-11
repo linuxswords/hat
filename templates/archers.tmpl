@@ -32,16 +32,16 @@
 </table>
 <h2 class="mt-4">Add New Archer</h2>
 <form action="/archers" method="post" class="mt-3">
-    <div class="form-row">
-        <div class="form-group col-md-4">
+    <div class="row">
+        <div class="col-md-4 mb-3">
             <label for="firstName">First Name:</label>
             <input type="text" id="firstName" name="FirstName" class="form-control" required>
         </div>
-        <div class="form-group col-md-4">
+        <div class="col-md-4 mb-3">
             <label for="lastName">Last Name:</label>
             <input type="text" id="lastName" name="LastName" class="form-control" required>
         </div>
-        <div class="form-group col-md-4">
+        <div class="col-md-4 mb-3">
             <label for="bowClass">Bow Class:</label>
             <select id="bowClass" name="BowClassID" class="form-control" required>
                 {{ range .BowClasses }}
