@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.Handycap{})
+	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.Handycap{}, &models.Tournament{})
 
 	r := gin.Default()
 	r.Use(func(c *gin.Context) {
@@ -45,6 +45,12 @@ func main() {
 	r.POST("/handycaps/add", handlers.AddHandycapSet)
 	r.PUT("/handycaps/:id", handlers.UpdateHandycap)
 	r.DELETE("/handycaps/:id", handlers.DeleteHandycap)
+
+	// Tournament routes
+	r.GET("/tournaments", handlers.ShowTournamentsPage)
+	r.POST("/tournaments", handlers.AddTournament)
+	r.PUT("/tournaments/:id", handlers.UpdateTournament)
+	r.DELETE("/tournaments/:id", handlers.DeleteTournament)
 
 	r.Run(":8987")
 }
