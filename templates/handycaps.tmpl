@@ -3,6 +3,7 @@
     <thead>
         <tr>
             <th>Set Name</th>
+            <th>Updated At</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -10,11 +11,12 @@
         {{ range .HandycapSets }}
         <tr>
             <td>{{ .Name }}</td>
+            <td>{{ .UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
             <td>
-                <a href="/handycaps/edit/{{ .ID }}" class="text-primary">
+                <a href="/handycaps/edit/{{ .ID }}" class="text-primary" title="Edit">
                     <i class="bi bi-pencil-square"></i>
                 </a>
-                <a href="javascript:void(0);" onclick="deleteHandycap({{ .ID }})" class="text-danger">
+                <a href="javascript:void(0);" onclick="deleteHandycap({{ .ID }})" class="text-danger" title="Delete">
                     <i class="bi bi-trash"></i>
                 </a>
             </td>
