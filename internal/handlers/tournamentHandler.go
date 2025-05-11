@@ -33,6 +33,7 @@ func AddTournament(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	tournament.TournamentType = c.PostForm("TournamentType")
 	handycapSetID, _ := strconv.Atoi(c.PostForm("handycapSetID"))
 	tournament.HandycapSetID = uint(handycapSetID)
 	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

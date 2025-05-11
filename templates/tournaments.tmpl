@@ -7,6 +7,7 @@
                 <th>Name</th>
                 <th>Date</th>
                 <th>Venue</th>
+                <th>Type</th>
                 <th>Handycap Set</th>
                 <th>Number of Archers</th>
                 <th>Actions</th>
@@ -18,6 +19,7 @@
                 <td>{{ .Name }}</td>
                 <td>{{ .Date.Format "2006-01-02" }}</td>
                 <td>{{ .Venue }}</td>
+                <td>{{ .TournamentType }}</td>
                 <td>{{ .HandycapSet.Name }}</td>
                 <td>{{ len .Archers }}</td>
                 <td>
@@ -35,33 +37,47 @@
 
     <h2>Add Tournament</h2>
     <form action="/tournaments" method="post">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="Name" required>
-        </div>
-        <div class="form-group">
-            <label for="date">Date</label>
-            <input type="date" class="form-control" id="date" name="date" required>
-        </div>
-        <div class="form-group">
-            <label for="venue">Venue</label>
-            <input type="text" class="form-control" id="venue" name="Venue" required>
-        </div>
-        <div class="form-group">
-            <label for="handycapSetID">Handycap Set</label>
-            <select class="form-control" id="handycapSetID" name="handycapSetID" required>
-                {{ range .HandycapSets }}
-                <option value="{{ .ID }}">{{ .Name }}</option>
-                {{ end }}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="archers">Select Archers</label>
-            <select multiple class="form-control" id="archers" name="archers">
-                {{ range .Archers }}
-                <option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }}</option>
-                {{ end }}
-            </select>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="type">Type</label>
+                    <select class="form-control" id="type" name="TournamentType" required>
+                        <option value="Indoor">Indoor</option>
+                        <option value="3D">3D</option>
+                        <option value="Field">Field</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="venue">Venue</label>
+                    <input type="text" class="form-control" id="venue" name="Venue" required>
+                </div>
+                <div class="form-group">
+                    <label for="handycapSetID">Handycap Set</label>
+                    <select class="form-control" id="handycapSetID" name="handycapSetID" required>
+                        {{ range .HandycapSets }}
+                        <option value="{{ .ID }}">{{ .Name }}</option>
+                        {{ end }}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="archers">Select Archers</label>
+                    <select multiple class="form-control" id="archers" name="archers">
+                        {{ range .Archers }}
+                        <option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }}</option>
+                        {{ end }}
+                    </select>
+                </div>
+            </div>
         </div>
         <button type="submit" class="btn btn-primary">Add Tournament</button>
     </form>
