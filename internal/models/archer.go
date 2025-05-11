@@ -6,8 +6,9 @@ import (
 
 type Archer struct {
 	gorm.Model
-	BowClassID uint
-	BowClass   BowClass
-	FirstName string   `gorm:"not null"`
-	LastName  string   `gorm:"not null"`
+	ID         uint `gorm:"primaryKey"`
+	BowClassID uint      `gorm:"not null"`
+	BowClass   BowClass  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	FirstName  string `gorm:"not null"`
+	LastName   string `gorm:"not null"`
 }

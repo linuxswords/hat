@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.Handycap{}, &models.Tournament{})
+	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.HandycapEntry{}, &models.Tournament{})
 
 	r := gin.Default()
 	r.Use(func(c *gin.Context) {

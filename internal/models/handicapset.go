@@ -6,12 +6,14 @@ import (
 
 type HandycapSet struct {
 	gorm.Model
-	Name      string
-	Handycaps []Handycap `gorm:"foreignKey:HandycapSetID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ID              uint `gorm:"primaryKey"`
+	Name            string
+	HandycapEntries []HandycapEntry `gorm:"foreignKey:HandycapSetID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-type Handycap struct {
+type HandycapEntry struct {
 	gorm.Model
+	ID            uint `gorm:"primaryKey"`
 	BowClassID    uint
 	BowClass      BowClass
 	Value         float64

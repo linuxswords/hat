@@ -35,7 +35,7 @@ func AddHandycapSet(c *gin.Context) {
 		for _, bowClass := range bowClasses {
 			value, err := strconv.ParseFloat(c.PostForm("factor_"+strconv.Itoa(int(bowClass.ID))), 64)
 			if err == nil {
-				handycapSet.Handycaps = append(handycapSet.Handycaps, models.Handycap{
+				handycapSet.HandycapEntries = append(handycapSet.HandycapEntries, models.HandycapEntry{
 					BowClassID: bowClass.ID,
 					Value:      value,
 				})
@@ -56,7 +56,7 @@ func AddHandycapSet(c *gin.Context) {
 func UpdateHandycap(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	id, _ := strconv.Atoi(c.Param("id"))
-	var handycap models.Handycap
+	var handycap models.HandycapEntry
 	if err := db.First(&handycap, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Handycap not found"})
 		return

@@ -36,9 +36,6 @@ func AddTournament(c *gin.Context) {
 	tournament.TournamentType = c.PostForm("TournamentType")
 	handycapSetID, _ := strconv.Atoi(c.PostForm("handycapSetID"))
 	tournament.HandycapSetID = uint(handycapSetID)
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
 	tournament.Date, _ = time.Parse("2006-01-02", c.PostForm("date"))
 	archerIDs := c.PostFormArray("archers")
 	for _, archerID := range archerIDs {
