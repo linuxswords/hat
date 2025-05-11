@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
 	"gorm.io/gorm"
-	"net/http"
-	"strconv"
 )
 
 func ShowScoresPage(c *gin.Context) {
@@ -35,6 +37,10 @@ func GetArchers(c *gin.Context) {
 	}
 	archers := tournament.Archers
 	db.Preload("BowClass").Find(&archers)
+	hcSet := tournament.HandycapSet
+	db.Preload("HandycapEntries").Find(&hcSet)
+
+	fmt.Println("hcEntries", hcSet)
 
 	// Prepare response with handycap factors
 	type ArcherResponse struct {
@@ -47,10 +53,15 @@ func GetArchers(c *gin.Context) {
 
 	var response []ArcherResponse
 	for _, archer := range archers {
+		factor := 1.0
+		hcEntry := hcSet.GetHandycapEntryByBowClass(archer.BowClassID)
+		if hcEntry != nil {
+			factor = hcEntry.Value
+		}
 		response = append(response, ArcherResponse{
 			ID:             archer.ID,
 			Name:           archer.FirstName + " " + archer.LastName,
-			HandycapFactor: 0.78, // Assuming this is a placeholder
+			HandycapFactor: factor,
 			BowClassName:   archer.BowClass.Name,
 			BowClassCode:   archer.BowClass.Code,
 		})

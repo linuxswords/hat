@@ -11,6 +11,15 @@ type HandycapSet struct {
 	HandycapEntries []HandycapEntry `gorm:"foreignKey:HandycapSetID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
+func (hs *HandycapSet) GetHandycapEntryByBowClass(bowClassID uint) *HandycapEntry {
+	for _, entry := range hs.HandycapEntries {
+		if entry.BowClassID == bowClassID {
+			return &entry
+		}
+	}
+	return nil
+}
+
 type HandycapEntry struct {
 	gorm.Model
 	ID            uint `gorm:"primaryKey"`
