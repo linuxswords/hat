@@ -23,12 +23,12 @@
                 <td>{{ .HandycapSet.Name }}</td>
                 <td>{{ len .Archers }}</td>
                 <td>
-                    <a href="/tournaments/{{ .ID }}/edit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-pencil-alt"></i>
+                    <a href="/tournaments/{{ .ID }}/edit" class="text-primary" title="Edit">
+                        <i class="bi bi-pencil-square"></i>
                     </a>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ .ID }}, 'tournaments')">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <a href="javascript:void(0)" title="Delete" class="text-danger" onclick="confirmDelete({{ .ID }}, 'tournaments')">
+                        <i class="bi bi-trash"></i>
+                    </a>
                 </td>
             </tr>
             {{ end }}
