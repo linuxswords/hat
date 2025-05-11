@@ -8,21 +8,21 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script>
-        function deleteHandycap(id) {
-            if (confirm('Are you sure you want to delete this handycap set?')) {
-                fetch(`/handycaps/${id}`, {
+        function confirmDelete(id, type) {
+            if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                fetch(`/${type}/${id}`, {
                     method: 'DELETE'
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/handycaps';
+                        window.location.href = `/${type}`;
                     } else {
-                        alert('Failed to delete handycap set.');
+                        alert(`Failed to delete ${type}.`);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while deleting the handycap set.');
+                    alert(`An error occurred while deleting the ${type}.`);
                 });
             }
         }

@@ -75,5 +75,5 @@ func DeleteTournament(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
-	c.Status(http.StatusOK)
+	c.Redirect(http.StatusSeeOther, "/tournaments")
 }

@@ -23,14 +23,12 @@
                 <td>{{ .HandycapSet.Name }}</td>
                 <td>{{ len .Archers }}</td>
                 <td>
-                    <form action="/tournaments/{{ .ID }}" method="post" style="display:inline;">
-                        <input type="hidden" name="_method" value="PUT">
-                        <button type="submit" class="btn btn-sm btn-primary">Edit</button>
-                    </form>
-                    <form action="/tournaments/{{ .ID }}" method="post" style="display:inline;">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    </form>
+                    <a href="/tournaments/{{ .ID }}/edit" class="btn btn-sm btn-primary">
+                        <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ .ID }}, 'tournaments')">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
             {{ end }}
