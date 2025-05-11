@@ -6,14 +6,13 @@ import (
 )
 
 func ShowHomePage(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+	c.HTML(http.StatusOK, "scores.tmpl", gin.H{
 		"Title":   "HAT - Home",
 		"Content": "Welcome to the Handycap Archery Tournament System!",
 	})
 }
 
 func ShowScoresPage(c *gin.Context) {
-	// Render a page to add scores
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"Title":   "HAT - Scores",
 		"Content": "Scores Page",
