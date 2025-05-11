@@ -25,14 +25,6 @@ func AddScore(c *gin.Context) {
 	c.String(http.StatusOK, "Score added")
 }
 
-func ShowResultsPage(c *gin.Context) {
-	// Render a page to show results
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-		"Title":   "HAT - Results",
-		"Content": "Results Page",
-	})
-}
-
 func ShowHandicapsPage(c *gin.Context) {
 	// Render a page to manage handicaps
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
