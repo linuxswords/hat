@@ -10,6 +10,7 @@
                 <th>Date</th>
                 <th>Venue</th>
                 <th>Handycap Set</th>
+                <th>Number of Archers</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -20,6 +21,7 @@
                 <td>{{ .Date.Format "2006-01-02" }}</td>
                 <td>{{ .Venue }}</td>
                 <td>{{ .HandycapSet.Name }}</td>
+                <td>{{ len .Archers }}</td>
                 <td>
                     <form action="/tournaments/{{ .ID }}" method="post" style="display:inline;">
                         <input type="hidden" name="_method" value="PUT">
