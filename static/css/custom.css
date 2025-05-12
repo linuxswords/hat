@@ -1,0 +1,18 @@
+/* Add your custom styles here */
+body {
+    background-color: #f8f9fa;
+}
+.sticky-nav {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: white;
+}
+
+.sticky-submit {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1001; /* Ensure it appears above other elements */
+}

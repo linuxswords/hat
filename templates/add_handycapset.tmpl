@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Handycap Set</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
+{{ template "head" . }}
     <div class="container">
-        <h1 class="mt-5">Add Handycap Set</h1>
         <form method="post" action="/handycaps/add">
             <div class="form-group">
                 <label for="name">Set Name</label>
                 <input type="text" class="form-control" id="name" name="Name" required>
             </div>
+            <button type="submit" class="btn btn-primary sticky-submit">Submit</button>
             {{range .BowClasses}}
             <div class="form-group">
                 <label for="factor_{{.ID}}">{{.Name}} Factor</label>
@@ -23,5 +15,4 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
-</body>
-</html>
+{{ template "footer" }}

@@ -23,6 +23,7 @@ func main() {
 		c.Next()
 	})
 
+	r.Static("/static", "./static")
 	r.LoadHTMLGlob("templates/*")
 	// Define routes
 	r.GET("/", handlers.ShowHomePage)
