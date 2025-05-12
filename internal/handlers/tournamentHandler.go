@@ -35,7 +35,15 @@ func AddTournament(c *gin.Context) {
 	}
 	tournament.TournamentType = c.PostForm("TournamentType")
 	handycapSetID, _ := strconv.Atoi(c.PostForm("handycapSetID"))
-	tournament.HandycapSetID = uint(handycapSetID)
+	var handycapSet models.HandycapSet
+	if err := db.First(&handycapSet, handycapSetID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "HandycapSet not found"})
+		return
+	}
+
+	tournament.HandycapSetID = handycapSet.ID
+	tournament.HandycapSet = handycapSet
+
 	tournament.Date, _ = time.Parse("2006-01-02", c.PostForm("date"))
 	archerIDs := c.PostFormArray("archers")
 	for _, archerID := range archerIDs {
