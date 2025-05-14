@@ -66,15 +66,26 @@ console.log('archers', archers)
             const score = parseFloat(scoreInput.value) || 0;
             return {
                 name: archer.name,
+                bowclassName: archer.bowclassName,
+                originalScore: score,
+                handycapFactor: archer.handycapFactor,
                 totalScore: score * archer.handycapFactor
             };
         }).sort((a, b) => b.totalScore - a.totalScore);
 
         const resultsList = document.getElementById('resultsList');
         resultsList.innerHTML = results.map(result => `
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>${result.name}</span>
-                <span class="badge bg-primary rounded-pill">${result.totalScore.toFixed(2)}</span>
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>${result.name}</strong> <small>(${result.bowclassName})</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-secondary">Score: ${result.originalScore}</span>
+                        <span class="badge bg-info">Factor: ${result.handycapFactor}</span>
+                        <span class="badge bg-primary">Total: ${result.totalScore.toFixed(2)}</span>
+                    </div>
+                </div>
             </li>
         `).join('');
     }
