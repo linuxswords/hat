@@ -12,19 +12,14 @@
         <button class="btn btn-primary" onclick="nextStep()">Next</button>
     </div>
 
-    <!-- Step 2: Enter Scores -->
+    <!-- Step 2 & 3: Enter Scores and Display Results -->
     <div id="step2" style="display:none;">
         <h2>Step 2: Enter Scores</h2>
         <div id="archersList">
             <!-- Archer list with input fields will be populated dynamically -->
         </div>
-        <button onclick="calculateResults()">Calculate Results</button>
-    </div>
-
-    <!-- Step 3: Display Results -->
-    <div id="step3" style="display:none;">
         <h2>Step 3: Results</h2>
-        <div id="resultsList">
+        <ul id="resultsList" class="list-group">
             <!-- Results will be displayed here -->
         </div>
     </div>
@@ -49,7 +44,7 @@ console.log('archers', archers)
                         <h5 class="card-title">${a.name}</h5>
                         <p class="card-text">Bow Class: ${a.bowclassName} (${a.bowclassCode})</p>
                         <p class="card-text">Factor: ${a.handycapFactor}</p>
-                        <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score">
+                        <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score" oninput="updateResults()">
                     </div>
                 </div>
             `).join('');
@@ -65,9 +60,10 @@ console.log('archers', archers)
         document.getElementById('step' + currentStep).style.display = 'block';
     }
 
-    function calculateResults() {
+    function updateResults() {
         const results = archers.map(archer => {
-            const score = parseFloat(document.getElementById('score_' + archer.id).value);
+            const scoreInput = document.getElementById('score_' + archer.id);
+            const score = parseFloat(scoreInput.value) || 0;
             return {
                 name: archer.name,
                 totalScore: score * archer.handycapFactor
@@ -75,8 +71,12 @@ console.log('archers', archers)
         }).sort((a, b) => b.totalScore - a.totalScore);
 
         const resultsList = document.getElementById('resultsList');
-        resultsList.innerHTML = results.map(result => `<div>${result.name}: ${result.totalScore}</div>`).join('');
-        nextStep();
+        resultsList.innerHTML = results.map(result => `
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>${result.name}</span>
+                <span class="badge bg-primary rounded-pill">${result.totalScore.toFixed(2)}</span>
+            </li>
+        `).join('');
     }
 
 </script>
