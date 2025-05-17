@@ -33,7 +33,7 @@ COPY --from=builder /app/static/ static/
 COPY --from=builder /app/templates/ templates/
 
 # Expose the application port
-EXPOSE 8987
+EXPOSE 8080
 
 # Command to run the application
 CMD ["./hat"]

@@ -58,5 +58,5 @@ func main() {
 		api.GET("/archers/tournament/:id", handlers.GetArchers)
 	}
 
-	r.Run(":8987")
+	r.Run(":8080")
 }

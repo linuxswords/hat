@@ -19,6 +19,6 @@ runner = "magenta"
 time = true
 
 [env]
-PORT = "8987"
+PORT = "8080"
 GOPROXY = "https://proxy.golang.org"
 
