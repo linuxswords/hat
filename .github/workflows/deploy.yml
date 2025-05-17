@@ -40,8 +40,8 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/hat-app:${{ github.sha }} -f ops/docker/Dockerfile .
-        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/hat-app:${{ github.sha }}
+        docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/linuxswords/hat-app:${{ github.sha }} -f ops/docker/Dockerfile .
+        docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/linuxswords/hat-app:${{ github.sha }}
 
     - name: Deploy to Cloud Run
       run: |
