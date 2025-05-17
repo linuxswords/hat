@@ -49,7 +49,7 @@ jobs:
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy hat-app \
-          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/hat-app:${{ github.sha }} \
-          --region us-central1 \
+          --image ${{ secrets.GCP_REGISTRY_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY_NAME }}/hat-app:${{ github.sha }} \
+          --region ${{ secrets.GCP_REGISTRY_LOCATION }} \
           --platform managed \
           --allow-unauthenticated
