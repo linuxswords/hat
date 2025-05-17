@@ -30,18 +30,23 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Log in to Google Cloud
-      uses: google-github-actions/auth@v1
+    - name: Setup up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
       with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        version: 'latest'
+        service-account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
 
     - name: Configure Docker for GCP
-      run: gcloud auth configure-docker europe-west4-docker.pkg.dev
+      run: gcloud auth configure-docker ${{ secrets.GCP_REGISTRY_LOCATION }}-docker.pkg.dev
 
-    - name: Build and push Docker image
+    - name: Build Docker image
       run: |
-        docker build -t europe-west4-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-images/hat-app:${{ github.sha }} -f ops/docker/Dockerfile .
-        docker push europe-west4-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-images/hat-app:${{ github.sha }}
+        docker build -t ${{ secrets.GCP_REGISTRY_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY_NAME }}/hat-app:${{ github.sha }} -f ops/docker/Dockerfile .
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ secrets.GCP_REGISTRY_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPOSITORY_NAME }}/hat-app:${{ github.sha }}
 
     - name: Deploy to Cloud Run
       run: |
