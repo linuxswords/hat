@@ -43,12 +43,14 @@
             console.log('archers:', archers);
             const archersList = document.getElementById('archersList');
             archersList.innerHTML = archers.map(a => `
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">${a.name}</h5>
-                        <p class="card-text">Bow Class: ${a.bowclassName} (${a.bowclassCode})</p>
-                        <p class="card-text">Factor: ${a.handycapFactor}</p>
-                        <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score" oninput="updateResults()">
+                <div class="card mb-2" style="padding: 5px;">
+                    <div class="card-body" style="padding: 10px;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title" style="margin-bottom: 5px;">${a.name}</h5>
+                            <span class="badge bg-secondary" style="font-size: 0.9em;">Factor: ${a.handycapFactor}</span>
+                        </div>
+                        <p class="card-text" style="margin-bottom: 5px;">Bow Class: ${a.bowclassName} (${a.bowclassCode})</p>
+                        <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score" oninput="updateResults()" style="margin-bottom: 5px;">
                     </div>
                 </div>
             `).join('');
