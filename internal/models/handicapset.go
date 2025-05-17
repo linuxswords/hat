@@ -12,6 +12,7 @@ type HandycapSet struct {
 }
 
 func (hs *HandycapSet) GetHandycapEntryByBowClass(bowClassID uint) *HandycapEntry {
+	//FIXME this will retrieve the first match and will disregard other values from different handycap sets
 	for _, entry := range hs.HandycapEntries {
 		if entry.BowClassID == bowClassID {
 			return &entry
