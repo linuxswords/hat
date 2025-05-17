@@ -26,7 +26,7 @@ WORKDIR /app
 
 # Install required runtime libraries
 RUN apt-get update && apt-get install -y libsqlite3-0 && rm -rf /var/lib/apt/lists/*
-RUN mkdir internal/models/bootstrap
+RUN mkdir -p internal/models/bootstrap
 # Copy the binary from the builder stage
 COPY --from=builder /app/hat .
 COPY --from=builder /app/static/ static/
