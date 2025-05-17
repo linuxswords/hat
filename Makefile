@@ -1,4 +1,4 @@
-.PHONY: install start
+.PHONY: install start docker-build
 
 install:
 	go install github.com/air-verse/air@latest
@@ -9,3 +9,5 @@ dev:
 
 start:
 	go run cmd/hat/main.go
+docker-build:
+	docker build -t hat-app -f ops/docker/Dockerfile .
