@@ -1,5 +1,5 @@
 # Use the official Golang image to build the application
-FROM golang:1.24.2 AS builder
+FROM golang:1.24.2-bullseye AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -11,17 +11,26 @@ RUN go mod download
 # Copy the entire application source code
 COPY . .
 
+# Install build dependencies
+# RUN apk add --no-cache gcc musl-dev sqlite-dev
+RUN apt-get update && apt-get install -y gcc libsqlite3-dev
+
 # Build the application
-RUN go build -o hat cmd/hat/main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -o hat ./cmd/hat/
 
 # Use a minimal base image to run the application
-FROM alpine:latest
+FROM debian:bullseye-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
+# Install required runtime libraries
+RUN apt-get update && apt-get install -y libsqlite3-0 && rm -rf /var/lib/apt/lists/*
+
 # Copy the binary from the builder stage
 COPY --from=builder /app/hat .
+COPY --from=builder /app/static/ static/
+COPY --from=builder /app/templates/ templates/
 
 # Expose the application port
 EXPOSE 8987
