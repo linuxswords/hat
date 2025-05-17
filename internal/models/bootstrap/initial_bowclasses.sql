@@ -1,4 +1,4 @@
-INSERT INTO bowclass (name, code) VALUES
+INSERT INTO bow_classes (name, code) VALUES
 ('Cub Male Freestyle Limited Recurve', 'CMFS-R'),
 ('Cub Male Bowhunter Recurve', 'CMBHR'),
 ('Cub Female Bowhunter Recurve', 'CFBHR'),

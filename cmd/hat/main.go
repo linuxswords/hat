@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/handlers"
-	"github.com/linuxswords/hat/internal/models"
+	"github.com/linuxswords/hat/internal/models/bootstrap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -14,8 +14,9 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	// Migrate the schema
-	db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.HandycapEntry{}, &models.Tournament{})
+	if err := bootstrap.BootstrapData(db); err != nil {
+		panic(err)
+	}
 
 	r := gin.Default()
 	r.Use(func(c *gin.Context) {
