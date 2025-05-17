@@ -26,11 +26,12 @@ WORKDIR /app
 
 # Install required runtime libraries
 RUN apt-get update && apt-get install -y libsqlite3-0 && rm -rf /var/lib/apt/lists/*
-
+RUN mkdir internal/models/bootstrap
 # Copy the binary from the builder stage
 COPY --from=builder /app/hat .
 COPY --from=builder /app/static/ static/
 COPY --from=builder /app/templates/ templates/
+COPY --from=builder /app/internal/models/boostrap/*sql internal/models/bootstrap/
 
 # Expose the application port
 EXPOSE 8080
