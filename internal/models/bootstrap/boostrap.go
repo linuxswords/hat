@@ -54,7 +54,7 @@ func initArchers(db *gorm.DB) error {
 // BootstrapData loads initial SQL and CSV data into the database
 func BootstrapData(db *gorm.DB) error {
 	// Migrate the schema
-	if err := db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.HandycapEntry{}, &models.Tournament{}); err != nil {
+	if err := db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.HandycapEntry{}, &models.Tournament{}, &models.Score{}); err != nil {
 		return fmt.Errorf("auto-migrate failed: %w", err)
 	}
 

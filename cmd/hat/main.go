@@ -57,6 +57,7 @@ func main() {
 	api := r.Group("/api")
 	{
 		api.GET("/archers/tournament/:id", handlers.GetArchers)
+		api.POST("/scores", handlers.SaveScores)
 	}
 
 	r.Run(":8080")

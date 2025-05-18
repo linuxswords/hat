@@ -23,6 +23,37 @@ func ShowScoresPage(c *gin.Context) {
 	})
 }
 
+func SaveScores(c *gin.Context) {
+	var request struct {
+		TournamentID uint `json:"tournamentId"`
+		Scores       []struct {
+			ArcherID   uint    `json:"archerId"`
+			Score      float64 `json:"score"`
+			Ranking    uint    `json:"ranking"`
+			TotalScore float64 `json:"totalScore"`
+		} `json:"scores"`
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	db := c.MustGet("db").(*gorm.DB)
+	for _, scoreData := range request.Scores {
+		score := models.Score{
+			TournamentID: request.TournamentID,
+			ArcherID:     scoreData.ArcherID,
+			Score:        scoreData.Score,
+			TotalScore:   scoreData.TotalScore,
+			Ranking:      scoreData.Ranking,
+		}
+		db.Create(&score)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Scores saved successfully"})
+}
+
 func GetHandycapSet(c *gin.Context) {
 }
 
