@@ -1,0 +1,24 @@
+{{ template "head" . }}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>ID</th>
+            <th>Tournament ID</th>
+            <th>Archer</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{ range .Scores }}
+        <tr>
+        <td>{{ .Ranking }}</td>
+        <td>{{ .ID }}</td>
+        <td>{{ .TournamentID }}</td>
+        <td>{{ .Archer.FirstName }}{{ .Archer.LastName}}</td>
+        <td>{{ .Archer.FirstName }}{{ .Archer.LastName}}</td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+{{ template "footer" }}

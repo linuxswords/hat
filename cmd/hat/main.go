@@ -33,6 +33,7 @@ func main() {
 	r.POST("/archers/edit/:id", handlers.UpdateArcher)
 	r.POST("/archers/delete/:id", handlers.DeleteArcher)
 	r.GET("/scores", handlers.ShowScoresPage)
+	r.GET("/resultLists", handlers.ShowResultLists)
 
 	// BowClass routes
 	r.GET("/bowclasses", handlers.ShowBowClassesPage)
