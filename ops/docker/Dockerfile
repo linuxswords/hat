@@ -31,7 +31,7 @@ RUN mkdir -p internal/models/bootstrap
 COPY --from=builder /app/hat .
 COPY --from=builder /app/static/ static/
 COPY --from=builder /app/templates/ templates/
-COPY --from=builder /app/internal/models/boostrap/*sql internal/models/bootstrap/
+COPY --from=builder /app/internal/models/bootstrap/*sql internal/models/bootstrap/
 
 # Expose the application port
 EXPOSE 8080
