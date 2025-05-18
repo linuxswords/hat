@@ -1,13 +1,8 @@
 package bootstrap
 
 import (
-	"bufio"
-	// "database/sql"
-	"encoding/csv"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/linuxswords/hat/internal/models"
 	"gorm.io/gorm"
@@ -88,44 +83,4 @@ func execSQLFile(db *gorm.DB, filepath string) error {
 	}
 	sqlStmts := string(sqlBytes)
 	return db.Exec(sqlStmts).Error
-}
-
-// loadCSVEntries parses the CSV and attaches entries to the handycap set
-func loadCSVEntries(db *gorm.DB, set *models.HandycapSet, csvPath string) error {
-	f, err := os.Open(filepath.Clean(csvPath))
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	reader := csv.NewReader(bufio.NewReader(f))
-	reader.Comma = ';'
-	records, err := reader.ReadAll()
-	if err != nil {
-		return err
-	}
-
-	for _, rec := range records {
-		if len(rec) != 2 {
-			continue // malformed row
-		}
-		code := strings.TrimSpace(rec[0])
-		valueStr := strings.TrimSpace(rec[1])
-
-		var bc models.BowClass
-		if err := db.Where("code = ?", code).First(&bc).Error; err != nil {
-			fmt.Printf("⚠️ Skipping unknown BowClass code: %s\n", code)
-			continue
-		}
-
-		var value float64
-		fmt.Sscanf(valueStr, "%f", &value)
-
-		set.HandycapEntries = append(set.HandycapEntries, models.HandycapEntry{
-			BowClassID: bc.ID,
-			Value:      value,
-		})
-	}
-
-	return nil
 }
