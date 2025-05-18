@@ -1,6 +1,6 @@
 -- Insert HandycapSet
 INSERT INTO handycap_sets (name, created_at, updated_at)
-VALUES ('3D 2021-2025 3-Arrow Round', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('3D 2021-2025 3-Arrow Round (KI generated)', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 2. Save the inserted ID
 -- In SQLite, we can use 1 to get the ID of the inserted row

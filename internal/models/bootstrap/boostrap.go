@@ -42,6 +42,20 @@ func initHandyCapSet(db *gorm.DB) error {
 	return nil
 }
 
+func initArchers(db *gorm.DB) error {
+	var count int64
+	db.Model(&models.Archer{}).Count(&count)
+	if count == 0 {
+		if err := execSQLFile(db, "internal/models/bootstrap/initial_archers.sql"); err != nil {
+			return fmt.Errorf("failed to load archers: %w", err)
+		}
+		fmt.Println("✅ Archers loaded")
+	} else {
+		fmt.Println("ℹ️ Archers already exist — skipping")
+	}
+	return nil
+}
+
 // BootstrapData loads initial SQL and CSV data into the database
 func BootstrapData(db *gorm.DB) error {
 	// Migrate the schema
@@ -49,14 +63,19 @@ func BootstrapData(db *gorm.DB) error {
 		return fmt.Errorf("auto-migrate failed: %w", err)
 	}
 
-	// Check if bow classes exist
+	// Check if bow classes exist and create if not
 	if err := initBowclasses(db); err != nil {
 		return fmt.Errorf("Error initializing bow classes: %w", err)
 	}
 
-	// Check if the handicap set already exists
+	// Check if the handicap set already exists and create if not
 	if err := initHandyCapSet(db); err != nil {
 		return fmt.Errorf("Error initializing handycap classes: %w", err)
+	}
+
+	// Check if the archers already exists and create if not
+	if err := initArchers(db); err != nil {
+		return fmt.Errorf("Error initializing archers classes: %w", err)
 	}
 	return nil
 }
