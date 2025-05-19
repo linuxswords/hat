@@ -59,6 +59,7 @@ func main() {
 	{
 		api.GET("/archers/tournament/:id", handlers.GetArchers)
 		api.POST("/scores", handlers.SaveScores)
+		api.GET("/tournaments/:id/download", handlers.DownloadTournamentPDF)
 	}
 
 	r.Run(":8080")

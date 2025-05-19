@@ -3,20 +3,23 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Rank</th>
             <th>ID</th>
-            <th>Tournament ID</th>
-            <th>Archer</th>
+            <th>Tournament</th>
+            <th>Venue</th>
+            <th>Date</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-    {{ range .Scores }}
+    {{ range .Tournaments }}
         <tr>
-        <td>{{ .Ranking }}</td>
-        <td>{{ .ID }}</td>
-        <td>{{ .TournamentID }}</td>
-        <td>{{ .Archer.FirstName }}{{ .Archer.LastName}}</td>
-        <td>{{ .Archer.FirstName }}{{ .Archer.LastName}}</td>
+            <td>{{ .ID }}</td>
+            <td>{{ .Name }}</td>
+            <td>{{ .Venue }}</td>
+            <td>{{ .Date }}</td>
+            <td>
+                <a href="/api/tournaments/{{ .ID }}/download" class="btn btn-primary">Download PDF</a>
+            </td>
         </tr>
         {{ end }}
     </tbody>
