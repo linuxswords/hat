@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
+	"github.com/linuxswords/hat/internal/pdf"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
@@ -39,7 +40,13 @@ func DownloadTournamentPDF(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Scores not found!"})
 		return
 	}
-	// Logic to generate PDF for the tournament with the given ID using the scores
-	// For now, we'll just return a placeholder response with the number of scores
-	c.String(http.StatusOK, "PDF download for tournament ID: %d with %d scores", id, len(scores))
+	pdfData, err := pdf.CreatePDF(db, scores)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate PDF"})
+		return
+	}
+
+	// Set the response headers for PDF download
+	c.Header("Content-Disposition", "attachment; filename=tournament_results.pdf")
+	c.Data(http.StatusOK, "application/pdf", pdfData)
 }
