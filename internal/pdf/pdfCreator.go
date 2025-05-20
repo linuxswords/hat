@@ -6,19 +6,19 @@ import (
 	"github.com/jung-kurt/gofpdf/v2"
 	"github.com/linuxswords/hat/internal/models"
 	"gorm.io/gorm"
+	"log/slog"
 )
 
 func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
-	pdf.AddUTF8Font("DejaVu", "", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")
-	pdf.AddUTF8Font("DejaVu", "B", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf")
-	pdf.SetFont("DejaVu", "", 12)
+	pdf.AddPage()
 	if len(scores) == 0 {
 		return nil, fmt.Errorf("no scores available")
 	}
 
 	var tournament models.Tournament
 	if err := db.Preload("HandycapSet").First(&tournament, scores[0].TournamentID).Error; err != nil {
+		slog.Error("error loading handycapset", "error", err)
 		return nil, err
 	}
 
@@ -47,6 +47,7 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	for i, score := range scores {
 		var archer models.Archer
 		if err := db.Preload("BowClass").First(&archer, score.ArcherID).Error; err != nil {
+			slog.Error("error loading bowclass", "error", err)
 			return nil, err
 		}
 		if i < 3 {
@@ -64,6 +65,7 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	var buf bytes.Buffer
 	err := pdf.Output(&buf)
 	if err != nil {
+		slog.Error("error byte buffer", "error", err)
 		return nil, err
 	}
 	return buf.Bytes(), nil
