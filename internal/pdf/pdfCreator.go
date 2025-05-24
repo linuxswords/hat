@@ -12,6 +12,7 @@ import (
 func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.AddPage()
+	pdf.ImageOptions("static/images/hat-logo.png", 170, 10, 30, 0, false, gofpdf.ImageOptions{ImageType: "PNG", ReadDpi: true}, 0, "")
 	if len(scores) == 0 {
 		return nil, fmt.Errorf("no scores available")
 	}
@@ -40,10 +41,10 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	pdf.SetFont("Arial", "B", 10)
 	pdf.CellFormat(15, 7, "Rank", "1", 0, "C", false, 0, "")
 	pdf.CellFormat(65, 7, "Name", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(65, 7, "Bow Class", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(25, 7, "Score", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(25, 7, "Handycap", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(25, 7, "Total Score", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(30, 7, "Bow Class Code", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(20, 7, "Score", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(20, 7, "Handycap", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(20, 7, "Total Score", "1", 0, "C", false, 0, "")
 	pdf.Ln(-1)
 
 	for i, score := range scores {
@@ -66,10 +67,10 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 		}
 		pdf.CellFormat(15, 6, fmt.Sprintf("%d", score.Ranking), "1", 0, "C", false, 0, "")
 		pdf.CellFormat(65, 6, fmt.Sprintf("%s %s", archer.FirstName, archer.LastName), "1", 0, "L", false, 0, "")
-		pdf.CellFormat(65, 6, archer.BowClass.Name, "1", 0, "L", false, 0, "")
-		pdf.CellFormat(25, 6, fmt.Sprintf("%.2f", score.Score), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(25, 6, fmt.Sprintf("%.2f", handycapEntry.Value), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(25, 6, fmt.Sprintf("%.2f", score.TotalScore), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(30, 6, archer.BowClass.Code, "1", 0, "L", false, 0, "")
+		pdf.CellFormat(20, 6, fmt.Sprintf("%.2f", score.Score), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(20, 6, fmt.Sprintf("%.2f", handycapEntry.Value), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(20, 6, fmt.Sprintf("%.2f", score.TotalScore), "1", 0, "C", false, 0, "")
 		pdf.Ln(-1)
 	}
 
@@ -79,5 +80,8 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 		slog.Error("error byte buffer", "error", err)
 		return nil, err
 	}
+	pdf.SetY(-30)
+	pdf.SetFont("Arial", "I", 8)
+	pdf.CellFormat(0, 10, "© 2025 BST - BS Thalwil, Martin Knoller Stocker. https://github.com/linuxswords/hat", "", 0, "C", false, 0, "")
 	return buf.Bytes(), nil
 }
