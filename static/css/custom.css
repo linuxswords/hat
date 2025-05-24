@@ -16,3 +16,15 @@ body {
     right: 20px;
     z-index: 1001; /* Ensure it appears above other elements */
 }
+
+.form-group label {
+    display: inline-block;
+    width: 400px; /* Increased width by another 150px */
+    text-align: right;
+    margin-right: 10px;
+}
+
+.form-control {
+    width: 300px; /* Set a fixed width for input fields */
+    text-align: right; /* Right-align text inside input fields */
+}
