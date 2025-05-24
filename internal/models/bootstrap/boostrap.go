@@ -24,7 +24,7 @@ func initBowclasses(db *gorm.DB) error {
 
 func initHandyCapSet(db *gorm.DB) error {
 	var existingSet models.HandycapSet
-	if err := db.Where("name = ?", "3D 2021-2025 3-Arrow Round").First(&existingSet).Error; err == nil {
+	if err := db.Where("name = ?", "3D 2021-2025 3-Arrow Round (KI generated)").First(&existingSet).Error; err == nil {
 		fmt.Println("ℹ️ Handicap set already exists — skipping")
 		return nil
 	}
