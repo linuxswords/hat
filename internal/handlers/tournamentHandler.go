@@ -17,7 +17,8 @@ func ShowTournamentsPage(c *gin.Context) {
 	var handycapSets []models.HandycapSet
 	db.Find(&handycapSets)
 	var archers []models.Archer
-	db.Find(&archers)
+	db.Preload("BowClass").Find(&archers)
+
 	c.HTML(http.StatusOK, "tournaments.tmpl", gin.H{
 		"Title":        "Tournaments",
 		"Tournaments":  tournaments,

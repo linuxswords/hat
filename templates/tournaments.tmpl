@@ -70,7 +70,7 @@
                 <label for="archers">Select Archers</label>
                 <select multiple class="form-control" id="archers" name="archers">
                     {{ range .Archers }}
-                    <option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }}</option>
+                    <option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }} ({{.BowClass.Code}})</option>
                     {{ end }}
                 </select>
             </div>
