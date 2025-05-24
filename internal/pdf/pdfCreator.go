@@ -11,6 +11,11 @@ import (
 
 func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.SetFooterFunc(func() {
+		pdf.SetY(-15)
+		pdf.SetFont("Arial", "I", 8)
+		pdf.CellFormat(0, 10, "© 2025 BST - BS Thalwil, Martin Knoller Stocker. https://github.com/linuxswords/hat", "", 0, "C", false, 0, "")
+	})
 	pdf.AddPage()
 	pdf.ImageOptions("static/images/hat-logo.png", 170, 10, 30, 0, false, gofpdf.ImageOptions{ImageType: "PNG", ReadDpi: true}, 0, "")
 	if len(scores) == 0 {
