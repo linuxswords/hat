@@ -42,12 +42,21 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	pdf.CellFormat(65, 7, "Name", "1", 0, "C", false, 0, "")
 	pdf.CellFormat(65, 7, "Bow Class", "1", 0, "C", false, 0, "")
 	pdf.CellFormat(25, 7, "Score", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(25, 7, "Handycap", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(25, 7, "Total Score", "1", 0, "C", false, 0, "")
 	pdf.Ln(-1)
 
 	for i, score := range scores {
 		var archer models.Archer
 		if err := db.Preload("BowClass").First(&archer, score.ArcherID).Error; err != nil {
 			slog.Error("error loading bowclass", "error", err)
+			return nil, err
+		}
+
+		var handycapEntry models.HandycapEntry
+		if err := db.Where("handycap_set_id = ? AND bow_class_id = ?", tournament.HandycapSetID, archer.BowClassID).First(&handycapEntry).Error; err != nil {
+			slog.Error("error loading handycap entry", "error", err)
+			fmt.Printf("Archer %s %s, and bowclass %s", archer.FirstName, archer.LastName, archer.BowClass.Code)
 			return nil, err
 		}
 		if i < 3 {
@@ -58,6 +67,8 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 		pdf.CellFormat(15, 6, fmt.Sprintf("%d", score.Ranking), "1", 0, "C", false, 0, "")
 		pdf.CellFormat(65, 6, fmt.Sprintf("%s %s", archer.FirstName, archer.LastName), "1", 0, "L", false, 0, "")
 		pdf.CellFormat(65, 6, archer.BowClass.Name, "1", 0, "L", false, 0, "")
+		pdf.CellFormat(25, 6, fmt.Sprintf("%.2f", score.Score), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(25, 6, fmt.Sprintf("%.2f", handycapEntry.Value), "1", 0, "C", false, 0, "")
 		pdf.CellFormat(25, 6, fmt.Sprintf("%.2f", score.TotalScore), "1", 0, "C", false, 0, "")
 		pdf.Ln(-1)
 	}
