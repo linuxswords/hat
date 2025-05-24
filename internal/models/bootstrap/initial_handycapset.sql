@@ -55,3 +55,4 @@ INSERT INTO handycap_entries (bow_class_id, value, handycap_set_id, created_at, 
 INSERT INTO handycap_entries (bow_class_id, value, handycap_set_id, created_at, updated_at) SELECT bc.id, 0.911, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'VMBBR';
 INSERT INTO handycap_entries (bow_class_id, value, handycap_set_id, created_at, updated_at) SELECT bc.id, 1.146, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'JMTR';
 INSERT INTO handycap_entries (bow_class_id, value, handycap_set_id, created_at, updated_at) SELECT bc.id, 1.876, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'JMLB';
+INSERT INTO handycap_entries (bow_class_id, value, handycap_set_id, created_at, updated_at) SELECT bc.id, 1.276, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'JFBHR';
