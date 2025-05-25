@@ -23,12 +23,32 @@ func ShowArchersPage(c *gin.Context) {
 
 func AddArcher(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
+	id, _ := strconv.Atoi(c.PostForm("ID"))
 	var archer models.Archer
+	if id != 0 {
+		if err := db.First(&archer, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
+			return
+		}
+	}
+
 	if err := c.ShouldBind(&archer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	db.Create(&archer)
+
+	var bowClass models.BowClass
+	if err := db.First(&bowClass, archer.BowClassID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	archer.BowClass = bowClass
+
+	if id == 0 {
+		db.Create(&archer)
+	} else {
+		db.Save(&archer)
+	}
+
 	c.Redirect(http.StatusSeeOther, "/archers")
 }
 
@@ -45,6 +65,17 @@ func UpdateArcher(c *gin.Context) {
 		return
 	}
 	db.Save(&archer)
+	c.JSON(http.StatusOK, archer)
+}
+
+func GetArcher(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	id, _ := strconv.Atoi(c.Param("id"))
+	var archer models.Archer
+	if err := db.Preload("BowClass").First(&archer, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
+		return
+	}
 	c.JSON(http.StatusOK, archer)
 }
 

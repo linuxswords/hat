@@ -30,7 +30,7 @@ func main() {
 	r.GET("/", handlers.ShowHomePage)
 	r.GET("/archers", handlers.ShowArchersPage)
 	r.POST("/archers", handlers.AddArcher)
-	r.POST("/archers/edit/:id", handlers.UpdateArcher)
+	r.GET("/archers/edit/:id", handlers.ShowArchersPage)
 	r.POST("/archers/delete/:id", handlers.DeleteArcher)
 	r.GET("/scores", handlers.ShowScoresPage)
 	r.GET("/resultLists", handlers.ShowResultLists)
@@ -59,7 +59,7 @@ func main() {
 	api := r.Group("/api")
 	{
 		api.GET("/archers/tournament/:id", handlers.GetArchers)
-		api.POST("/scores", handlers.SaveScores)
+		api.GET("/archers/:id", handlers.GetArcher)
 		api.GET("/tournaments/:id/download", handlers.DownloadTournamentPDF)
 	}
 
