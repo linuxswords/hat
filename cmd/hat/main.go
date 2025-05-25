@@ -45,7 +45,8 @@ func main() {
 	r.GET("/handycaps", handlers.ShowHandycapsPage)
 	r.GET("/handycaps/add", handlers.AddHandycapSet)
 	r.POST("/handycaps/add", handlers.AddHandycapSet)
-	r.PUT("/handycaps/:id", handlers.UpdateHandycap)
+	r.GET("/handycaps/edit/:id", handlers.EditHandycapSet)
+	r.POST("/handycaps/edit/:id", handlers.EditHandycapSet)
 	r.DELETE("/handycaps/:id", handlers.DeleteHandycap)
 
 	// Tournament routes

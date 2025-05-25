@@ -53,9 +53,47 @@ func AddHandycapSet(c *gin.Context) {
 	})
 }
 
-func UpdateHandycap(c *gin.Context) {
+func EditHandycapSet(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	id, _ := strconv.Atoi(c.Param("id"))
+	var handycapSet models.HandycapSet
+	if err := db.Preload("HandycapEntries").First(&handycapSet, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "HandycapSet not found"})
+		return
+	}
+
+	var bowClasses []models.BowClass
+	db.Find(&bowClasses)
+
+	if c.Request.Method == http.MethodPost {
+		if err := c.ShouldBind(&handycapSet); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Update handycap values
+		for _, bowClass := range bowClasses {
+			value, err := strconv.ParseFloat(c.PostForm("factor_"+strconv.Itoa(int(bowClass.ID))), 64)
+			if err == nil {
+				for i, entry := range handycapSet.HandycapEntries {
+					if entry.BowClassID == bowClass.ID {
+						handycapSet.HandycapEntries[i].Value = value
+					}
+				}
+			}
+		}
+
+		db.Save(&handycapSet)
+		c.Redirect(http.StatusSeeOther, "/handycaps")
+		return
+	}
+
+	c.HTML(http.StatusOK, "edit_handycapset.tmpl", gin.H{
+		"Title":       "Edit Handycap Set",
+		"HandycapSet": handycapSet,
+		"BowClasses":  bowClasses,
+	})
+
 	var handycap models.HandycapEntry
 	if err := db.First(&handycap, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Handycap not found"})
