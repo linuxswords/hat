@@ -12,7 +12,7 @@ import (
 func ShowHandycapsPage(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var handycapSets []models.HandycapSet
-	db.Preload("HandycapEntries").Find(&handycapSets)
+	db.Preload("HandycapEntries.BowClass").Find(&handycapSets)
 	c.HTML(http.StatusOK, "handycaps.tmpl", gin.H{
 		"Title":        "Handycaps",
 		"HandycapSets": handycapSets,
@@ -57,7 +57,7 @@ func EditHandycapSet(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	id, _ := strconv.Atoi(c.Param("id"))
 	var handycapSet models.HandycapSet
-	if err := db.Preload("HandycapEntries").First(&handycapSet, id).Error; err != nil {
+	if err := db.Preload("HandycapEntries.BowClass").First(&handycapSet, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "HandycapSet not found"})
 		return
 	}
@@ -94,17 +94,17 @@ func EditHandycapSet(c *gin.Context) {
 		"BowClasses":  bowClasses,
 	})
 
-	var handycap models.HandycapEntry
-	if err := db.First(&handycap, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Handycap not found"})
-		return
-	}
-	if err := c.ShouldBindJSON(&handycap); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	db.Save(&handycap)
-	c.Status(http.StatusOK)
+	// var handycap models.HandycapEntry
+	// if err := db.First(&handycap, id).Error; err != nil {
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Handycap not found"})
+	// 	return
+	// }
+	// if err := c.ShouldBindJSON(&handycap); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	// db.Save(&handycap)
+	// c.Status(http.StatusOK)
 }
 
 func DeleteHandycap(c *gin.Context) {
