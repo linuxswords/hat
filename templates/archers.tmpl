@@ -37,15 +37,15 @@
     <input type="hidden" id="archerId" name="ID" value="{{ .Archer.ID }}">
     <div class="row">
         <div class="form-group col-md-4 mb-3">
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="FirstName" class="form-control" value="{{ .Archer.FirstName }}" required>
+            <label for="firstName" class="text-left">First Name:</label>
+            <input type="text" id="firstName" name="FirstName" class="form-control text-left" value="{{ .Archer.FirstName }}" required>
         </div>
         <div class="form-group col-md-4 mb-3">
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="LastName" class="form-control" value="{{ .Archer.LastName }}" required>
+            <label for="lastName" class="text-left">Last Name:</label>
+            <input type="text" id="lastName" name="LastName" class="form-control text-left" value="{{ .Archer.LastName }}" required>
         </div>
         <div class="form-group col-md-4 mb-3">
-            <label for="bowClass">Bow Class:</label>
+            <label for="bowClass" class="text-left">Bow Class:</label>
             <select id="bowClass" name="BowClassID" class="form-control" required>
                 {{ range .BowClasses }}
                 <option value="{{ .ID }}" {{ if eq .ID $.Archer.BowClassID }}selected{{ end }}>{{ .Name }} ({{ .Code }})</option>
