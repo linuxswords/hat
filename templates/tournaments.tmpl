@@ -81,7 +81,7 @@
                 </div>
                 <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
                     <label for="selected-archers">Selected Archers</label>
-                    <select multiple class="form-control" id="selected-archers" name="archers" size="25" style="width: 100%;">
+                    <select multiple class="form-control" id="selected-archers" name="archers[]" size="25" style="width: 100%;">
                     </select>
                 </div>
             </div>
@@ -91,14 +91,6 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $.noConflict();
-        $('#archers').select2({
-            placeholder: "Select Archers",
-            allowClear: true
-        });
-    });
-
     function moveSelected(from, to) {
         $(from + ' option:selected').each(function() {
             $(this).remove().appendTo(to);

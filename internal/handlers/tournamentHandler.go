@@ -46,7 +46,7 @@ func AddTournament(c *gin.Context) {
 	tournament.HandicapSet = handicapSet
 
 	tournament.Date, _ = time.Parse("2006-01-02", c.PostForm("date"))
-	archerIDs := c.PostFormArray("archers")
+	archerIDs := c.PostFormArray("archers[]")
 	for _, archerID := range archerIDs {
 		id, _ := strconv.Atoi(archerID)
 		var archer models.Archer
