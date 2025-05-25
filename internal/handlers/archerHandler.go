@@ -86,5 +86,5 @@ func DeleteArcher(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return
 	}
-	c.Status(http.StatusOK)
+	c.Redirect(http.StatusSeeOther, "/archers")
 }

@@ -22,9 +22,11 @@
                 <a href="#" class="text-primary" onclick="editArcher({{ .ID }})">
                     <i class="bi bi-pencil-square"></i>
                 </a>
-                <a href="/archers/delete/{{ .ID }}" class="text-danger">
-                    <i class="bi bi-trash"></i>
-                </a>
+                <form action="/archers/delete/{{ .ID }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-link text-danger p-0" style="border:none; background:none;">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
             </td>
         </tr>
         {{ end }}
