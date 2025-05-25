@@ -8,15 +8,15 @@
         </tr>
     </thead>
     <tbody>
-        {{ range .HandycapSets }}
+        {{ range .HandicapSets }}
         <tr>
             <td>{{ .Name }}</td>
             <td>{{ .UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
             <td>
-                <a href="/handycaps/edit/{{ .ID }}" class="text-primary" title="Edit">
+                <a href="/handicaps/edit/{{ .ID }}" class="text-primary" title="Edit">
                     <i class="bi bi-pencil-square"></i>
                 </a>
-                <a href="javascript:void(0);" onclick="confirmDelete({{ .ID }}, 'handycaps')" class="text-danger" title="Delete">
+                <a href="javascript:void(0);" onclick="confirmDelete({{ .ID }}, 'handicaps')" class="text-danger" title="Delete">
                     <i class="bi bi-trash"></i>
                 </a>
             </td>
@@ -25,5 +25,5 @@
     </tbody>
 </table>
 
-<a href="/handycaps/add" class="btn btn-primary mt-3">Add New Handicap Set</a>
+<a href="/handicaps/add" class="btn btn-primary mt-3">Add New Handicap Set</a>
 {{ template "footer" }}

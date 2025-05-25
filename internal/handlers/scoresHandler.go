@@ -54,11 +54,11 @@ func SaveScores(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Scores saved successfully"})
 }
 
-func GetHandycapSet(c *gin.Context) {
+func GetHandicapSet(c *gin.Context) {
 }
 
 func GetArchers(c *gin.Context) {
-	// Fetch archers and their handycap factors from the database
+	// Fetch archers and their handicap factors from the database
 	db := c.MustGet("db").(*gorm.DB)
 	var tournament models.Tournament
 	id, _ := strconv.Atoi(c.Param("id"))
@@ -68,31 +68,31 @@ func GetArchers(c *gin.Context) {
 	}
 	archers := tournament.Archers
 	db.Preload("BowClass").Find(&archers)
-	hcSet := tournament.HandycapSet
-	db.Preload("HandycapEntries").Find(&hcSet)
+	hcSet := tournament.HandicapSet
+	db.Preload("HandicapEntries").Find(&hcSet)
 
 	fmt.Println("hcEntries", hcSet)
 
-	// Prepare response with handycap factors
+	// Prepare response with handicap factors
 	type ArcherResponse struct {
 		ID             uint    `json:"id"`
 		Name           string  `json:"name"`
 		BowClassName   string  `json:"bowclassName"`
 		BowClassCode   string  `json:"bowclassCode"`
-		HandycapFactor float64 `json:"handycapFactor"`
+		HandicapFactor float64 `json:"handicapFactor"`
 	}
 
 	var response []ArcherResponse
 	for _, archer := range archers {
 		factor := 1.0
-		hcEntry := hcSet.GetHandycapEntryByBowClass(archer.BowClassID)
+		hcEntry := hcSet.GetHandicapEntryByBowClass(archer.BowClassID)
 		if hcEntry != nil {
 			factor = hcEntry.Value
 		}
 		response = append(response, ArcherResponse{
 			ID:             archer.ID,
 			Name:           archer.FirstName + " " + archer.LastName,
-			HandycapFactor: factor,
+			HandicapFactor: factor,
 			BowClassName:   archer.BowClass.Name,
 			BowClassCode:   archer.BowClass.Code,
 		})

@@ -41,13 +41,13 @@ func main() {
 	r.PUT("/bowclasses/:id", handlers.UpdateBowClass)
 	r.DELETE("/bowclasses/:id", handlers.DeleteBowClass)
 
-	// Handycap routes
-	r.GET("/handycaps", handlers.ShowHandycapsPage)
-	r.GET("/handycaps/add", handlers.AddHandycapSet)
-	r.POST("/handycaps/add", handlers.AddHandycapSet)
-	r.GET("/handycaps/edit/:id", handlers.EditHandycapSet)
-	r.POST("/handycaps/edit/:id", handlers.EditHandycapSet)
-	r.DELETE("/handycaps/:id", handlers.DeleteHandycap)
+	// Handicap routes
+	r.GET("/handicaps", handlers.ShowHandicapsPage)
+	r.GET("/handicaps/add", handlers.AddHandicapSet)
+	r.POST("/handicaps/add", handlers.AddHandicapSet)
+	r.GET("/handicaps/edit/:id", handlers.EditHandicapSet)
+	r.POST("/handicaps/edit/:id", handlers.EditHandicapSet)
+	r.DELETE("/handicaps/:id", handlers.DeleteHandicap)
 
 	// Tournament routes
 	r.GET("/tournaments", handlers.ShowTournamentsPage)

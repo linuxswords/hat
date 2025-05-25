@@ -38,7 +38,7 @@
         const results = archers.map(archer => {
             const scoreInput = document.getElementById('score_' + archer.id);
             const score = parseFloat(scoreInput.value) || 0;
-            const totalScore = score * archer.handycapFactor;
+            const totalScore = score * archer.handicapFactor;
             return {
                 archerId: archer.id,
                 originalScore: score,
@@ -104,7 +104,7 @@
                     <div class="card-body" style="padding: 10px;">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title" style="margin-bottom: 5px;">${a.name}</h5>
-                            <span class="badge bg-secondary" style="font-size: 0.9em;">Factor: ${a.handycapFactor}</span>
+                            <span class="badge bg-secondary" style="font-size: 0.9em;">Factor: ${a.handicapFactor}</span>
                         </div>
                         <p class="card-text" style="margin-bottom: 5px;">Bow Class: ${a.bowclassName} (${a.bowclassCode})</p>
                         <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score" oninput="updateResults()" style="margin-bottom: 5px; width: calc(100% - 160px);">
@@ -133,8 +133,8 @@
                 name: archer.name,
                 bowclassCode: archer.bowclassCode,
                 originalScore: score,
-                handycapFactor: archer.handycapFactor,
-                totalScore: score * archer.handycapFactor
+                handicapFactor: archer.handicapFactor,
+                totalScore: score * archer.handicapFactor
             };
         }).sort((a, b) => b.totalScore - a.totalScore);
 
@@ -167,7 +167,7 @@
                     </div>
                     <div class="d-flex justify-content-end">
                         <span class="badge bg-light text-dark" style="margin-right: 15px;">Score: ${result.originalScore}</span>
-                        <span class="badge bg-light text-dark" style="margin-right: 15px;">Factor: ${result.handycapFactor}</span>
+                        <span class="badge bg-light text-dark" style="margin-right: 15px;">Factor: ${result.handicapFactor}</span>
                         <span class="badge bg-primary" style="font-size: 1.2em;">Total: ${result.totalScore.toFixed(2)}</span>
                     </div>
                 </div>

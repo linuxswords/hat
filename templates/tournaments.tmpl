@@ -8,7 +8,7 @@
                 <th>Date</th>
                 <th>Venue</th>
                 <th>Type</th>
-                <th>Handycap Set</th>
+                <th>Handicap Set</th>
                 <th>Number of Archers</th>
                 <th>Actions</th>
             </tr>
@@ -20,7 +20,7 @@
                 <td>{{ .Date.Format "2006-01-02" }}</td>
                 <td>{{ .Venue }}</td>
                 <td>{{ .TournamentType }}</td>
-                <td>{{ .HandycapSet.Name }}</td>
+                <td>{{ .HandicapSet.Name }}</td>
                 <td>{{ len .Archers }}</td>
                 <td>
                     <a href="/tournaments/{{ .ID }}/edit" class="text-primary" title="Edit">
@@ -59,9 +59,9 @@
                 <input type="text" class="form-control" id="venue" name="Venue" required>
             </div>
             <div class="col-md-6 mb-3">
-                <label for="handycapSetID">Handycap Set</label>
-                <select class="form-control" id="handycapSetID" name="handycapSetID" required>
-                    {{ range .HandycapSets }}
+                <label for="handicapSetID">Handicap Set</label>
+                <select class="form-control" id="handicapSetID" name="handicapSetID" required>
+                    {{ range .HandicapSets }}
                     <option value="{{ .ID }}">{{ .Name }}</option>
                     {{ end }}
                 </select>

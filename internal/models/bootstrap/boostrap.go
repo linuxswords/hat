@@ -22,16 +22,16 @@ func initBowclasses(db *gorm.DB) error {
 	return nil
 }
 
-func initHandyCapSet(db *gorm.DB) error {
-	var existingSet models.HandycapSet
+func initHandiCapSet(db *gorm.DB) error {
+	var existingSet models.HandicapSet
 	if err := db.Where("name = ?", "3D 2021-2025 3-Arrow Round (KI generated)").First(&existingSet).Error; err == nil {
 		fmt.Println("ℹ️ Handicap set already exists — skipping")
 		return nil
 	}
 
-	// Create HandycapSet & entries
-	if err := execSQLFile(db, "internal/models/bootstrap/initial_handycapset.sql"); err != nil {
-		return fmt.Errorf("failed to load inital handycap set: %w", err)
+	// Create HandicapSet & entries
+	if err := execSQLFile(db, "internal/models/bootstrap/initial_handicapset.sql"); err != nil {
+		return fmt.Errorf("failed to load inital handicap set: %w", err)
 	}
 	fmt.Println("✅ Handicap set and entries loaded")
 	return nil
@@ -54,7 +54,7 @@ func initArchers(db *gorm.DB) error {
 // BootstrapData loads initial SQL and CSV data into the database
 func BootstrapData(db *gorm.DB) error {
 	// Migrate the schema
-	if err := db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandycapSet{}, &models.HandycapEntry{}, &models.Tournament{}, &models.Score{}); err != nil {
+	if err := db.AutoMigrate(&models.BowClass{}, &models.Archer{}, &models.HandicapSet{}, &models.HandicapEntry{}, &models.Tournament{}, &models.Score{}); err != nil {
 		return fmt.Errorf("auto-migrate failed: %w", err)
 	}
 
@@ -64,8 +64,8 @@ func BootstrapData(db *gorm.DB) error {
 	}
 
 	// Check if the handicap set already exists and create if not
-	if err := initHandyCapSet(db); err != nil {
-		return fmt.Errorf("Error initializing handycap classes: %w", err)
+	if err := initHandiCapSet(db); err != nil {
+		return fmt.Errorf("Error initializing handicap classes: %w", err)
 	}
 
 	// Check if the archers already exists and create if not

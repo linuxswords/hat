@@ -8,23 +8,6 @@ import (
 func ShowHomePage(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"Title":   "HAT - Home",
-		"Content": "Welcome to the Handycap Archery Tournament System!",
+		"Content": "Welcome to the Handicap Archery Tournament System!",
 	})
-}
-func AddScore(c *gin.Context) {
-	// Logic to add a score
-	c.String(http.StatusOK, "Score added")
-}
-
-func ShowHandicapsPage(c *gin.Context) {
-	// Render a page to manage handicaps
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-		"Title":   "HAT - Handicaps",
-		"Content": "Handicaps Page",
-	})
-}
-
-func AddHandicap(c *gin.Context) {
-	// Logic to add a handicap
-	c.String(http.StatusOK, "Handicap added")
 }

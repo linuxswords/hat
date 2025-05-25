@@ -23,8 +23,8 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	}
 
 	var tournament models.Tournament
-	if err := db.Preload("HandycapSet").First(&tournament, scores[0].TournamentID).Error; err != nil {
-		slog.Error("error loading handycapset", "error", err)
+	if err := db.Preload("HandicapSet").First(&tournament, scores[0].TournamentID).Error; err != nil {
+		slog.Error("error loading handicapset", "error", err)
 		return nil, err
 	}
 
@@ -40,7 +40,7 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	pdf.Ln(10)
 	pdf.Cell(40, 10, "Venue: "+tournament.Venue)
 	pdf.Ln(10)
-	pdf.Cell(40, 10, "Handycap Set: "+tournament.HandycapSet.Name)
+	pdf.Cell(40, 10, "Handicap Set: "+tournament.HandicapSet.Name)
 	pdf.Ln(20)
 
 	pdf.SetFont("Arial", "B", 10)
@@ -48,7 +48,7 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 	pdf.CellFormat(65, 7, "Name", "1", 0, "C", false, 0, "")
 	pdf.CellFormat(30, 7, "Bow Class Code", "1", 0, "C", false, 0, "")
 	pdf.CellFormat(20, 7, "Score", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(20, 7, "Handycap", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(20, 7, "Handicap", "1", 0, "C", false, 0, "")
 	pdf.CellFormat(20, 7, "Total Score", "1", 0, "C", false, 0, "")
 	pdf.Ln(-1)
 
@@ -59,9 +59,9 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 			return nil, err
 		}
 
-		var handycapEntry models.HandycapEntry
-		if err := db.Where("handycap_set_id = ? AND bow_class_id = ?", tournament.HandycapSetID, archer.BowClassID).First(&handycapEntry).Error; err != nil {
-			slog.Error("error loading handycap entry", "error", err)
+		var handicapEntry models.HandicapEntry
+		if err := db.Where("handicap_set_id = ? AND bow_class_id = ?", tournament.HandicapSetID, archer.BowClassID).First(&handicapEntry).Error; err != nil {
+			slog.Error("error loading handicap entry", "error", err)
 			fmt.Printf("Archer %s %s, and bowclass %s", archer.FirstName, archer.LastName, archer.BowClass.Code)
 			return nil, err
 		}
@@ -74,7 +74,7 @@ func CreatePDF(db *gorm.DB, scores []models.Score) ([]byte, error) {
 		pdf.CellFormat(65, 6, fmt.Sprintf("%s %s", archer.FirstName, archer.LastName), "1", 0, "L", false, 0, "")
 		pdf.CellFormat(30, 6, archer.BowClass.Code, "1", 0, "L", false, 0, "")
 		pdf.CellFormat(20, 6, fmt.Sprintf("%.2f", score.Score), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(20, 6, fmt.Sprintf("%.2f", handycapEntry.Value), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(20, 6, fmt.Sprintf("%.2f", handicapEntry.Value), "1", 0, "C", false, 0, "")
 		pdf.CellFormat(20, 6, fmt.Sprintf("%.2f", score.TotalScore), "1", 0, "C", false, 0, "")
 		pdf.Ln(-1)
 	}

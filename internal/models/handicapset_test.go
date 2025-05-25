@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetHandycapEntryByBowClass(t *testing.T) {
-	handycapSet := HandycapSet{
-		HandycapEntries: []HandycapEntry{
+func TestGetHandicapEntryByBowClass(t *testing.T) {
+	handicapSet := HandicapSet{
+		HandicapEntries: []HandicapEntry{
 			{BowClassID: 1, Value: 10.0},
 			{BowClassID: 2, Value: 20.0},
 			{BowClassID: 3, Value: 30.0},
@@ -17,15 +17,15 @@ func TestGetHandycapEntryByBowClass(t *testing.T) {
 
 	tests := []struct {
 		bowClassID uint
-		expected   *HandycapEntry
+		expected   *HandicapEntry
 	}{
-		{bowClassID: 1, expected: &HandycapEntry{BowClassID: 1, Value: 10.0}},
-		{bowClassID: 2, expected: &HandycapEntry{BowClassID: 2, Value: 20.0}},
+		{bowClassID: 1, expected: &HandicapEntry{BowClassID: 1, Value: 10.0}},
+		{bowClassID: 2, expected: &HandicapEntry{BowClassID: 2, Value: 20.0}},
 		{bowClassID: 4, expected: nil},
 	}
 
 	for _, test := range tests {
-		result := handycapSet.GetHandycapEntryByBowClass(test.bowClassID)
+		result := handicapSet.GetHandicapEntryByBowClass(test.bowClassID)
 		assert.Equal(t, test.expected, result)
 	}
 }

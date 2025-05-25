@@ -13,16 +13,16 @@ import (
 func ShowTournamentsPage(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var tournaments []models.Tournament
-	db.Preload("HandycapSet").Preload("Archers").Find(&tournaments)
-	var handycapSets []models.HandycapSet
-	db.Find(&handycapSets)
+	db.Preload("HandicapSet").Preload("Archers").Find(&tournaments)
+	var handicapSets []models.HandicapSet
+	db.Find(&handicapSets)
 	var archers []models.Archer
 	db.Preload("BowClass").Find(&archers)
 
 	c.HTML(http.StatusOK, "tournaments.tmpl", gin.H{
 		"Title":        "Tournaments",
 		"Tournaments":  tournaments,
-		"HandycapSets": handycapSets,
+		"HandicapSets": handicapSets,
 		"Archers":      archers,
 	})
 }
@@ -35,15 +35,15 @@ func AddTournament(c *gin.Context) {
 		return
 	}
 	tournament.TournamentType = c.PostForm("TournamentType")
-	handycapSetID, _ := strconv.Atoi(c.PostForm("handycapSetID"))
-	var handycapSet models.HandycapSet
-	if err := db.First(&handycapSet, handycapSetID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "HandycapSet not found"})
+	handicapSetID, _ := strconv.Atoi(c.PostForm("handicapSetID"))
+	var handicapSet models.HandicapSet
+	if err := db.First(&handicapSet, handicapSetID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "HandicapSet not found"})
 		return
 	}
 
-	tournament.HandycapSetID = handycapSet.ID
-	tournament.HandycapSet = handycapSet
+	tournament.HandicapSetID = handicapSet.ID
+	tournament.HandicapSet = handicapSet
 
 	tournament.Date, _ = time.Parse("2006-01-02", c.PostForm("date"))
 	archerIDs := c.PostFormArray("archers")

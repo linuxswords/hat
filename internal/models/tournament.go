@@ -12,7 +12,7 @@ type Tournament struct {
 	Date           time.Time
 	Venue          string
 	TournamentType string      `gorm:"not null"`
-	HandycapSet    HandycapSet `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	HandycapSetID  uint
+	HandicapSet    HandicapSet `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	HandicapSetID  uint
 	Archers        []Archer `gorm:"many2many:tournament_archers;"`
 }
