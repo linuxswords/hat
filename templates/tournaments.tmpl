@@ -39,24 +39,24 @@
     <form action="/tournaments" method="post">
         <div class="row">
             <div class="form-group col-md-6 mb-3">
-                <label for="name">Name</label>
+                <label for="name" class="text-left">Name</label>
                 <input type="text" class="form-control" id="name" name="Name" required>
             </div>
-            <div class="form-group col-md-6 mb-3">
-                <label for="type">Type</label>
-                <select class="form-control" id="type" name="TournamentType" required>
-                    <option value="Indoor">Indoor</option>
-                    <option value="3D">3D</option>
-                    <option value="Field">Field</option>
-                </select>
+            <div class="col-md-6 mb-3">
+                <label for="venue">Venue</label>
+                <input type="text" class="form-control" id="venue" name="Venue" required>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="date">Date</label>
                 <input type="date" class="form-control" id="date" name="date" required>
             </div>
-            <div class="col-md-6 mb-3">
-                <label for="venue">Venue</label>
-                <input type="text" class="form-control" id="venue" name="Venue" required>
+            <div class="form-group col-md-6 mb-3">
+                <label for="type" class="text-left">Type</label>
+                <select class="form-control text-left" id="type" name="TournamentType" required>
+                    <option value="Indoor">Indoor</option>
+                    <option value="3D">3D</option>
+                    <option value="Field">Field</option>
+                </select>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="handicapSetID">Handicap Set</label>
@@ -68,7 +68,7 @@
             </div>
             <div class="form-group col-md-13 mb-3">
                 <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
-                    <label for="available-archers">Available Archers</label>
+                    <label for="available-archers" class="text-left">Available Archers</label>
                     <select multiple class="form-control" id="available-archers" size="25" style="width: 100%;">
                         {{ range .Archers }}
                         <option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }} ({{.BowClass.Code}})</option>
@@ -80,7 +80,7 @@
                     <button type="button" class="btn btn-secondary" onclick="moveSelected('#selected-archers', '#available-archers')">&lt;&lt;</button>
                 </div>
                 <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
-                    <label for="selected-archers">Selected Archers</label>
+                    <label for="selected-archers" class="text-left">Selected Archers</label>
                     <select multiple class="form-control" id="selected-archers" name="archers[]" size="25" style="width: 100%;">
                     </select>
                 </div>
