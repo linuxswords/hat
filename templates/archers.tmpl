@@ -53,11 +53,10 @@
     <button type="submit" class="btn btn-primary">Add</button>
     <script>
         $(document).ready(function() {
+            $.noConflict();
             $('#bowClass').select2({
                 placeholder: "Select a Bow Class",
                 allowClear: true
-            }).on('select2:open', function() {
-                $('.select2-search__field').focus();
             });
         });
     </script>
