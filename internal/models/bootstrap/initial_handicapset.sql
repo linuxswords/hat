@@ -9,8 +9,6 @@ VALUES ('3D 2021-2025 3-Arrow Round (KI generated)', CURRENT_TIMESTAMP, CURRENT_
 -- 3. Insert HandicapEntry rows
 INSERT INTO handicap_entries (bow_class_id, value, handicap_set_id, created_at, updated_at)
 SELECT bc.id, 1.000, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'AMHB';
-
-INSERT INTO handicap_entries (bow_class_id, value, handicap_set_id, created_at, updated_at) SELECT bc.id, 1.000, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'AMHB';
 INSERT INTO handicap_entries (bow_class_id, value, handicap_set_id, created_at, updated_at) SELECT bc.id, 1.038, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'CMFS-R';
 INSERT INTO handicap_entries (bow_class_id, value, handicap_set_id, created_at, updated_at) SELECT bc.id, 0.887, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'CMBHR';
 INSERT INTO handicap_entries (bow_class_id, value, handicap_set_id, created_at, updated_at) SELECT bc.id, 1.158, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM bow_classes bc WHERE bc.code = 'CFBHR';
