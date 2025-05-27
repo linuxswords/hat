@@ -23,7 +23,7 @@
                 <td>{{ .HandicapSet.Name }}</td>
                 <td>{{ len .Archers }}</td>
                 <td>
-                    <a href="/tournaments/{{ .ID }}/edit" class="text-primary" title="Edit">
+                    <a href="javascript:void(0)" class="text-primary" title="Edit" onclick="editTournament({{ .ID }})">
                         <i class="bi bi-pencil-square"></i>
                     </a>
                     <a href="javascript:void(0)" title="Delete" class="text-danger" onclick="confirmDelete({{ .ID }}, 'tournaments')">
@@ -40,15 +40,15 @@
         <div class="row">
             <div class="form-group col-md-6 mb-3">
                 <label for="name" class="text-left">Name</label>
-                <input type="text" class="form-control" id="name" name="Name" required>
+                <input type="text" class="form-control text-left" id="name" name="Name" required>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="venue">Venue</label>
-                <input type="text" class="form-control" id="venue" name="Venue" required>
+                <input type="text" class="form-control text-left" id="venue" name="Venue" required>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="date">Date</label>
-                <input type="date" class="form-control" id="date" name="date" required>
+                <input type="date" class="form-control text-left" id="date" name="date" required>
             </div>
             <div class="form-group col-md-6 mb-3">
                 <label for="type" class="text-left">Type</label>
@@ -95,6 +95,43 @@
         $(from + ' option:selected').each(function() {
             $(this).remove().appendTo(to);
         });
+    }
+    async function editTournament(tournamentId) {
+        try {
+            const response = await fetch(`/api/tournaments/${tournamentId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch tournament data');
+            }
+            const tournament = await response.json();
+
+            // Populate the form with the tournament data
+            document.getElementById('name').value = tournament.Name;
+            document.getElementById('venue').value = tournament.Venue;
+            document.getElementById('date').value = tournament.Date.split('T')[0]; // Assuming the date is in ISO format
+            document.getElementById('type').value = tournament.TournamentType;
+            document.getElementById('handicapSetID').value = tournament.HandicapSetID;
+
+            // Move selected archers to the selected list
+            const availableArchers = document.getElementById('available-archers');
+            const selectedArchers = document.getElementById('selected-archers');
+            selectedArchers.innerHTML = '';
+
+            tournament.Archers.forEach(archer => {
+                const option = document.createElement('option');
+                option.value = archer.ID;
+                option.textContent = `${archer.FirstName} ${archer.LastName} (${archer.BowClass.Code})`;
+                selectedArchers.appendChild(option);
+
+                // Remove from available archers
+                const availableOption = availableArchers.querySelector(`option[value="${archer.ID}"]`);
+                if (availableOption) {
+                    availableOption.remove();
+                }
+            });
+        } catch (error) {
+            console.error('Error editing tournament:', error);
+            alert('Error loading tournament data.');
+        }
     }
 </script>
 {{ template "footer" . }}

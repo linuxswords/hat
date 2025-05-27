@@ -61,6 +61,7 @@ func main() {
 		api.GET("/archers/tournament/:id", handlers.GetArchers)
 		api.GET("/archers/:id", handlers.GetArcher)
 		api.GET("/tournaments/:id/download", handlers.DownloadTournamentPDF)
+		api.GET("/tournaments/:id", handlers.GetTournament)
 	}
 
 	r.Run(":8080")
