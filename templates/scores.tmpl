@@ -16,6 +16,12 @@
     <div id="step2" style="display:none;">
         <div style="flex: 1; margin-right: 10px; overflow-y: auto; height: 100vh;">
             <h2>Step 2: Enter Scores</h2>
+            <div class="input-group mb-3">
+                <input type="text" id="archerSearch" class="form-control" placeholder="Search for an archer..." oninput="filterArchers()">
+                <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+                    <i class="bi bi-x-circle"></i>
+                </button>
+            </div>
             <div id="archersList">
                 <!-- Archer list with input fields will be populated dynamically -->
             </div>
@@ -83,6 +89,24 @@
             console.error('Error saving scores:', error);
             alert('Error saving scores.');
         }
+    }
+    function filterArchers() {
+        const searchValue = document.getElementById('archerSearch').value.toLowerCase();
+        const archerCards = document.querySelectorAll('#archersList .card');
+        
+        archerCards.forEach(card => {
+            const archerName = card.querySelector('.card-title').textContent.toLowerCase();
+            if (archerName.includes(searchValue)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    function clearSearch() {
+        const searchInput = document.getElementById('archerSearch');
+        searchInput.value = '';
+        filterArchers();
     }
 </script>
 
