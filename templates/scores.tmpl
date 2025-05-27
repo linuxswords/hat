@@ -106,8 +106,8 @@
                             <h5 class="card-title" style="margin-bottom: 5px;">${a.name}</h5>
                             <span class="badge bg-secondary" style="font-size: 0.9em;">Factor: ${a.handicapFactor}</span>
                         </div>
-                        <p class="card-text" style="margin-bottom: 5px;">Bow Class: ${a.bowclassName} (${a.bowclassCode})</p>
-                        <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score" oninput="updateResults()" style="margin-bottom: 5px; width: calc(100% - 160px);">
+                        <p class="card-text" style="margin-bottom: 5px;" title="${a.bowclassName}">${a.bowclassCode}</p>
+                        <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score" oninput="updateResults()" style="margin-bottom: 5px; width: 80px;">
                     </div>
                 </div>
             `).join('');
