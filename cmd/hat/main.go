@@ -24,6 +24,7 @@ func main() {
 		c.Next()
 	})
 
+	r.StaticFile("favicon.ico", "./static/images/favicon.ico")
 	r.Static("/static", "./static")
 	r.LoadHTMLGlob("templates/*")
 	// Define routes
