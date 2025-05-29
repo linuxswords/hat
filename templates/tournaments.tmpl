@@ -36,7 +36,8 @@
     </table>
 
     <h2>Add Tournament</h2>
-    <form action="/tournaments" method="post">
+    <form id="tournament-form" action="/tournaments" method="post" onsubmit="selectAllArchers()">
+        <input type="hidden" id="tournament-id" name="ID" value="">
         <div class="row">
             <div class="form-group col-md-6 mb-3">
                 <label for="name" class="text-left">Name</label>
@@ -82,11 +83,13 @@
                 <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
                     <label for="selected-archers" class="text-left">Selected Archers</label>
                     <select multiple class="form-control" id="selected-archers" name="archers[]" size="25" style="width: 100%;">
+                        <!-- Ensure options are populated here -->
+                    </select>
                     </select>
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Add Tournament</button>
+        <button type="submit" class="btn btn-primary" id="submit-button">Add Tournament</button>
     </form>
 </div>
 
@@ -95,6 +98,12 @@
         $(from + ' option:selected').each(function() {
             $(this).remove().appendTo(to);
         });
+        // Ensure the selected options are marked as selected
+        $(to + ' option').prop('selected', true);
+    }
+
+    function selectAllArchers() {
+        $('#selected-archers option').prop('selected', true);
     }
     async function editTournament(tournamentId) {
         try {
@@ -104,7 +113,9 @@
             }
             const tournament = await response.json();
 
-            // Populate the form with the tournament data
+            // Set form action to update
+            document.getElementById('tournament-form').action = `/tournaments/${tournamentId}`;
+            document.getElementById('tournament-id').value = tournamentId;
             document.getElementById('name').value = tournament.Name;
             document.getElementById('venue').value = tournament.Venue;
             document.getElementById('date').value = tournament.Date.split('T')[0]; // Assuming the date is in ISO format
@@ -119,6 +130,7 @@
             tournament.Archers.forEach(archer => {
                 const option = document.createElement('option');
                 option.value = archer.ID;
+                option.selected = true;
                 option.textContent = `${archer.FirstName} ${archer.LastName} (${archer.BowClass.Code})`;
                 selectedArchers.appendChild(option);
 
@@ -128,6 +140,7 @@
                     availableOption.remove();
                 }
             });
+            document.getElementById('submit-button').textContent = 'Update Tournament';
         } catch (error) {
             console.error('Error editing tournament:', error);
             alert('Error loading tournament data.');
