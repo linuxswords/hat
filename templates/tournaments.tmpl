@@ -90,6 +90,7 @@
             </div>
         </div>
         <button type="submit" class="btn btn-primary" id="submit-button">Add Tournament</button>
+        <button type="button" class="btn btn-secondary" id="cancel-button" style="display: none;" onclick="cancelEdit()">Cancel</button>
     </form>
 </div>
 
@@ -105,6 +106,15 @@
     function selectAllArchers() {
         $('#selected-archers option').prop('selected', true);
     }
+    function cancelEdit() {
+        // Reset form action to add
+        document.getElementById('tournament-form').action = '/tournaments';
+        document.getElementById('tournament-id').value = '';
+        document.getElementById('submit-button').textContent = 'Add Tournament';
+        document.getElementById('cancel-button').style.display = 'none';
+        document.getElementById('tournament-form').reset();
+    }
+
     async function editTournament(tournamentId) {
         try {
             const response = await fetch(`/api/tournaments/${tournamentId}`);
@@ -141,6 +151,8 @@
                 }
             });
             document.getElementById('submit-button').textContent = 'Update Tournament';
+            document.getElementById('submit-button').textContent = 'Update Tournament';
+            document.getElementById('cancel-button').style.display = 'inline-block';
         } catch (error) {
             console.error('Error editing tournament:', error);
             alert('Error loading tournament data.');
