@@ -118,10 +118,8 @@
     async function fetchArchers() {
         try {
             const tournamentId = document.getElementById('tournamentSelect').value;
-            console.log('tournamentId:', tournamentId);
             const archerResponse = await fetch('/api/archers/tournament/' + tournamentId);
             archers = await archerResponse.json();
-            console.log('archers:', archers);
             const archersList = document.getElementById('archersList');
             archersList.innerHTML = archers.map(a => `
                 <div class="card mb-1" style="padding: 5px;">
