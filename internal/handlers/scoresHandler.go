@@ -16,7 +16,7 @@ func ShowScoresPage(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	db.Find(&tournaments)
 
-	c.HTML(http.StatusOK, "scores.tmpl", gin.H{
+	c.HTML(http.StatusOK, "scores", gin.H{
 		"Title":       "HAT - Scores",
 		"Content":     "Scores Page",
 		"Tournaments": tournaments,

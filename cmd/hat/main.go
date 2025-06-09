@@ -19,6 +19,7 @@ func main() {
 	}
 
 	r := gin.Default()
+
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
 		c.Next()
@@ -26,7 +27,7 @@ func main() {
 
 	r.StaticFile("favicon.ico", "./static/images/favicon.ico")
 	r.Static("/static", "./static")
-	r.LoadHTMLGlob("templates/*")
+	r.LoadHTMLGlob("templates/**/*")
 	// Define routes
 	r.GET("/", handlers.ShowHomePage)
 	r.GET("/archers", handlers.ShowArchersPage)

@@ -1,4 +1,5 @@
-{{ template "head" . }}
+{{ define "scores" }}
+{{ template "layout/head" . }}
 
 <style>
     .greyed-out {
@@ -207,4 +208,5 @@
 
 </script>
 
-{{ template "footer" }}
+{{ template "layout/footer" }}
+{{ end }}

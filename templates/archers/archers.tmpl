@@ -1,5 +1,6 @@
-{{ template "head" . }}
-<table class="table table-striped">
+{{ define "archers" }}
+{{ template "layout/head" . }}
+<table id="archerTable" class="table table-striped">
     <thead>
         <tr>
             <th>ID</th>
@@ -12,28 +13,13 @@
     </thead>
     <tbody>
         {{ range .Archers }}
-        <tr>
-            <td>{{ .ID }}</td>
-            <td>{{ .FirstName }}</td>
-            <td>{{ .LastName }}</td>
-            <td>{{ .BowClass.Code }}</td>
-            <td>{{ .BowClass.Name }}</td>
-            <td>
-                <a href="#" class="text-primary" onclick="editArcher({{ .ID }})">
-                    <i class="bi bi-pencil-square"></i>
-                </a>
-                <form action="/archers/delete/{{ .ID }}" method="post" style="display:inline;">
-                    <button type="submit" class="btn btn-link text-danger p-0" style="border:none; background:none;">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </form>
-            </td>
-        </tr>
+        {{ template "archers/archerrow" .}}
+        
         {{ end }}
     </tbody>
 </table>
 <h2 class="mt-4">Add New Archer</h2>
-<form action="/archers" method="post" class="mt-3" id="archerForm">
+<form hx-post="/api/archers" class="mt-3">
     <input type="hidden" id="archerId" name="ID" value="{{ .Archer.ID }}">
     <div class="row">
         <div class="form-group col-md-4 mb-3">
@@ -80,4 +66,6 @@
         }
     </script>
 </form>
-{{ template "footer" }}
+{{ template "layout/footer" }}
+
+{{ end }}

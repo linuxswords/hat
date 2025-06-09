@@ -14,7 +14,7 @@ func ShowArchersPage(c *gin.Context) {
 	db.Preload("BowClass").Find(&archers)
 	var bowClasses []models.BowClass
 	db.Find(&bowClasses)
-	c.HTML(http.StatusOK, "archers.tmpl", gin.H{
+	c.HTML(http.StatusOK, "archers", gin.H{
 		"Title":      "Archers",
 		"Archers":    archers,
 		"BowClasses": bowClasses,

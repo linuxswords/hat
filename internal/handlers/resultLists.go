@@ -25,7 +25,7 @@ func ShowResultLists(c *gin.Context) {
 	var tournaments []models.Tournament
 	db.Where("ID IN ?", tournamentIds).Find(&tournaments)
 
-	c.HTML(http.StatusOK, "resultLists.tmpl", gin.H{
+	c.HTML(http.StatusOK, "resultLists", gin.H{
 		"Title":       "HAT - Result Lists",
 		"Content":     "Tournament Result Lists",
 		"Tournaments": tournaments,

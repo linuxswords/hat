@@ -13,7 +13,7 @@ func ShowHandicapsPage(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var handicapSets []models.HandicapSet
 	db.Preload("HandicapEntries.BowClass").Find(&handicapSets)
-	c.HTML(http.StatusOK, "handicaps.tmpl", gin.H{
+	c.HTML(http.StatusOK, "handicaps", gin.H{
 		"Title":        "Handicaps",
 		"HandicapSets": handicapSets,
 	})
@@ -47,7 +47,7 @@ func AddHandicapSet(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "add_handicapset.tmpl", gin.H{
+	c.HTML(http.StatusOK, "addHandicapset", gin.H{
 		"Title":      "Add Handicap Set",
 		"BowClasses": bowClasses,
 	})
@@ -88,7 +88,7 @@ func EditHandicapSet(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "edit_handicapset.tmpl", gin.H{
+	c.HTML(http.StatusOK, "editHandicapset", gin.H{
 		"Title":       "Edit Handicap Set",
 		"HandicapSet": handicapSet,
 		"BowClasses":  bowClasses,

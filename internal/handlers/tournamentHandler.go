@@ -20,7 +20,7 @@ func ShowTournamentsPage(c *gin.Context) {
 	var archers []models.Archer
 	db.Preload("BowClass").Find(&archers)
 
-	c.HTML(http.StatusOK, "tournaments.tmpl", gin.H{
+	c.HTML(http.StatusOK, "tournaments", gin.H{
 		"Title":        "Tournaments",
 		"Tournaments":  tournaments,
 		"HandicapSets": handicapSets,

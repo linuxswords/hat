@@ -12,7 +12,7 @@ func ShowBowClassesPage(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var bowClasses []models.BowClass
 	db.Find(&bowClasses)
-	c.HTML(http.StatusOK, "bowclasses.tmpl", gin.H{
+	c.HTML(http.StatusOK, "bowclasses", gin.H{
 		"Title":      "Bow Classes",
 		"BowClasses": bowClasses,
 	})
