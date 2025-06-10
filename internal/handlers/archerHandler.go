@@ -49,7 +49,12 @@ func AddArcher(c *gin.Context) {
 		db.Save(&archer)
 	}
 
-	c.HTML(http.StatusOK, "archerForm", archer)
+	var bowClasses []models.BowClass
+	db.Find(&bowClasses)
+	c.HTML(http.StatusOK, "archerForm", gin.H{
+		"Archer":     nil,
+		"BowClasses": bowClasses,
+	})
 	c.HTML(http.StatusCreated, "archer-oob", archer)
 }
 

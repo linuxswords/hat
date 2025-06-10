@@ -18,7 +18,7 @@
     </tbody>
 </table>
 <h2 class="mt-4">Add New Archer</h2>
-{{ template "archerForm" .BowClasses }}
+{{ template "archerForm" . }}
 {{ template "layout/footer" }}
 {{ end }}
 
@@ -45,7 +45,7 @@
     </div>
     <button type="submit" class="btn btn-primary" id="submitButton">Add</button>
     <script>
-        $(document).ready(function() {
+        jQuery(document).ready(function() {
             $.noConflict();
             $('#bowClass').select2({
                 placeholder: "Select a Bow Class",
@@ -74,8 +74,11 @@
 
 
 {{ block "archer-oob" . }}
-<div hx-swap-oob="afterbegin" id="archerTable">
-    {{ template "archers/archerrow" . }}
-</div>
+<template>
+    <tbody hx-swap-oob="beforeend:#archerTable tbody">
+        {{ template "archers/archerrow" . }}
+    </tbody>
+</template>
 {{ end }}
+
 
