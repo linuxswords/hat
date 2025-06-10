@@ -49,7 +49,8 @@ func AddArcher(c *gin.Context) {
 		db.Save(&archer)
 	}
 
-	c.Redirect(http.StatusSeeOther, "/archers")
+	c.HTML(http.StatusOK, "archerForm", archer)
+	c.HTML(http.StatusCreated, "archer-oob", archer)
 }
 
 func UpdateArcher(c *gin.Context) {

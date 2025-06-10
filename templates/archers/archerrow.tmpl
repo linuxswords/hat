@@ -1,0 +1,20 @@
+{{ define "archers/archerrow" }}
+<tr>
+            <td>{{ .ID }}</td>
+            <td>{{ .FirstName }}</td>
+            <td>{{ .LastName }}</td>
+            <td>{{ .BowClass.Code }}</td>
+            <td>{{ .BowClass.Name }}</td>
+            <td>
+                <a href="#" class="text-primary" onclick="editArcher({{ .ID }})">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <form action="/archers/delete/{{ .ID }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-link text-danger p-0" style="border:none; background:none;">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+{{ end }}
+
