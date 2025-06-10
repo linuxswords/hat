@@ -39,7 +39,6 @@ func main() {
 	r.GET("/bowclasses", handlers.ShowBowClassesPage)
 	r.POST("/bowclasses", handlers.AddBowClass)
 	r.PUT("/bowclasses/:id", handlers.UpdateBowClass)
-	r.DELETE("/bowclasses/:id", handlers.DeleteBowClass)
 
 	// Handicap routes
 	r.GET("/handicaps", handlers.ShowHandicapsPage)
@@ -67,6 +66,7 @@ func main() {
 		api.GET("/tournaments/:id", handlers.GetTournament)
 
 		api.POST("/scores", handlers.SaveScores)
+		api.DELETE("/bowclasses/:id", handlers.DeleteBowClass)
 	}
 
 	r.Run(":8080")

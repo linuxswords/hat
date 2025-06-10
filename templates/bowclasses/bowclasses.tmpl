@@ -11,7 +11,7 @@
     </thead>
     <tbody>
         {{ range .BowClasses }}
-        <tr>
+        <tr id="bowclass-{{ .ID }}">
             <td>{{ .ID }}</td>
             <td>{{ .Code }}</td>
             <td>{{ .Name }}</td>
@@ -19,7 +19,7 @@
                 <a href="/bowclasses/edit/{{ .ID }}" class="text-primary">
                     <i class="bi bi-pencil-square"></i>
                 </a>
-                <a href="/bowclasses/delete/{{ .ID }}" class="text-danger">
+                <a href="#" class="text-danger" hx-delete="/api/bowclasses/{{ .ID }}" hx-swap="outerHTML" hx-target="#bowclass-{{ .ID }}">
                     <i class="bi bi-trash"></i>
                 </a>
             </td>

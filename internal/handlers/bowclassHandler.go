@@ -52,5 +52,5 @@ func DeleteBowClass(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "BowClass not found"})
 		return
 	}
-	c.Status(http.StatusOK)
+	c.Status(http.StatusNoContent)
 }
