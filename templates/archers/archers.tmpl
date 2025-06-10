@@ -68,16 +68,7 @@
                 }
             });
         }
-        document.addEventListener("DOMContentLoaded", (event) => {
-            document.body.addEventListener('htmx:beforeSwap', function(evt) {
-                    if (evt.detail.xhr.status === 204) {
-                        evt.detail.shouldSwap = true;
-                        // set isError to false to avoid error logging in console
-                        evt.detail.isError = false;
-                    }
-            });
-        })
-</script>
+    </script>
 </form>
 {{ end }}
 
