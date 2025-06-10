@@ -1,5 +1,5 @@
 {{ define "archers/archerrow" }}
-<tr>
+<tr id="archer-{{ .ID }}">
     <td>{{ .ID }}</td>
     <td>{{ .FirstName }}</td>
     <td>{{ .LastName }}</td>
@@ -9,11 +9,9 @@
         <a href="#" class="text-primary" onclick="editArcher({{ .ID }})">
             <i class="bi bi-pencil-square"></i>
         </a>
-        <form action="/archers/delete/{{ .ID }}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-link text-danger p-0" style="border:none; background:none;">
-                <i class="bi bi-trash"></i>
-            </button>
-        </form>
+        <a href="#" class="text-danger" hx-delete="/api/archers/{{ .ID }}" hx-swap="outerHTML" hx-target="#archer-{{ .ID }}">
+            <i class="bi bi-trash"></i>
+        </a>
     </td>
 </tr>
 {{ end }}

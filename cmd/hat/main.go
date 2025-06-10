@@ -32,7 +32,6 @@ func main() {
 	r.GET("/", handlers.ShowHomePage)
 	r.GET("/archers", handlers.ShowArchersPage)
 	r.GET("/archers/edit/:id", handlers.ShowArchersPage)
-	r.POST("/archers/delete/:id", handlers.DeleteArcher)
 	r.GET("/scores", handlers.ShowScoresPage)
 	r.GET("/resultLists", handlers.ShowResultLists)
 
@@ -62,8 +61,11 @@ func main() {
 		api.GET("/archers/tournament/:id", handlers.GetArchers)
 		api.GET("/archers/:id", handlers.GetArcher)
 		api.POST("/archers", handlers.AddArcher)
+		api.DELETE("/archers/:id", handlers.DeleteArcher)
+
 		api.GET("/tournaments/:id/download", handlers.DownloadTournamentPDF)
 		api.GET("/tournaments/:id", handlers.GetTournament)
+
 		api.POST("/scores", handlers.SaveScores)
 	}
 
