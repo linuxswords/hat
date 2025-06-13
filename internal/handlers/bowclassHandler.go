@@ -26,7 +26,10 @@ func AddBowClass(c *gin.Context) {
 		return
 	}
 	db.Create(&bowClass)
-	c.Redirect(http.StatusSeeOther, "/bowclasses")
+
+	c.HTML(http.StatusCreated, "bowclass-form", nil)
+	c.HTML(http.StatusOK, "bowclass-oob", bowClass)
+	return
 }
 
 func UpdateBowClass(c *gin.Context) {
