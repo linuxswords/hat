@@ -24,24 +24,6 @@
                     }
             });
         })
-        function confirmDelete(id, type) {
-            if (confirm(`Are you sure you want to delete this ${type}?`)) {
-                fetch(`/${type}/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = `/${type}`;
-                    } else {
-                        alert(`Failed to delete ${type}.`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`An error occurred while deleting the ${type}.`);
-                });
-            }
-        }
     </script>
 </head>
 <body class="container">

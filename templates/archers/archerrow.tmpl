@@ -9,7 +9,7 @@
         <a href="#" class="text-primary" onclick="editArcher({{ .ID }})">
             <i class="bi bi-pencil-square"></i>
         </a>
-        <a href="#" class="text-danger" hx-delete="/api/archers/{{ .ID }}" hx-swap="outerHTML" hx-target="#archer-{{ .ID }}">
+        <a href="#" title="Delete" class="text-danger" hx-delete="/api/archers/{{ .ID }}" hx-swap="outerHTML" hx-target="#archer-{{ .ID }}">
             <i class="bi bi-trash"></i>
         </a>
     </td>

@@ -10,14 +10,15 @@
     </thead>
     <tbody>
         {{ range .HandicapSets }}
-        <tr>
+        <tr id="handicap-{{ .ID }}">
             <td>{{ .Name }}</td>
             <td>{{ .UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
             <td>
                 <a href="/handicaps/edit/{{ .ID }}" class="text-primary" title="Edit">
                     <i class="bi bi-pencil-square"></i>
                 </a>
-                <a href="javascript:void(0);" onclick="confirmDelete({{ .ID }}, 'handicaps')" class="text-danger" title="Delete">
+                <a href="#" hx-delete="/api/handicaps/{{ .ID }}" hx-confirm="Are you sure you want to delete this handicap set?" hx-target="#handicap-{{ .ID }}"
+                hx-swap="outerHTML" class="text-danger" title="Delete">
                     <i class="bi bi-trash"></i>
                 </a>
             </td>
