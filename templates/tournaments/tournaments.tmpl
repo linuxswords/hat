@@ -2,7 +2,7 @@
 {{ template "layout/head" . }}
 
 <div class="container">
-    <table class="table">
+    <table id="tournamentTable" class="table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -16,83 +16,13 @@
         </thead>
         <tbody>
             {{ range .Tournaments }}
-            <tr>
-                <td>{{ .Name }}</td>
-                <td>{{ .Date.Format "2006-01-02" }}</td>
-                <td>{{ .Venue }}</td>
-                <td>{{ .TournamentType }}</td>
-                <td>{{ .HandicapSet.Name }}</td>
-                <td>{{ len .Archers }}</td>
-                <td>
-                    <a href="javascript:void(0)" class="text-primary" title="Edit" onclick="editTournament({{ .ID }})">
-                        <i class="bi bi-pencil-square"></i>
-                    </a>
-                    <a href="javascript:void(0)" title="Delete" class="text-danger" onclick="confirmDelete({{ .ID }}, 'tournaments')">
-                        <i class="bi bi-trash"></i>
-                    </a>
-                </td>
-            </tr>
+            {{ template "tournament-entry" . }}
             {{ end }}
         </tbody>
     </table>
 
     <h2>Add Tournament</h2>
-    <form id="tournament-form" action="/tournaments" method="post" onsubmit="selectAllArchers()">
-        <input type="hidden" id="tournament-id" name="ID" value="">
-        <div class="row">
-            <div class="form-group col-md-6 mb-3">
-                <label for="name" class="text-left">Name</label>
-                <input type="text" class="form-control text-left" id="name" name="Name" required>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="venue">Venue</label>
-                <input type="text" class="form-control text-left" id="venue" name="Venue" required>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="date">Date</label>
-                <input type="date" class="form-control text-left" id="date" name="date" required>
-            </div>
-            <div class="form-group col-md-6 mb-3">
-                <label for="type" class="text-left">Type</label>
-                <select class="form-control text-left" id="type" name="TournamentType" required>
-                    <option value="Indoor">Indoor</option>
-                    <option value="3D">3D</option>
-                    <option value="Field">Field</option>
-                </select>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="handicapSetID">Handicap Set</label>
-                <select class="form-control" id="handicapSetID" name="handicapSetID" required>
-                    {{ range .HandicapSets }}
-                    <option value="{{ .ID }}">{{ .Name }}</option>
-                    {{ end }}
-                </select>
-            </div>
-            <div class="form-group col-md-13 mb-3">
-                <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
-                    <label for="available-archers" class="text-left">Available Archers</label>
-                    <select multiple class="form-control" id="available-archers" size="25" style="width: 100%;">
-                        {{ range .Archers }}
-                        <option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }} ({{.BowClass.Code}})</option>
-                        {{ end }}
-                    </select>
-                </div>
-                <div class="col-md-2 mb-3 text-center" style="display: inline-block; width: 10%; vertical-align: middle; position: relative; top: 50%; transform: translateY(-50%);">
-                    <button type="button" class="btn btn-secondary" onclick="moveSelected('#available-archers', '#selected-archers')">&gt;&gt;</button>
-                    <button type="button" class="btn btn-secondary" onclick="moveSelected('#selected-archers', '#available-archers')">&lt;&lt;</button>
-                </div>
-                <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
-                    <label for="selected-archers" class="text-left">Selected Archers</label>
-                    <select multiple class="form-control" id="selected-archers" name="archers[]" size="25" style="width: 100%;">
-                        <!-- Ensure options are populated here -->
-                    </select>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="submit-button">Add Tournament</button>
-        <button type="button" class="btn btn-secondary" id="cancel-button" style="display: none;" onclick="cancelEdit()">Cancel</button>
-    </form>
+    {{ template "tournament-form" . }}
 </div>
 
 <script>
@@ -162,3 +92,93 @@
 </script>
 {{ template "layout/footer" . }}
 {{ end }}
+
+
+{{ block "tournament-form" . }}
+    <form id="tournament-form" hx-post="/api/tournaments" hx-swap="outerHtml" onsubmit="selectAllArchers()">
+        <input type="hidden" id="tournament-id" name="ID" value="">
+        <div class="row">
+            <div class="form-group col-md-6 mb-3">
+                <label for="name" class="text-left">Name</label>
+                <input type="text" class="form-control text-left" id="name" name="Name" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="venue">Venue</label>
+                <input type="text" class="form-control text-left" id="venue" name="Venue" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="date">Date</label>
+                <input type="date" class="form-control text-left" id="date" name="date" required>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+                <label for="type" class="text-left">Type</label>
+                <select class="form-control text-left" id="type" name="TournamentType" required>
+                    <option value="Indoor">Indoor</option>
+                    <option value="3D">3D</option>
+                    <option value="Field">Field</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="handicapSetID">Handicap Set</label>
+                <select class="form-control" id="handicapSetID" name="handicapSetID" required>
+                    {{ range .HandicapSets }}
+                    <option value="{{ .ID }}">{{ .Name }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="form-group col-md-13 mb-3">
+                <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
+                    <label for="available-archers" class="text-left">Available Archers</label>
+                    <select multiple class="form-control" id="available-archers" size="25" style="width: 100%;">
+                        {{ range .Archers }}
+                        <option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }} ({{.BowClass.Code}})</option>
+                        {{ end }}
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3 text-center" style="display: inline-block; width: 10%; vertical-align: middle; position: relative; top: 50%; transform: translateY(-50%);">
+                    <button type="button" class="btn btn-secondary" onclick="moveSelected('#available-archers', '#selected-archers')">&gt;&gt;</button>
+                    <button type="button" class="btn btn-secondary" onclick="moveSelected('#selected-archers', '#available-archers')">&lt;&lt;</button>
+                </div>
+                <div class="col-md-5" style="display: inline-block; width: 45%; vertical-align: top;">
+                    <label for="selected-archers" class="text-left">Selected Archers</label>
+                    <select multiple class="form-control" id="selected-archers" name="archers[]" size="25" style="width: 100%;">
+                        <!-- Ensure options are populated here -->
+                    </select>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="submit-button">Add Tournament</button>
+        <button type="button" class="btn btn-secondary" id="cancel-button" style="display: none;" onclick="cancelEdit()">Cancel</button>
+    </form>
+{{ end }}
+
+
+{{ block "tournament-entry" . }}
+<tr>
+    <td>{{ .Name }}</td>
+    <td>{{ .Date.Format "2006-01-02" }}</td>
+    <td>{{ .Venue }}</td>
+    <td>{{ .TournamentType }}</td>
+    <td>{{ .HandicapSet.Name }}</td>
+    <td>{{ len .Archers }}</td>
+    <td>
+        <a href="javascript:void(0)" class="text-primary" title="Edit" onclick="editTournament({{ .ID }})">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+        <a href="javascript:void(0)" title="Delete" class="text-danger" onclick="confirmDelete({{ .ID }}, 'tournaments')">
+            <i class="bi bi-trash"></i>
+        </a>
+    </td>
+</tr>
+{{ end }}
+
+{{ block "tournament-oob" . }}
+<template>
+    <tbody hx-swap-oob="beforeend:#tournamentTable tbody">
+        {{ template "tournament-entry" . }}
+    </tbody>
+</template>
+{{ end }}
+
+

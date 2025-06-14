@@ -71,7 +71,15 @@ func AddTournament(c *gin.Context) {
 		db.Save(&tournament)
 	}
 
-	c.Redirect(http.StatusSeeOther, "/tournaments")
+	c.HTML(http.StatusOK, "tournament-oob", tournament)
+	var handicapSets []models.HandicapSet
+	db.Find(&handicapSets)
+	var archers []models.Archer
+	db.Preload("BowClass").Find(&archers)
+	c.HTML(http.StatusOK, "tournament-form", gin.H{
+		"HandicapSets": handicapSets,
+		"Archers":      archers,
+	})
 }
 
 func GetTournament(c *gin.Context) {

@@ -49,7 +49,6 @@ func main() {
 
 	// Tournament routes
 	r.GET("/tournaments", handlers.ShowTournamentsPage)
-	r.POST("/tournaments", handlers.AddTournament)        // For adding new tournaments
 	r.POST("/tournaments/:id", handlers.UpdateTournament) // For updating existing tournaments
 	r.DELETE("/tournaments/:id", handlers.DeleteTournament)
 
@@ -63,6 +62,7 @@ func main() {
 
 		api.GET("/tournaments/:id/download", handlers.DownloadTournamentPDF)
 		api.GET("/tournaments/:id", handlers.GetTournament)
+		api.POST("/tournaments", handlers.AddTournament) // For adding new tournaments
 
 		api.POST("/scores", handlers.SaveScores)
 		api.DELETE("/bowclasses/:id", handlers.DeleteBowClass)
