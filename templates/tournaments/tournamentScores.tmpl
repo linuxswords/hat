@@ -1,0 +1,165 @@
+{{ define "tournamentScores" }}
+{{ template "layout/head" . }}
+
+<style>
+    .greyed-out {
+        color: grey;
+        opacity: 0.6;
+    }
+</style>
+    <div id="wizard" style="display: flex; flex-direction: row; height: 100vh;">
+        <div class="tournamentArchers" style="flex: 1; margin-right: 10px; overflow-y: auto; height: 100vh;">
+            <h2>Enter Scores</h2>
+            <div class="input-group mb-3">
+                <input type="text" id="archerSearch" class="form-control" placeholder="Search for an archer..." oninput="filterArchers()">
+                <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+                    <i class="bi bi-x-circle"></i>
+                </button>
+            </div>
+            <div id="archersList">
+                {{ range .Archers }}
+                    {{ template "archer" . }}
+                {{ end }}
+            </div>
+        </div>
+        <div class="tournamentResults" style="flex: 1; margin-left: 10px;">
+            <h2>Results</h2>
+            <button class="btn btn-success" onclick="saveScores()">Save Scores</button>
+            <ul id="resultsList" class="list-group">
+                {{ range .Archers }}
+                    {{ template "scoredArcher" . }}
+                {{ end }}
+            </ul>
+        </div>
+    </div>
+
+<script>
+    async function saveScores() {
+        const tournamentId = document.getElementById('tournamentSelect').value;
+        const results = archers.map(archer => {
+            const scoreInput = document.getElementById('score_' + archer.id);
+            const score = parseFloat(scoreInput.value) || 0;
+            const totalScore = score * archer.handicapFactor;
+            return {
+                archerId: archer.id,
+                originalScore: score,
+                totalScore: totalScore
+            };
+        }).sort((a, b) => b.totalScore - a.totalScore);
+
+        let lastScore = null;
+        let lastRank = 0;
+        let displayRank = 0;
+
+        const scores = results.map((result, index) => {
+            if (result.totalScore !== lastScore) {
+                displayRank = index + 1;
+                lastScore = result.totalScore;
+            }
+            lastRank = displayRank;
+
+            return {
+                archerId: result.archerId,
+                score: result.originalScore,
+                totalScore: result.totalScore,
+                ranking: lastRank
+            };
+        });
+
+        try {
+            const response = await fetch('/api/scores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "tournamentId": parseInt(tournamentId), scores })
+            });
+
+            if (response.ok) {
+                alert('Scores saved successfully!');
+            } else {
+                alert('Failed to save scores.');
+            }
+        } catch (error) {
+            console.error('Error saving scores:', error);
+            alert('Error saving scores.');
+        }
+    }
+    
+    function filterArchers() {
+        const searchValue = document.getElementById('archerSearch').value.toLowerCase();
+        const archerCards = document.querySelectorAll('#archersList .card');
+        
+        archerCards.forEach(card => {
+            const archerName = card.querySelector('.card-title').textContent.toLowerCase();
+            if (archerName.includes(searchValue)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    function clearSearch() {
+        const searchInput = document.getElementById('archerSearch');
+        searchInput.value = '';
+        filterArchers();
+    }
+</script>
+
+
+{{ template "layout/footer" }}
+{{ end }}
+
+
+{{ block "archer" . }}
+<div id="archerBlock-{{ .ID }}" class="card mb-1" style="padding: 5px;">
+    <div class="card-body" style="padding: 10px;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title" style="margin-bottom: 5px;">{{ .Name }} <small>({{ .BowClassCode }})</small></h5>
+            <img src="/images/circles.svg" id="indicator-{{ .ID }}" class="htmx-indicator"/>
+            <input type="number" 
+                name="archerScore"
+                hx-put="/api/scores/archer/{{ .ID }}/score/{{ .ScoreID }}" 
+                hx-trigger="keyup changed delay:500ms"
+                hx-target="#archerBlock-{{ .ID }}"
+                hx-swap="outerHTML"
+                hx-indicator="#indicator-{{ .ID }}"
+                id="score-{{ .ID }}" 
+                class="form-control score-input" 
+                {{ if gt .Score 0.0 }} value="{{ .Score }}" {{ end }} 
+                placeholder="Enter score" 
+                style="margin-bottom: 5px; width: 80px;">
+        </div>
+        <span class="badge bg-secondary" style="font-size: 0.9em;">Factor: {{ .HandicapFactor }}</span>
+    </div>
+</div>
+{{ end }}
+
+
+{{ block "scoredArcher" . }}
+<li class="list-group-item ${greyClass}" style="${borderColor}; margin-bottom: 20px; padding: 25px;">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-end" style="margin-right: 20px;">
+            <strong>{{ .Ranking }}</strong>
+        </div>
+        <div class="d-flex justify-content-between" style="margin-right: 20px; width: 100%;">
+            <strong style="flex-grow: 1; text-align: left;">{{ .Name }}</strong>
+            <small style="text-align: right;">({{ .BowClassCode }})</small>
+        </div>
+        <div class="d-flex justify-content-end">
+            <span class="badge bg-light text-dark" style="margin-right: 15px;">Score: <span id="archerScore-{{ .ID }}">{{ .Score }}</span></span>
+            <span class="badge bg-light text-dark" style="margin-right: 15px;">Factor: <span id="archerFactor-{{ .ID }}">{{ .HandicapFactor }}</span></span>
+            <span class="badge bg-primary" style="font-size: 1.2em;">Total: <span id="archerTotal-{{ .ID }}">{{ printf "%.3f" .TotalScore }}</span></span>
+        </div>
+    </div>
+</li>
+
+{{ end }}
+
+{{ block "scoredArchers-oob" . }}
+    <div hx-swap-oob="true" id="resultsList">
+        {{ range .Archers }}
+            {{ template "scoredArcher" . }}
+        {{ end }}
+    </div>
+{{ end }}

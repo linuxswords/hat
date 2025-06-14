@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	tournamentHelper "github.com/linuxswords/hat/internal/helper"
 	"github.com/linuxswords/hat/internal/models"
 	"gorm.io/gorm"
 )
@@ -57,19 +58,18 @@ func AddTournament(c *gin.Context) {
 
 	tournament.Date, _ = time.Parse("2006-01-02", c.PostForm("date"))
 	archerIDs := c.PostFormArray("archers[]")
-	for _, archerID := range archerIDs {
-		id, _ := strconv.Atoi(archerID)
-		var archer models.Archer
-		if err := db.First(&archer, id).Error; err == nil {
-			db.Model(&tournament).Association("Archers").Append(&archer)
-		}
-	}
 
 	if id == 0 {
 		db.Create(&tournament)
 	} else {
 		db.Save(&tournament)
 	}
+	archerIDasInt := make([]uint, 0, len(archerIDs))
+	for _, archerID := range archerIDs {
+		id, _ := strconv.Atoi(archerID)
+		archerIDasInt = append(archerIDasInt, uint(id))
+	}
+	tournamentHelper.CreateTournamentArchers(db, tournament.ID, archerIDasInt)
 
 	c.HTML(http.StatusOK, "tournament-oob", tournament)
 	var handicapSets []models.HandicapSet

@@ -2,6 +2,7 @@
 body {
     background-color: #f8f9fa;
 }
+
 .sticky-nav {
     position: -webkit-sticky;
     position: sticky;
@@ -14,17 +15,33 @@ body {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 1001; /* Ensure it appears above other elements */
+    z-index: 1001;
+    /* Ensure it appears above other elements */
 }
 
 .form-group label {
     display: inline-block;
-    width: 400px; /* Increased width by another 150px */
+    width: 400px;
+    /* Increased width by another 150px */
     text-align: right;
     margin-right: 10px;
 }
 
 .form-control {
-    width: 300px; /* Set a fixed width for input fields */
-    text-align: right; /* Right-align text inside input fields */
+    width: 300px;
+    /* Set a fixed width for input fields */
+    text-align: right;
+    /* Right-align text inside input fields */
+}
+
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
 }
