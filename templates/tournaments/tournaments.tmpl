@@ -155,7 +155,7 @@
 
 
 {{ block "tournament-entry" . }}
-<tr>
+<tr id="tournament-{{ .ID }}">
     <td>{{ .Name }}</td>
     <td>{{ .Date.Format "2006-01-02" }}</td>
     <td>{{ .Venue }}</td>
@@ -166,7 +166,7 @@
         <a href="javascript:void(0)" class="text-primary" title="Edit" onclick="editTournament({{ .ID }})">
             <i class="bi bi-pencil-square"></i>
         </a>
-        <a href="javascript:void(0)" title="Delete" class="text-danger" onclick="confirmDelete({{ .ID }}, 'tournaments')">
+        <a href="#" title="Delete" class="text-danger" hx-delete="/api/tournaments/{{ .ID }}" hx-confirm="Are you sure you want to delete '{{ .Name }}'?" hx-swap="outerHTML" hx-target="#tournament-{{ .ID }}">
             <i class="bi bi-trash"></i>
         </a>
     </td>
