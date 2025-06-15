@@ -136,19 +136,16 @@
 
 
 {{ block "scoredArcher" . }}
-<li class="list-group-item {{ if eq .Score 0.0 }}greyed-out{{ end }}" style="{{ if eq .Ranking 1 }}border: 2px solid gold;{{ else if eq .Ranking 2 }}border: 2px solid silver;{{ else if eq .Ranking 3 }}border: 2px solid #cd7f32;{{ end }} margin-bottom: 20px; padding: 25px;">
+<li class="list-group-item {{ if eq .Score 0.0 }}greyed-out{{ end }}" style="{{ if eq .Ranking 1 }}border: 2px solid gold;{{ else if eq .Ranking 2 }}border: 2px solid silver;{{ else if eq .Ranking 3 }}border: 2px solid #cd7f32;{{ end }} margin-bottom: 10px; padding: 20px;">
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex justify-content-end" style="margin-right: 20px;">
             <strong>{{ .Ranking }}</strong>
         </div>
-        <div class="d-flex justify-content-between" style="margin-right: 20px; width: 100%;">
+        <div class="d-flex justify-content-end" style="margin-right: 20px; width: 100%;">
             <strong style="flex-grow: 1; text-align: left;">{{ .Name }}</strong>
-            <small style="text-align: right;">({{ .BowClassCode }})</small>
-        </div>
-        <div class="d-flex justify-content-end">
-            <span class="badge bg-light text-dark" style="margin-right: 15px;">Score: <span id="archerScore-{{ .ID }}">{{ .Score }}</span></span>
-            <span class="badge bg-light text-dark" style="margin-right: 15px;">Factor: <span id="archerFactor-{{ .ID }}">{{ .HandicapFactor }}</span></span>
-            <span class="badge bg-primary" style="font-size: 1.2em;">Total: <span id="archerTotal-{{ .ID }}">{{ printf "%.3f" .TotalScore }}</span></span>
+            <small title="{{ .BowClassName }}" style="text-align: right;">({{ .BowClassCode }})</small>
+            <span class="badge bg-light text-dark" style="margin-right: 15px;">{{ .Score }} &times; {{ .HandicapFactor }}</span>
+            <span class="badge bg-primary" style="font-size: 1.2em;">{{ printf "%.3f" .TotalScore }}</span>
         </div>
     </div>
 </li>
