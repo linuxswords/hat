@@ -33,15 +33,3 @@ body {
     text-align: right;
     /* Right-align text inside input fields */
 }
-
-.htmx-indicator {
-    display: none;
-}
-
-.htmx-request .htmx-indicator {
-    display: inline;
-}
-
-.htmx-request.htmx-indicator {
-    display: inline;
-}

@@ -62,20 +62,41 @@
     <div class="card-body" style="padding: 10px;">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="card-title" style="margin-bottom: 5px;">{{ .Name }} <small title="{{ .BowClassName }}">({{ .BowClassCode }} &mdash; {{ .HandicapFactor }})</small></h5>
-            <img src="/images/circles.svg" id="indicator-{{ .ID }}" class="htmx-indicator"/>
             <input type="number" 
                 name="archerScore"
                 hx-put="/api/scores/archer/{{ .ID }}/score/{{ .ScoreID }}" 
-                hx-trigger="keyup changed delay:500ms"
+                hx-trigger="keyup changed delay:200ms"
                 hx-target="#archerBlock-{{ .ID }}"
                 hx-swap="outerHTML"
-                hx-indicator="#indicator-{{ .ID }}"
                 id="score-{{ .ID }}" 
                 class="form-control score-input" 
                 {{ if gt .Score 0.0 }} value="{{ .Score }}" {{ end }} 
                 placeholder="Enter score" 
                 style="margin-bottom: 5px; width: 80px;">
         </div>
+        <progress id="progress-{{ .ID }}" value="0" max="500" style="width: 100%; display: none;"></progress>
+        <script>
+            htmx.on('#score-{{ .ID }}', 'htmx:xhr:progress', function(evt) {
+                console.log('Progress for archer {{ .ID }}: ' + evt.detail.loaded + '/' + evt.detail.total);
+                if (evt.detail.total === 0) {
+                    htmx.find('#progress-{{ .ID }}').style.display = 'none';
+                    return; // Avoid division by zero
+                }
+                htmx.find('#progress-{{ .ID }}').style.display = 'block';
+                var duration = 500;
+                var steps = 10;
+                var currentProgress = 0;
+                var timer = setInterval(function() {
+                    currentProgress += steps;
+                    htmx.find('#progress-{{ .ID }}').setAttribute('value', currentProgress);
+                    if (currentProgress >= duration) {
+                        clearInterval(timer);
+                        htmx.find('#progress-{{ .ID }}').style.display = 'none';
+                    }
+                }, steps);
+              // htmx.find('#progress-{{ .ID }}').setAttribute('value', evt.detail.loaded/evt.detail.total * 1000)
+            });
+        </script>
     </div>
 </div>
 {{ end }}
