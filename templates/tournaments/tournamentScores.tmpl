@@ -115,7 +115,7 @@
 <div id="archerBlock-{{ .ID }}" class="card mb-1" style="padding: 5px;">
     <div class="card-body" style="padding: 10px;">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-title" style="margin-bottom: 5px;">{{ .Name }} <small>({{ .BowClassCode }})</small></h5>
+            <h5 class="card-title" style="margin-bottom: 5px;">{{ .Name }} <small title="{{ .BowClassName }}">({{ .BowClassCode }} &mdash; {{ .HandicapFactor }})</small></h5>
             <img src="/images/circles.svg" id="indicator-{{ .ID }}" class="htmx-indicator"/>
             <input type="number" 
                 name="archerScore"
@@ -130,7 +130,6 @@
                 placeholder="Enter score" 
                 style="margin-bottom: 5px; width: 80px;">
         </div>
-        <span class="badge bg-secondary" style="font-size: 0.9em;">Factor: {{ .HandicapFactor }}</span>
     </div>
 </div>
 {{ end }}
