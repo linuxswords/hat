@@ -24,7 +24,6 @@
         </div>
         <div class="tournamentResults" style="flex: 1; margin-left: 10px;">
             <h2>Results</h2>
-            <button class="btn btn-success" onclick="saveScores()">Save Scores</button>
             <ul id="resultsList" class="list-group">
                 {{ range .Archers }}
                     {{ template "scoredArcher" . }}
@@ -34,62 +33,9 @@
     </div>
 
 <script>
-    async function saveScores() {
-        const tournamentId = document.getElementById('tournamentSelect').value;
-        const results = archers.map(archer => {
-            const scoreInput = document.getElementById('score_' + archer.id);
-            const score = parseFloat(scoreInput.value) || 0;
-            const totalScore = score * archer.handicapFactor;
-            return {
-                archerId: archer.id,
-                originalScore: score,
-                totalScore: totalScore
-            };
-        }).sort((a, b) => b.totalScore - a.totalScore);
-
-        let lastScore = null;
-        let lastRank = 0;
-        let displayRank = 0;
-
-        const scores = results.map((result, index) => {
-            if (result.totalScore !== lastScore) {
-                displayRank = index + 1;
-                lastScore = result.totalScore;
-            }
-            lastRank = displayRank;
-
-            return {
-                archerId: result.archerId,
-                score: result.originalScore,
-                totalScore: result.totalScore,
-                ranking: lastRank
-            };
-        });
-
-        try {
-            const response = await fetch('/api/scores', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ "tournamentId": parseInt(tournamentId), scores })
-            });
-
-            if (response.ok) {
-                alert('Scores saved successfully!');
-            } else {
-                alert('Failed to save scores.');
-            }
-        } catch (error) {
-            console.error('Error saving scores:', error);
-            alert('Error saving scores.');
-        }
-    }
-    
     function filterArchers() {
         const searchValue = document.getElementById('archerSearch').value.toLowerCase();
         const archerCards = document.querySelectorAll('#archersList .card');
-        
         archerCards.forEach(card => {
             const archerName = card.querySelector('.card-title').textContent.toLowerCase();
             if (archerName.includes(searchValue)) {
