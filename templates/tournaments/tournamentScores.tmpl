@@ -22,7 +22,10 @@
                 {{ end }}
             </div>
         </div>
-        <div class="tournamentResults" style="flex: 1; margin-left: 10px;">
+        <div class="tournamentResults" style="flex: 1; margin-left: 10px; position: relative;">
+            <a class="btn btn-outline-secondary" style="position: absolute; right: 10px; top: 10px;" href="/api/tournaments/{{ .Tournament.ID }}/download">
+                <i class="bi bi-printer"></i>
+            </a>
             <h2>Results</h2>
             <ul id="resultsList" class="list-group">
                 {{ range .Archers }}
