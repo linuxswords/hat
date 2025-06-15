@@ -77,6 +77,7 @@ func ShowTournamentScores(c *gin.Context) {
 }
 
 func UpdateArcherScore(c *gin.Context) {
+	tournamentID, _ := strconv.Atoi(c.Param("tournamentID"))
 	tournamentArcherID, _ := strconv.Atoi(c.Param("archerID"))
 	db := c.MustGet("db").(*gorm.DB)
 	var tournamentArcher models.TournamentArcher
@@ -94,7 +95,7 @@ func UpdateArcherScore(c *gin.Context) {
 	db.Save(&tournamentArcher.Score)
 
 	// recalculate the overall rankings for the tournament
-	tournamentHelper.RecalculateRankings(db, tournamentArcher.TournamentID)
+	tournamentHelper.RecalculateRankings(db, uint(tournamentID))
 
 	archerResponse := ArcherResponse{
 		ID:             tournamentArcher.ArcherID,
@@ -107,7 +108,7 @@ func UpdateArcherScore(c *gin.Context) {
 	}
 
 	var tournamentArchers []models.TournamentArcher
-	if err := db.Where("tournament_id = ?", tournamentArcher.TournamentID).Preload("HandicapEntry").Preload("Score").Preload("Archer").Preload("BowClass").Find(&tournamentArchers).Error; err != nil {
+	if err := db.Where("tournament_id = ?", tournamentID).Preload("HandicapEntry").Preload("Score").Preload("Archer").Preload("BowClass").Find(&tournamentArchers).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tournament archers"})
 		return
 	}
@@ -115,68 +116,4 @@ func UpdateArcherScore(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "archer", archerResponse)
 	c.HTML(http.StatusOK, "scoredArchers-oob", gin.H{"Archers": archersData})
-}
-
-func SaveScores(c *gin.Context) {
-	var request struct {
-		TournamentID uint `json:"tournamentId"`
-		Scores       []struct {
-			ArcherID   uint    `json:"archerId"`
-			Score      float64 `json:"score"`
-			Ranking    uint    `json:"ranking"`
-			TotalScore float64 `json:"totalScore"`
-		} `json:"scores"`
-	}
-
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	db := c.MustGet("db").(*gorm.DB)
-	for _, scoreData := range request.Scores {
-		score := models.Score{
-			TournamentID: request.TournamentID,
-			ArcherID:     scoreData.ArcherID,
-			Score:        scoreData.Score,
-			TotalScore:   scoreData.TotalScore,
-			Ranking:      scoreData.Ranking,
-		}
-		db.Create(&score)
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Scores saved successfully"})
-}
-
-func GetArchers(c *gin.Context) {
-	// Fetch archers and their handicap factors from the database
-	db := c.MustGet("db").(*gorm.DB)
-	var tournament models.Tournament
-	id, _ := strconv.Atoi(c.Param("id"))
-	if err := db.First(&tournament, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
-		return
-	}
-	archers := tournament.Archers
-	db.Preload("BowClass").Find(&archers)
-	hcSet := tournament.HandicapSet
-	db.Preload("HandicapEntries").Find(&hcSet)
-
-	var response []ArcherResponse
-	for _, archer := range archers {
-		factor := 1.0
-		hcEntry := hcSet.GetHandicapEntryByBowClass(archer.BowClassID)
-		if hcEntry != nil {
-			factor = hcEntry.Value
-		}
-		response = append(response, ArcherResponse{
-			ID:             archer.ID,
-			Name:           archer.Name(),
-			HandicapFactor: factor,
-			BowClassName:   archer.BowClass.Name,
-			BowClassCode:   archer.BowClass.Code,
-		})
-	}
-
-	c.JSON(http.StatusOK, response)
 }

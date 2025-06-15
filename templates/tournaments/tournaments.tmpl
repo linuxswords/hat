@@ -55,7 +55,7 @@
             const tournament = await response.json();
 
             // Set form action to update
-            document.getElementById('tournament-form').action = `/tournaments/${tournamentId}`;
+            document.getElementById('tournament-form').setAttribute('hx-put', `/api/tournaments/${tournamentId}`);
             document.getElementById('tournament-id').value = tournamentId;
             document.getElementById('name').value = tournament.Name;
             document.getElementById('venue').value = tournament.Venue;

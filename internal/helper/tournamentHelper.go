@@ -6,9 +6,11 @@ import (
 	"sort"
 )
 
-func CreateTournamentArchers(db *gorm.DB, tournamentID uint, archerIDs []uint) error {
+func UpsertTournamentArchers(db *gorm.DB, tournamentID uint, archerIDs []uint) error {
 	var tournament models.Tournament
-	print("Creating tournament archers for tournament ID: ", tournamentID, "\n")
+	if err := db.Where("tournament_id = ?", tournamentID).Delete(&models.TournamentArcher{}).Error; err != nil {
+		return err
+	}
 	if err := db.Preload("HandicapSet").First(&tournament, tournamentID).Error; err != nil {
 		return err
 	}
@@ -39,8 +41,6 @@ func CreateTournamentArchers(db *gorm.DB, tournamentID uint, archerIDs []uint) e
 		tournamentArcher := models.TournamentArcher{
 			ArcherID:        archerID,
 			Archer:          archer,
-			TournamentID:    tournamentID,
-			Tournament:      tournament,
 			BowClassID:      archer.BowClassID,
 			BowClass:        archer.BowClass,
 			ScoreID:         score.ID,

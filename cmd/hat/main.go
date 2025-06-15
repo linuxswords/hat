@@ -48,22 +48,20 @@ func main() {
 
 	// Tournament routes
 	r.GET("/tournaments", handlers.ShowTournamentsPage)
-	r.POST("/tournaments/:id", handlers.UpdateTournament) // For updating existing tournaments
 
 	// API routes
 	api := r.Group("/api")
 	{
-		api.GET("/archers/tournament/:id", handlers.GetArchers)
 		api.GET("/archers/:id", handlers.GetArcher)
 		api.POST("/archers", handlers.AddArcher)
 		api.DELETE("/archers/:id", handlers.DeleteArcher)
 
 		api.GET("/tournaments/:id/download", handlers.DownloadTournamentPDF)
-		api.GET("/tournaments/:id", handlers.GetTournament)
-		api.POST("/tournaments", handlers.AddTournament) // For adding new tournaments
+		api.POST("/tournaments", handlers.AddTournament)
+		api.PUT("/tournaments/:id", handlers.AddTournament)
 		api.DELETE("/tournaments/:id", handlers.DeleteTournament)
 
-		api.PUT("/scores/archer/:archerID/score/:scoreID", handlers.UpdateArcherScore)
+		api.PUT("/scores/tournament/:tournamentId/archer/:archerID/score/:scoreID", handlers.UpdateArcherScore)
 		api.DELETE("/bowclasses/:id", handlers.DeleteBowClass)
 		api.POST("/bowclasses", handlers.AddBowClass)
 
