@@ -7,22 +7,8 @@
         opacity: 0.6;
     }
 </style>
-
-<div id="wizard">
-    <!-- Step 1: Choose Tournament -->
-    <div id="step1" class="card mb-3 p-3">
-        <h2 class="card-title">Step 1: Choose a Tournament</h2>
-        <select id="tournamentSelect" class="form-select mb-3">
-            {{ range .Tournaments }}
-                <option value="{{ .ID }}">{{ .Name }}</option>
-            {{ end }}
-        </select>
-        <button class="btn btn-primary" onclick="nextStep()">Next</button>
-    </div>
-
-    <!-- Step 2 & 3: Enter Scores and Display Results -->
-    <div id="step2" style="display:none;">
-        <div style="flex: 1; margin-right: 10px; overflow-y: auto; height: 100vh;">
+    <div id="wizard" style="display: flex; flex-direction: row; height: 100vh;">
+        <div class="tournamentArchers" style="flex: 1; margin-right: 10px; overflow-y: auto; height: 100vh;">
             <h2>Enter Scores</h2>
             <div class="input-group mb-3">
                 <input type="text" id="archerSearch" class="form-control" placeholder="Search for an archer..." oninput="filterArchers()">
@@ -31,77 +17,28 @@
                 </button>
             </div>
             <div id="archersList">
-                <!-- Archer list with input fields will be populated dynamically -->
+                {{ range .Archers }}
+                    {{ template "archer" . }}
+                {{ end }}
             </div>
         </div>
-        <div style="flex: 1; margin-left: 10px;">
+        <div class="tournamentResults" style="flex: 1; margin-left: 10px; position: relative;">
+            <a class="btn btn-outline-secondary" style="position: absolute; right: 10px; top: 10px;" href="/api/tournaments/{{ .Tournament.ID }}/download">
+                <i class="bi bi-printer"></i>
+            </a>
             <h2>Results</h2>
-            <button class="btn btn-success" onclick="saveScores()">Save Scores</button>
             <ul id="resultsList" class="list-group">
-                <!-- Results will be displayed here -->
+                {{ range .Archers }}
+                    {{ template "scoredArcher" . }}
+                {{ end }}
             </ul>
         </div>
     </div>
-</div>
 
 <script>
-    // Existing JavaScript code...
-
-    async function saveScores() {
-        const tournamentId = document.getElementById('tournamentSelect').value;
-        const results = archers.map(archer => {
-            const scoreInput = document.getElementById('score_' + archer.id);
-            const score = parseFloat(scoreInput.value) || 0;
-            const totalScore = score * archer.handicapFactor;
-            return {
-                archerId: archer.id,
-                originalScore: score,
-                totalScore: totalScore
-            };
-        }).sort((a, b) => b.totalScore - a.totalScore);
-
-        let lastScore = null;
-        let lastRank = 0;
-        let displayRank = 0;
-
-        const scores = results.map((result, index) => {
-            if (result.totalScore !== lastScore) {
-                displayRank = index + 1;
-                lastScore = result.totalScore;
-            }
-            lastRank = displayRank;
-
-            return {
-                archerId: result.archerId,
-                score: result.originalScore,
-                totalScore: result.totalScore,
-                ranking: lastRank
-            };
-        });
-
-        try {
-            const response = await fetch('/api/scores', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ "tournamentId": parseInt(tournamentId), scores })
-            });
-
-            if (response.ok) {
-                alert('Scores saved successfully!');
-            } else {
-                alert('Failed to save scores.');
-            }
-        } catch (error) {
-            console.error('Error saving scores:', error);
-            alert('Error saving scores.');
-        }
-    }
     function filterArchers() {
         const searchValue = document.getElementById('archerSearch').value.toLowerCase();
         const archerCards = document.querySelectorAll('#archersList .card');
-        
         archerCards.forEach(card => {
             const archerName = card.querySelector('.card-title').textContent.toLowerCase();
             if (archerName.includes(searchValue)) {
@@ -118,95 +55,77 @@
     }
 </script>
 
-<script>
-    let currentStep = 1;
-    let tournaments = [];
-    let archers = [];
-
-    async function fetchArchers() {
-        try {
-            const tournamentId = document.getElementById('tournamentSelect').value;
-            const archerResponse = await fetch('/api/archers/tournament/' + tournamentId);
-            archers = await archerResponse.json();
-            const archersList = document.getElementById('archersList');
-            archersList.innerHTML = archers.map(a => `
-                <div class="card mb-1" style="padding: 5px;">
-                    <div class="card-body" style="padding: 10px;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title" style="margin-bottom: 5px;">${a.name} <small>(${a.bowclassCode})</small></h5>
-                            <input type="number" class="form-control" id="score_${a.id}" placeholder="Enter score" oninput="updateResults()" style="margin-bottom: 5px; width: 80px;">
-                        </div>
-                        <span class="badge bg-secondary" style="font-size: 0.9em;">Factor: ${a.handicapFactor}</span>
-                    </div>
-                </div>
-            `).join('');
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-
-    function nextStep() {
-        document.getElementById('step' + currentStep).style.display = 'none';
-        currentStep++;
-        if (currentStep === 2) {
-            fetchArchers();
-            document.getElementById('step' + currentStep).style.display = 'flex';
-        }
-    }
-
-    function updateResults() {
-        const results = archers.map(archer => {
-            const scoreInput = document.getElementById('score_' + archer.id);
-            const score = parseFloat(scoreInput.value) || 0;
-            return {
-                name: archer.name,
-                bowclassCode: archer.bowclassCode,
-                originalScore: score,
-                handicapFactor: archer.handicapFactor,
-                totalScore: score * archer.handicapFactor
-            };
-        }).sort((a, b) => b.totalScore - a.totalScore);
-
-        const resultsList = document.getElementById('resultsList');
-        let lastScore = null;
-        let lastRank = 0;
-        let displayRank = 0;
-
-        resultsList.innerHTML = results.map((result, index) => {
-            let borderColor = '';
-            if (index === 0) borderColor = 'border: 4px solid gold;';
-            else if (index === 1) borderColor = 'border: 4px solid silver;';
-            else if (index === 2) borderColor = 'border: 4px solid #cd7f32;'; // bronze
-
-            if (result.totalScore !== lastScore) {
-                displayRank = index + 1;
-                lastScore = result.totalScore;
-            }
-            lastRank = displayRank;
-
-            const greyClass = result.originalScore === 0 ? 'greyed-out' : '';
-            return `
-            <li class="list-group-item ${greyClass}" style="${borderColor}; margin-bottom: 20px; padding: 25px;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex justify-content-end" style="margin-right: 20px;">
-                        <strong>${lastRank}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between" style="margin-right: 20px; width: 100%;">
-                        <strong style="flex-grow: 1; text-align: left;">${result.name}</strong>
-                        <small style="text-align: right;">(${result.bowclassCode})</small>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <span class="badge bg-light text-dark" style="margin-right: 15px;">Score: ${result.originalScore}</span>
-                        <span class="badge bg-light text-dark" style="margin-right: 15px;">Factor: ${result.handicapFactor}</span>
-                        <span class="badge bg-primary" style="font-size: 1.2em;">Total: ${result.totalScore.toFixed(2)}</span>
-                    </div>
-                </div>
-            </li>
-            `;
-        }).join('');
-    }
-
-</script>
 
 {{ template "layout/footer" }}
+{{ end }}
+
+
+{{ block "archer" . }}
+<div id="archerBlock-{{ .ID }}" class="card mb-1" style="padding: 5px;">
+    <div class="card-body" style="padding: 10px;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title" style="margin-bottom: 5px;">{{ .Name }} <small title="{{ .BowClassName }}">({{ .BowClassCode }} &mdash; {{ .HandicapFactor }})</small></h5>
+            <input type="number" 
+                name="archerScore"
+                hx-put="/api/scores/archer/{{ .ID }}/score/{{ .ScoreID }}" 
+                hx-trigger="keyup changed delay:200ms"
+                hx-target="#archerBlock-{{ .ID }}"
+                hx-swap="outerHTML"
+                id="score-{{ .ID }}" 
+                class="form-control score-input" 
+                {{ if gt .Score 0.0 }} value="{{ .Score }}" {{ end }} 
+                placeholder="Enter score" 
+                style="margin-bottom: 5px; width: 80px;">
+        </div>
+        <progress id="progress-{{ .ID }}" value="0" max="500" style="width: 100%; display: none;"></progress>
+        <script>
+            htmx.on('#score-{{ .ID }}', 'htmx:xhr:progress', function(evt) {
+                console.log('Progress for archer {{ .ID }}: ' + evt.detail.loaded + '/' + evt.detail.total);
+                if (evt.detail.total === 0) {
+                    htmx.find('#progress-{{ .ID }}').style.display = 'none';
+                    return; // Avoid division by zero
+                }
+                htmx.find('#progress-{{ .ID }}').style.display = 'block';
+                var duration = 500;
+                var steps = 10;
+                var currentProgress = 0;
+                var timer = setInterval(function() {
+                    currentProgress += steps;
+                    htmx.find('#progress-{{ .ID }}').setAttribute('value', currentProgress);
+                    if (currentProgress >= duration) {
+                        clearInterval(timer);
+                        htmx.find('#progress-{{ .ID }}').style.display = 'none';
+                    }
+                }, steps);
+              // htmx.find('#progress-{{ .ID }}').setAttribute('value', evt.detail.loaded/evt.detail.total * 1000)
+            });
+        </script>
+    </div>
+</div>
+{{ end }}
+
+
+{{ block "scoredArcher" . }}
+<li class="list-group-item {{ if eq .Score 0.0 }}greyed-out{{ end }}" style="{{ if eq .Ranking 1 }}border: 2px solid gold;{{ else if eq .Ranking 2 }}border: 2px solid silver;{{ else if eq .Ranking 3 }}border: 2px solid #cd7f32;{{ end }} margin-bottom: 10px; padding: 20px;">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-end" style="margin-right: 20px;">
+            <strong>{{ .Ranking }}</strong>
+        </div>
+        <div class="d-flex justify-content-end" style="margin-right: 20px; width: 100%;">
+            <strong style="flex-grow: 1; text-align: left;">{{ .Name }}</strong>
+            <small title="{{ .BowClassName }}" style="text-align: right;">({{ .BowClassCode }})</small>
+            <span class="badge bg-light text-dark" style="margin-right: 15px;">{{ .Score }} &times; {{ .HandicapFactor }}</span>
+            <span class="badge bg-primary" style="font-size: 1.2em;">{{ printf "%.3f" .TotalScore }}</span>
+        </div>
+    </div>
+</li>
+
+{{ end }}
+
+{{ block "scoredArchers-oob" . }}
+    <div hx-swap-oob="true" id="resultsList">
+        {{ range .Archers }}
+            {{ template "scoredArcher" . }}
+        {{ end }}
+    </div>
 {{ end }}

@@ -32,7 +32,6 @@ func main() {
 	r.GET("/", handlers.ShowHomePage)
 	r.GET("/archers", handlers.ShowArchersPage)
 	r.GET("/archers/edit/:id", handlers.ShowArchersPage)
-	r.GET("/scores", handlers.ShowScoresPage)
 	r.GET("/tournament/score/:id", handlers.ShowTournamentScores)
 	r.GET("/resultLists", handlers.ShowResultLists)
 
@@ -64,7 +63,6 @@ func main() {
 		api.POST("/tournaments", handlers.AddTournament) // For adding new tournaments
 		api.DELETE("/tournaments/:id", handlers.DeleteTournament)
 
-		api.POST("/scores", handlers.SaveScores)
 		api.PUT("/scores/archer/:archerID/score/:scoreID", handlers.UpdateArcherScore)
 		api.DELETE("/bowclasses/:id", handlers.DeleteBowClass)
 		api.POST("/bowclasses", handlers.AddBowClass)

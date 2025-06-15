@@ -68,24 +68,11 @@ func ShowTournamentScores(c *gin.Context) {
 
 	archersData := createArchersResponse(tournamentArchers)
 
-	c.HTML(http.StatusOK, "tournamentScores", gin.H{
+	c.HTML(http.StatusOK, "scores", gin.H{
 		"Title":      "HAT - Tournament Scores",
 		"Content":    "Scores for Tournament: " + tournament.Name,
 		"Tournament": tournament,
 		"Archers":    archersData,
-	})
-}
-
-func ShowScoresPage(c *gin.Context) {
-	// Fetch tournaments from the database
-	var tournaments []models.Tournament
-	db := c.MustGet("db").(*gorm.DB)
-	db.Find(&tournaments)
-
-	c.HTML(http.StatusOK, "scores", gin.H{
-		"Title":       "HAT - Scores",
-		"Content":     "Scores Page",
-		"Tournaments": tournaments,
 	})
 }
 
