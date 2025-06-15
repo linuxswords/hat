@@ -137,7 +137,7 @@
 
 
 {{ block "scoredArcher" . }}
-<li class="list-group-item ${greyClass}" style="${borderColor}; margin-bottom: 20px; padding: 25px;">
+<li class="list-group-item {{ if eq .Score 0.0 }}greyed-out{{ end }}" style="${borderColor}; margin-bottom: 20px; padding: 25px;">
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex justify-content-end" style="margin-right: 20px;">
             <strong>{{ .Ranking }}</strong>
