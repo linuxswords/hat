@@ -22,9 +22,10 @@ type ArcherResponse struct {
 	TotalScore     float64
 	Score          float64
 	ScoreID        uint
+	TournamentID   uint
 }
 
-func createArchersResponse(tournamentArchers []models.TournamentArcher) []ArcherResponse {
+func createArchersResponse(tournamentArchers []models.TournamentArcher, tournamentId uint) []ArcherResponse {
 	var archersData []ArcherResponse
 	for _, tournamenArcher := range tournamentArchers {
 		factor := 1.0
@@ -41,6 +42,7 @@ func createArchersResponse(tournamentArchers []models.TournamentArcher) []Archer
 			Ranking:        tournamenArcher.Score.Ranking,
 			Score:          tournamenArcher.Score.Score,
 			TotalScore:     tournamenArcher.Score.TotalScore,
+			TournamentID:   tournamentId,
 		}
 		archersData = append(archersData, archerResponse)
 	}
@@ -66,7 +68,7 @@ func ShowTournamentScores(c *gin.Context) {
 		return
 	}
 
-	archersData := createArchersResponse(tournamentArchers)
+	archersData := createArchersResponse(tournamentArchers, tournament.ID)
 
 	c.HTML(http.StatusOK, "scores", gin.H{
 		"Title":      "HAT - Tournament Scores",
@@ -95,24 +97,16 @@ func UpdateArcherScore(c *gin.Context) {
 	db.Save(&tournamentArcher.Score)
 
 	// recalculate the overall rankings for the tournament
-	tournamentHelper.RecalculateRankings(db, uint(tournamentID))
+	tournamentHelper.RecalculateRankings(db, tournamentID)
 
-	archerResponse := ArcherResponse{
-		ID:             tournamentArcher.ArcherID,
-		Name:           tournamentArcher.Name(),
-		Ranking:        tournamentArcher.Score.Ranking,
-		BowClassCode:   tournamentArcher.BowClass.Code,
-		HandicapFactor: tournamentArcher.HandicapEntry.Value,
-		Score:          tournamentArcher.Score.Score,
-		TotalScore:     tournamentArcher.Score.TotalScore,
-	}
+	archerResponse := createArchersResponse([]models.TournamentArcher{tournamentArcher}, uint(tournamentID))
 
 	var tournamentArchers []models.TournamentArcher
 	if err := db.Where("tournament_id = ?", tournamentID).Preload("HandicapEntry").Preload("Score").Preload("Archer").Preload("BowClass").Find(&tournamentArchers).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tournament archers"})
 		return
 	}
-	archersData := createArchersResponse(tournamentArchers)
+	archersData := createArchersResponse(tournamentArchers, uint(tournamentID))
 
 	c.HTML(http.StatusOK, "archer", archerResponse)
 	c.HTML(http.StatusOK, "scoredArchers-oob", gin.H{"Archers": archersData})

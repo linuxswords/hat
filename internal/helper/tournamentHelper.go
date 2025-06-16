@@ -53,13 +53,16 @@ func UpsertTournamentArchers(db *gorm.DB, tournamentID uint, archerIDs []uint) e
 			return err
 		}
 
+		tournament.TournamentArchers = append(tournament.TournamentArchers, tournamentArcher)
+		db.Save(&tournament)
+
 	}
 
 	return nil
 }
 
 // RecalculateRankings recalculates the rankings of archers in a tournament based on their total scores.
-func RecalculateRankings(db *gorm.DB, tournamentID uint) error {
+func RecalculateRankings(db *gorm.DB, tournamentID int) error {
 	var scores []models.Score
 	if err := db.Where("tournament_id = ?", tournamentID).Order("total_score desc").Find(&scores).Error; err != nil {
 		return err

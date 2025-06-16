@@ -7,12 +7,12 @@ import (
 
 type Tournament struct {
 	gorm.Model
-	ID             uint `gorm:"primaryKey"`
-	Name           string
-	Date           time.Time
-	Venue          string
-	TournamentType string      `gorm:"not null"`
-	HandicapSet    HandicapSet `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	HandicapSetID  uint
-	Archers        []TournamentArcher `gorm:"many2many:tournament_archers;"`
+	ID                uint `gorm:"primaryKey"`
+	Name              string
+	Date              time.Time
+	Venue             string
+	TournamentType    string      `gorm:"not null"`
+	HandicapSet       HandicapSet `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	HandicapSetID     uint
+	TournamentArchers []TournamentArcher `gorm:"foreignKey:TournamentID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }

@@ -14,7 +14,7 @@ import (
 func ShowTournamentsPage(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var tournaments []models.Tournament
-	db.Preload("HandicapSet").Preload("Archers").Find(&tournaments)
+	db.Preload("HandicapSet").Preload("TournamentArchers").Find(&tournaments)
 	var handicapSets []models.HandicapSet
 	db.Find(&handicapSets)
 	var archers []models.Archer

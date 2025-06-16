@@ -18,7 +18,6 @@
             </div>
             <div id="archersList">
                 {{ range .Archers }}
-                    {{ tournamentID := .Tournament.ID }}
                     {{ template "archer" . }}
                 {{ end }}
             </div>
@@ -68,7 +67,7 @@
             <h5 class="card-title" style="margin-bottom: 5px;">{{ .Name }} <small title="{{ .BowClassName }}">({{ .BowClassCode }} &mdash; {{ .HandicapFactor }})</small></h5>
             <input type="number" 
                 name="archerScore"
-                hx-put="/api/tournament/{{ .tournamentID }}/scores/archer/{{ .ID }}/score/{{ .ScoreID }}" 
+                hx-put="/api/tournament/{{ .TournamentID }}/scores/archer/{{ .ID }}/score/{{ .ScoreID }}" 
                 hx-trigger="keyup changed delay:200ms"
                 hx-target="#archerBlock-{{ .ID }}"
                 hx-swap="outerHTML"

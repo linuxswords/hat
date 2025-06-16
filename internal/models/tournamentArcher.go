@@ -15,6 +15,8 @@ type TournamentArcher struct {
 	Score           Score         `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	HandicapEntryID uint          `gorm:"not null"`
 	HandicapEntry   HandicapEntry `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	TournamentID uint      `gorm:"not null"`
+	Tournament   Tournament `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 func (ta *TournamentArcher) Name() string {
