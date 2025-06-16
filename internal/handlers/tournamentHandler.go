@@ -69,6 +69,7 @@ func AddTournament(c *gin.Context) {
 		archerIDasInt = append(archerIDasInt, uint(id))
 	}
 	tournamentHelper.UpsertTournamentArchers(db, tournament.ID, archerIDasInt)
+	db.Preload("HandicapSet").Preload("TournamentArchers").Find(&tournament)
 
 	c.HTML(http.StatusOK, "tournament-oob", tournament)
 	var handicapSets []models.HandicapSet
