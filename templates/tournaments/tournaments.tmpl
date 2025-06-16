@@ -68,15 +68,15 @@
             const selectedArchers = document.getElementById('selected-archers');
             selectedArchers.innerHTML = '';
 
-            tournament.Archers.forEach(archer => {
+            tournament.TournamentArchers.forEach(tournamentArcher => {
                 const option = document.createElement('option');
-                option.value = archer.ID;
+                option.value = tournamentArcher.Archer.ID;
                 option.selected = true;
-                option.textContent = `${archer.FirstName} ${archer.LastName} (${archer.BowClass.Code})`;
+                option.textContent = `${tournamentArcher.Archer.FirstName} ${tournamentArcher.Archer.LastName} (${tournamentArcher.Archer.BowClass.Code})`;
                 selectedArchers.appendChild(option);
 
                 // Remove from available archers
-                const availableOption = availableArchers.querySelector(`option[value="${archer.ID}"]`);
+                const availableOption = availableArchers.querySelector(`option[value="${tournamentArcher.Archer.ID}"]`);
                 if (availableOption) {
                     availableOption.remove();
                 }

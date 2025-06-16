@@ -91,3 +91,14 @@ func DeleteTournament(c *gin.Context) {
 	}
 	c.HTML(http.StatusNoContent, "", nil)
 }
+
+func GetTournament(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	id, _ := strconv.Atoi(c.Param("id"))
+	var tournament models.Tournament
+	if err := db.Preload("TournamentArchers").First(&tournament, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
+		return
+	}
+	c.JSON(http.StatusOK, tournament)
+}

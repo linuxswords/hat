@@ -58,6 +58,7 @@ func main() {
 
 		api.GET("/tournaments/:id/download", handlers.DownloadTournamentPDF)
 		api.POST("/tournaments", handlers.AddTournament)
+		api.GET("/tournaments/:id", handlers.GetTournament)
 		api.PUT("/tournaments/:id", handlers.AddTournament)
 		api.DELETE("/tournaments/:id", handlers.DeleteTournament)
 
