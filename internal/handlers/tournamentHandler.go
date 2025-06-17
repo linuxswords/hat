@@ -100,5 +100,12 @@ func GetTournament(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
+	for i, ta := range tournament.TournamentArchers {
+		var tournamentArcher models.TournamentArcher
+		if err := db.Preload("Archer").Preload("BowClass").First(&tournamentArcher, ta.ID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "could not deepload archer"})
+		}
+		tournament.TournamentArchers[i] = tournamentArcher
+	}
 	c.JSON(http.StatusOK, tournament)
 }
