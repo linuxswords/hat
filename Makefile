@@ -2,7 +2,7 @@
 
 # Build the application
 build: css
-	go build -o bin/hat main.go
+	go build -o bin/hat cmd/hat/main.go
 
 # Build CSS with Tailwind
 css:
