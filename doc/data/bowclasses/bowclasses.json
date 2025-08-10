@@ -1,0 +1,190 @@
+[
+    {
+        "id": "CMFSR",
+        "name": "Cub Male Freestyle Limited Recurve"
+    },
+    {
+        "id": "CMBHR",
+        "name": "Cub Male Bowhunter Recurve"
+    },
+    {
+        "id": "CFBHR",
+        "name": "Cub Female Bowhunter Recurve"
+    },
+    {
+        "id": "JMLB",
+        "name": "Junior Male Longbow"
+    },
+    {
+        "id": "JMTR",
+        "name": "Junior Male Traditional Recurve"
+    },
+    {
+        "id": "JFTR",
+        "name": "Junior Female Traditional Recurve"
+    },
+    {
+        "id": "JMBHR",
+        "name": "Junior Male Bowhunter Recurve"
+    },
+    {
+        "id": "JFBHR",
+        "name": "Junior Female Bowhunter Recurve"
+    },
+    {
+        "id": "JFBU",
+        "name": "Junior Female Bowhunter Unlimited"
+    },
+    {
+        "id": "AMHB",
+        "name": "Adult Male Historical Bow"
+    },
+    {
+        "id": "AFHB",
+        "name": "Adult Female Historical Bow"
+    },
+    {
+        "id": "AMLB",
+        "name": "Adult Male Longbow"
+    },
+    {
+        "id": "AFLB",
+        "name": "Adult Female Longbow"
+    },
+    {
+        "id": "VMLB",
+        "name": "Veteran Male Longbow"
+    },
+    {
+        "id": "VFLB",
+        "name": "Veteran Female Longbow"
+    },
+    {
+        "id": "SMLB",
+        "name": "Senior Male Longbow"
+    },
+    {
+        "id": "AMFU",
+        "name": "Adult Male Freestyle Unlimited"
+    },
+    {
+        "id": "AFFU",
+        "name": "Adult Female Freestyle Unlimited"
+    },
+    {
+        "id": "VMFU",
+        "name": "Veteran Male Freestyle Unlimited"
+    },
+    {
+        "id": "SMFU",
+        "name": "Senior Male Freestyle Unlimited"
+    },
+    {
+        "id": "VMFSR",
+        "name": "Veteran Male Freestyle Limited Recurve"
+    },
+    {
+        "id": "AMBBR",
+        "name": "Adult Male Barebow Recurve"
+    },
+    {
+        "id": "VMBBR",
+        "name": "Veteran Male Barebow Recurve"
+    },
+    {
+        "id": "YAMTR",
+        "name": "Young Adult Male Traditional Recurve"
+    },
+    {
+        "id": "YAFTR",
+        "name": "Young Adult Female Traditional Recurve"
+    },
+    {
+        "id": "AMTR",
+        "name": "Adult Male Traditional Recurve"
+    },
+    {
+        "id": "AFTR",
+        "name": "Adult Female Traditional Recurve"
+    },
+    {
+        "id": "VMTR",
+        "name": "Veteran Male Traditional Recurve"
+    },
+    {
+        "id": "VFTR",
+        "name": "Veteran Female Traditional Recurve"
+    },
+    {
+        "id": "YAFBHR",
+        "name": "Young Adult Female Bowhunter Recurve"
+    },
+    {
+        "id": "AMBHR",
+        "name": "Adult Male Bowhunter Recurve"
+    },
+    {
+        "id": "AFBHR",
+        "name": "Adult Female Bowhunter Recurve"
+    },
+    {
+        "id": "VMBHR",
+        "name": "Veteran Male Bowhunter Recurve"
+    },
+    {
+        "id": "VFBHR",
+        "name": "Veteran Female Bowhunter Recurve"
+    },
+    {
+        "id": "SMBHR",
+        "name": "Senior Male Bowhunter Recurve"
+    },
+    {
+        "id": "SFBHR",
+        "name": "Senior Female Bowhunter Recurve"
+    },
+    {
+        "id": "AMBU",
+        "name": "Adult Male Bowhunter Unlimited"
+    },
+    {
+        "id": "AFBU",
+        "name": "Adult Female Bowhunter Unlimited"
+    },
+    {
+        "id": "VMBU",
+        "name": "Veteran Male Bowhunter Unlimited"
+    },
+    {
+        "id": "VFBU",
+        "name": "Veteran Female Bowhunter Unlimited"
+    },
+    {
+        "id": "JFFU",
+        "name": "Junior Female Freestyle Unlimited"
+    },
+    {
+        "id": "JMFSR",
+        "name": "Junior Male Freestyle Limited Recurve"
+    },
+    {
+        "id": "AFBBR",
+        "name": "Adult Female Barebow Recurve"
+    },
+    {
+        "id": "VFBBR",
+        "name": "Veteran Female Barebow Recurve"
+    },
+    {
+        "id": "YAMBHR",
+        "name": "Young Adult Male Bowhunter Recurve"
+    },
+    {
+        "id": "CMFU",
+        "name": "Cub Male Freestyle Unlimited"
+    },
+    {
+        "id": "AMFSR",
+        "name": "Adult Male Freestyle Limited Recurve"
+    }
+]

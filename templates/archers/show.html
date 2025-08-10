@@ -1,0 +1,126 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+            <p class="text-gray-600 mt-2">Archer details and information</p>
+        </div>
+        <div class="space-x-2">
+            <a href="/archers/{{.archer.ID}}/edit" 
+               class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Edit Archer
+            </a>
+            <a href="/archers" 
+               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Archer Information Card -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Archer Information</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            Name
+                        </label>
+                        <p class="text-lg text-gray-900">{{.archer.Name}}</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            Archer ID
+                        </label>
+                        <p class="text-lg text-gray-900">#{{.archer.ID}}</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            Gender
+                        </label>
+                        <p class="text-lg text-gray-900">{{.archer.Gender}}</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            Bow Class
+                        </label>
+                        <p class="text-lg text-gray-900">{{.archer.BowClass}}</p>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            Email
+                        </label>
+                        <p class="text-lg text-gray-900">{{.archer.Email}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Card -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Stats</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Tournaments</span>
+                        <span class="font-semibold text-gray-900">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Best Score</span>
+                        <span class="font-semibold text-gray-900">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Current Handicap</span>
+                        <span class="font-semibold text-gray-900">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Last Tournament</span>
+                        <span class="font-semibold text-gray-900">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Actions</h3>
+                <div class="space-y-3">
+                    <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Add to Tournament
+                    </button>
+                    <button class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        Record Score
+                    </button>
+                    <button class="w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                        Update Handicap
+                    </button>
+                    <button class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        Delete Archer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament History Section -->
+    <div class="mt-8">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Tournament History</h2>
+            <div class="text-center py-12">
+                <div class="text-gray-400 mb-4">
+                    <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No tournament history</h3>
+                <p class="text-gray-600">This archer hasn't participated in any tournaments yet.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

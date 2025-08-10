@@ -1,0 +1,108 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+        <p class="text-gray-600 mt-2">Update archer information</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <form action="/archers/{{.archer.ID}}" method="POST" class="space-y-6">
+            <input type="hidden" name="_method" value="PUT">
+            
+            <!-- Name Field -->
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                    Name <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="name" name="name" required value="{{.archer.Name}}"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       placeholder="Enter archer's full name">
+            </div>
+
+            <!-- Gender Field -->
+            <div>
+                <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">
+                    Gender <span class="text-red-500">*</span>
+                </label>
+                <select id="gender" name="gender" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Select gender</option>
+                    <option value="Male" {{if eq .archer.Gender "Male"}}selected{{end}}>Male</option>
+                    <option value="Female" {{if eq .archer.Gender "Female"}}selected{{end}}>Female</option>
+                </select>
+            </div>
+
+            <!-- Bow Class Field -->
+            <div>
+                <label for="bow_class" class="block text-sm font-medium text-gray-700 mb-2">
+                    Bow Class <span class="text-red-500">*</span>
+                </label>
+                <select id="bow_class" name="bow_class" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Select bow class</option>
+                    {{range .bowClasses}}
+                    <option value="{{.ID}}" {{if eq $.archer.BowClass .ID}}selected{{end}}>{{.Name}}</option>
+                    {{end}}
+                </select>
+            </div>
+
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                    Email <span class="text-red-500">*</span>
+                </label>
+                <input type="email" id="email" name="email" required value="{{.archer.Email}}"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       placeholder="archer@example.com">
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex gap-4 pt-6">
+                <button type="submit"
+                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline">
+                    Update Archer
+                </button>
+                <a href="/archers/{{.archer.ID}}"
+                   class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Current Information Display -->
+    <div class="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Current Information</h3>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+                <span class="text-gray-600">Name:</span>
+                <span class="ml-2 font-medium">{{.archer.Name}}</span>
+            </div>
+            <div>
+                <span class="text-gray-600">Gender:</span>
+                <span class="ml-2 font-medium">{{.archer.Gender}}</span>
+            </div>
+            <div>
+                <span class="text-gray-600">Bow Class:</span>
+                <span class="ml-2 font-medium">{{.archer.BowClass}}</span>
+            </div>
+            <div>
+                <span class="text-gray-600">Email:</span>
+                <span class="ml-2 font-medium">{{.archer.Email}}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Section -->
+    <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-4">
+        <div class="flex">
+            <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                    <strong>Warning:</strong> Changing the bow class may affect tournament eligibility and handicap calculations. 
+                    Make sure this change is intentional and complies with tournament rules.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

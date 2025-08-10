@@ -1,0 +1,16 @@
+{{ define "layouts/base" }}
+<!DOCTYPE html>
+<html lang="en">
+
+{{ template "partials/header" . }}
+
+<body class="bg-gray-100">
+    {{ template "partials/navigation" .}}
+    <!-- Main Content -->
+    <main>
+        {{ template "content" . }}
+    </main>
+</body>
+
+</html>
+{{ end }}

@@ -1,0 +1,108 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">{{.bowClass.Name}}</h1>
+                <p class="text-gray-600 mt-2">Bow Class ID: <span class="font-mono font-semibold">{{.bowClass.ID}}</span></p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="/bowclasses/{{.bowClass.ID}}/edit" 
+                   class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Edit
+                </a>
+                <a href="/bowclasses" 
+                   class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Bow Class Details -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Bow Class Information</h2>
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Age Group</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{if contains .bowClass.Name "Cub"}}Cub{{else if contains .bowClass.Name "Junior"}}Junior{{else if contains .bowClass.Name "Young Adult"}}Young Adult{{else if contains .bowClass.Name "Veteran"}}Veteran{{else if contains .bowClass.Name "Senior"}}Senior{{else}}Adult{{end}}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Gender</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{if contains .bowClass.Name "Male"}}Male{{else}}Female{{end}}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Bow Type</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{if contains .bowClass.Name "Longbow"}}Longbow{{else if contains .bowClass.Name "Traditional Recurve"}}Traditional Recurve{{else if contains .bowClass.Name "Barebow Recurve"}}Barebow Recurve{{else if contains .bowClass.Name "Bowhunter Recurve"}}Bowhunter Recurve{{else if contains .bowClass.Name "Freestyle Limited Recurve"}}Freestyle Limited Recurve{{else if contains .bowClass.Name "Bowhunter Unlimited"}}Bowhunter Unlimited{{else if contains .bowClass.Name "Freestyle Unlimited"}}Freestyle Unlimited{{else if contains .bowClass.Name "Historical"}}Historical Bow{{else}}Other{{end}}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{.bowClass.Name}}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Archers Using This Bow Class -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Archers Using This Bow Class</h2>
+                    <div class="text-gray-600">
+                        <p>No archers currently registered with this bow class.</p>
+                        <a href="/archers/new?bow_class={{.bowClass.ID}}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                            Add archer with this bow class →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tournament Usage -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Tournament Usage</h2>
+                    <div class="text-gray-600">
+                        <p>This bow class has not been used in any tournaments yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <!-- Statistics -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Statistics</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Active Archers</span>
+                            <span class="font-semibold">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Tournaments Used</span>
+                            <span class="font-semibold">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Average Score</span>
+                            <span class="font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Handicap Information -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Handicap Factors</h3>
+                    <div class="text-gray-600">
+                        <p class="text-sm">No handicap sets configured yet.</p>
+                        <a href="/handicaps" class="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">
+                            Configure handicaps →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
