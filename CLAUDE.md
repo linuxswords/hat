@@ -9,7 +9,7 @@ HAT (Handicap Archery Tournament) is a web application for managing handicap arc
 ## Architecture
 
 ### Tech Stack
-- **Backend**: Go 1.21+ with Gin-Gonic web framework
+- **Backend**: Go 1.24.2+ with Gin-Gonic web framework
 - **Templates**: Go's standard `html/template` with custom layout system
 - **Frontend**: Tailwind CSS for styling and responsive design
 - **Data Storage**: Currently JSON files (database integration planned)
