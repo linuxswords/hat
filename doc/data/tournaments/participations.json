@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "tournament_id": 1,
+        "archer_id": 10,
+        "registered_at": "2025-08-13T17:41:55.49728575+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 2,
+        "tournament_id": 1,
+        "archer_id": 16,
+        "registered_at": "2025-08-13T17:41:55.497410129+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 3,
+        "tournament_id": 1,
+        "archer_id": 4,
+        "registered_at": "2025-08-13T17:41:55.497545611+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 4,
+        "tournament_id": 1,
+        "archer_id": 17,
+        "registered_at": "2025-08-13T17:41:55.498562182+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 5,
+        "tournament_id": 1,
+        "archer_id": 2,
+        "registered_at": "2025-08-13T17:41:55.499897232+02:00",
+        "status": "registered"
+    }
+]

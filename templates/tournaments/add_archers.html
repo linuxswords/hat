@@ -1,0 +1,257 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <nav class="text-sm breadcrumbs mb-2">
+            <a href="/tournaments" class="text-blue-600 hover:text-blue-900">Tournaments</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <a href="/tournaments/{{.tournament.ID}}" class="text-blue-600 hover:text-blue-900">{{.tournament.Name}}</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <a href="/tournaments/{{.tournament.ID}}/archers" class="text-blue-600 hover:text-blue-900">Archers</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <span class="text-gray-600">Add Archers</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+        <p class="text-gray-600 mt-2">Select archers to register for {{.tournament.Name}}</p>
+    </div>
+
+    <!-- Error Messages -->
+    {{if .error}}
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div class="text-red-800">Registration failed. Please try again.</div>
+    </div>
+    {{end}}
+
+    <!-- Available Archers Form -->
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="p-6">
+            {{if .availableArchers}}
+            <form method="POST" action="/tournaments/{{.tournament.ID}}/archers" id="add-archers-form">
+                <!-- Search and Filter -->
+                <div class="mb-6">
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <div class="flex-1 min-w-64">
+                            <input type="text" placeholder="Search available archers..." 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   id="search-available-archers">
+                        </div>
+                        <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                id="filter-gender">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                id="filter-bowclass">
+                            <option value="">All Bow Classes</option>
+                            {{range $bowClass, $name := .bowClassNames}}
+                            <option value="{{$bowClass}}">{{$bowClass}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    
+                    <!-- Bulk Selection -->
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button type="button" onclick="selectAll()" 
+                                    class="text-blue-600 hover:text-blue-900 text-sm font-medium">
+                                Select All Visible
+                            </button>
+                            <button type="button" onclick="deselectAll()" 
+                                    class="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                                Deselect All
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            <span id="selection-count">0</span> archer(s) selected
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Archers List -->
+                <div class="max-h-96 overflow-y-auto border rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <input type="checkbox" id="select-all-checkbox" onchange="toggleAll(this)">
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Archer
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Bow Class
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Email
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {{range .availableArchers}}
+                            <tr class="hover:bg-gray-50 archer-row" 
+                                data-name="{{.Name}}" 
+                                data-gender="{{.Gender}}"
+                                data-bowclass="{{.BowClass}}">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <input type="checkbox" name="archer_ids" value="{{.ID}}" 
+                                           class="archer-checkbox" onchange="updateSelectionCount()">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex flex-col">
+                                        <div class="text-sm font-medium text-gray-900">{{.Name}}</div>
+                                        <div class="text-sm text-gray-500">{{.Gender}} • ID: {{.ID}}</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex flex-col">
+                                        <div class="text-sm text-gray-900">{{.BowClass}}</div>
+                                        {{if index $.bowClassNames .BowClass}}
+                                        <div class="text-xs text-gray-500">{{index $.bowClassNames .BowClass}}</div>
+                                        {{end}}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{.Email}}
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
+                    <a href="/tournaments/{{.tournament.ID}}/archers" 
+                       class="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                            id="submit-button" disabled>
+                        Register Selected Archers
+                    </button>
+                </div>
+            </form>
+            {{else}}
+            <!-- No Available Archers -->
+            <div class="text-center py-12">
+                <div class="text-gray-400 text-6xl mb-4">👥</div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Available Archers</h3>
+                <p class="text-gray-500 mb-6">
+                    All existing archers are already registered for this tournament, or there are no archers in the system.
+                </p>
+                <div class="space-x-4">
+                    <a href="/archers/new" 
+                       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+                        Create New Archer
+                    </a>
+                    <a href="/tournaments/{{.tournament.ID}}/archers" 
+                       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition-colors">
+                        Back to Tournament
+                    </a>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+<script>
+// Client-side filtering and selection management
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-available-archers');
+    const genderFilter = document.getElementById('filter-gender');
+    const bowclassFilter = document.getElementById('filter-bowclass');
+    const archerRows = document.querySelectorAll('.archer-row');
+    const submitButton = document.getElementById('submit-button');
+
+    function filterArchers() {
+        const searchTerm = searchInput?.value.toLowerCase() || '';
+        const genderValue = genderFilter?.value || '';
+        const bowclassValue = bowclassFilter?.value || '';
+
+        archerRows.forEach(row => {
+            const name = row.dataset.name.toLowerCase();
+            const gender = row.dataset.gender;
+            const bowclass = row.dataset.bowclass;
+
+            const matchesSearch = name.includes(searchTerm);
+            const matchesGender = !genderValue || gender === genderValue;
+            const matchesBowClass = !bowclassValue || bowclass === bowclassValue;
+
+            row.style.display = matchesSearch && matchesGender && matchesBowClass ? '' : 'none';
+        });
+
+        // Update selection count after filtering
+        updateSelectionCount();
+    }
+
+    // Add event listeners if elements exist
+    if (searchInput) searchInput.addEventListener('input', filterArchers);
+    if (genderFilter) genderFilter.addEventListener('change', filterArchers);
+    if (bowclassFilter) bowclassFilter.addEventListener('change', filterArchers);
+
+    updateSelectionCount();
+});
+
+function updateSelectionCount() {
+    const checkboxes = document.querySelectorAll('.archer-checkbox');
+    const checkedBoxes = document.querySelectorAll('.archer-checkbox:checked');
+    const submitButton = document.getElementById('submit-button');
+    const selectionCount = document.getElementById('selection-count');
+    
+    if (selectionCount) {
+        selectionCount.textContent = checkedBoxes.length;
+    }
+    
+    if (submitButton) {
+        submitButton.disabled = checkedBoxes.length === 0;
+    }
+}
+
+function selectAll() {
+    const visibleRows = Array.from(document.querySelectorAll('.archer-row')).filter(row => 
+        row.style.display !== 'none'
+    );
+    
+    visibleRows.forEach(row => {
+        const checkbox = row.querySelector('.archer-checkbox');
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+    });
+    
+    updateSelectionCount();
+}
+
+function deselectAll() {
+    const checkboxes = document.querySelectorAll('.archer-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    const selectAllCheckbox = document.getElementById('select-all-checkbox');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+    }
+    
+    updateSelectionCount();
+}
+
+function toggleAll(masterCheckbox) {
+    const visibleRows = Array.from(document.querySelectorAll('.archer-row')).filter(row => 
+        row.style.display !== 'none'
+    );
+    
+    visibleRows.forEach(row => {
+        const checkbox = row.querySelector('.archer-checkbox');
+        if (checkbox) {
+            checkbox.checked = masterCheckbox.checked;
+        }
+    });
+    
+    updateSelectionCount();
+}
+</script>
+{{ end }}

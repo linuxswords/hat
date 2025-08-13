@@ -1,0 +1,242 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <nav class="text-sm breadcrumbs mb-2">
+                <a href="/tournaments" class="text-blue-600 hover:text-blue-900">Tournaments</a>
+                <span class="mx-2 text-gray-400">/</span>
+                <a href="/tournaments/{{.tournament.ID}}" class="text-blue-600 hover:text-blue-900">{{.tournament.Name}}</a>
+                <span class="mx-2 text-gray-400">/</span>
+                <span class="text-gray-600">Archers</span>
+            </nav>
+            <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+            <p class="text-gray-600 mt-2">Manage archer registrations for {{.tournament.Name}}</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="/tournaments/{{.tournament.ID}}/archers/add" 
+               class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded font-medium transition-colors">
+                Add Archers
+            </a>
+            <a href="/tournaments/{{.tournament.ID}}" 
+               class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded font-medium transition-colors">
+                Back to Tournament
+            </a>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    {{if .success}}
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <div class="text-green-800">Successfully added {{.success}} archer(s) to the tournament!</div>
+    </div>
+    {{end}}
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-blue-600">{{.totalArchers}}</div>
+            <div class="text-gray-600">Total Archers</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-green-600">
+                {{$checkedInCount := 0}}
+                {{range .tournamentArchers}}
+                    {{if eq .Participation.Status "checked_in"}}{{$checkedInCount = add $checkedInCount 1}}{{end}}
+                {{end}}
+                {{$checkedInCount}}
+            </div>
+            <div class="text-gray-600">Checked In</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-purple-600">{{len .bowClassStats}}</div>
+            <div class="text-gray-600">Bow Classes</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-orange-600">
+                {{$competingCount := 0}}
+                {{range .tournamentArchers}}
+                    {{if eq .Participation.Status "competing"}}{{$competingCount = add $competingCount 1}}{{end}}
+                {{end}}
+                {{$competingCount}}
+            </div>
+            <div class="text-gray-600">Competing</div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="flex flex-wrap gap-4">
+            <div class="flex-1 min-w-64">
+                <input type="text" placeholder="Search archers..." 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       id="search-archers">
+            </div>
+            <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    id="filter-status">
+                <option value="">All Status</option>
+                <option value="registered">Registered</option>
+                <option value="checked_in">Checked In</option>
+                <option value="competing">Competing</option>
+                <option value="completed">Completed</option>
+                <option value="withdrawn">Withdrawn</option>
+            </select>
+            <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    id="filter-bowclass">
+                <option value="">All Bow Classes</option>
+                {{range $bowClass, $count := .bowClassStats}}
+                <option value="{{$bowClass}}">{{$bowClass}} ({{$count}})</option>
+                {{end}}
+            </select>
+        </div>
+    </div>
+
+    <!-- Archers Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Archer
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Bow Class
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Registered
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {{range .tournamentArchers}}
+                <tr class="hover:bg-gray-50 archer-row" 
+                    data-name="{{.Archer.Name}}" 
+                    data-status="{{.Participation.Status}}"
+                    data-bowclass="{{.Archer.BowClass}}">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col">
+                            <div class="text-sm font-medium text-gray-900">{{.Archer.Name}}</div>
+                            <div class="text-sm text-gray-500">ID: {{.Archer.ID}}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col">
+                            <div class="text-sm text-gray-900">{{.Archer.BowClass}}</div>
+                            {{if .BowClassName}}
+                            <div class="text-xs text-gray-500">{{.BowClassName}}</div>
+                            {{end}}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{.Archer.Email}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <form method="POST" action="/tournaments/{{$.tournament.ID}}/archers/{{.Archer.ID}}/status" class="inline">
+                            <select name="status" onchange="this.form.submit()" 
+                                    class="text-xs px-2 py-1 rounded-full border-0 font-medium
+                                    {{if eq .Participation.Status "registered"}}bg-blue-100 text-blue-800
+                                    {{else if eq .Participation.Status "checked_in"}}bg-green-100 text-green-800
+                                    {{else if eq .Participation.Status "competing"}}bg-purple-100 text-purple-800
+                                    {{else if eq .Participation.Status "completed"}}bg-gray-100 text-gray-800
+                                    {{else if eq .Participation.Status "withdrawn"}}bg-red-100 text-red-800
+                                    {{end}}">
+                                <option value="registered" {{if eq .Participation.Status "registered"}}selected{{end}}>Registered</option>
+                                <option value="checked_in" {{if eq .Participation.Status "checked_in"}}selected{{end}}>Checked In</option>
+                                <option value="competing" {{if eq .Participation.Status "competing"}}selected{{end}}>Competing</option>
+                                <option value="completed" {{if eq .Participation.Status "completed"}}selected{{end}}>Completed</option>
+                                <option value="withdrawn" {{if eq .Participation.Status "withdrawn"}}selected{{end}}>Withdrawn</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{.Participation.RegisteredAt.Format "Jan 2, 2006 15:04"}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="/archers/{{.Archer.ID}}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                        <form method="POST" action="/tournaments/{{$.tournament.ID}}/archers/{{.Archer.ID}}/remove" class="inline"
+                              onsubmit="return confirm('Are you sure you want to remove {{.Archer.Name}} from this tournament?')">
+                            <button type="submit" class="text-red-600 hover:text-red-900">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        No archers registered for this tournament yet. 
+                        <a href="/tournaments/{{.tournament.ID}}/archers/add" class="text-blue-600 hover:text-blue-900">Add the first archer</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bow Class Breakdown -->
+    {{if .bowClassStats}}
+    <div class="mt-8 bg-white rounded-lg shadow-md">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Bow Class Distribution</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {{range $bowClass, $count := .bowClassStats}}
+                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <div class="text-lg font-bold text-blue-600">{{$count}}</div>
+                    <div class="text-sm font-medium text-gray-900">{{$bowClass}}</div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+
+<script>
+// Client-side filtering
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-archers');
+    const statusFilter = document.getElementById('filter-status');
+    const bowclassFilter = document.getElementById('filter-bowclass');
+    const archerRows = document.querySelectorAll('.archer-row');
+
+    function filterArchers() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const bowclassValue = bowclassFilter.value;
+
+        archerRows.forEach(row => {
+            const name = row.dataset.name.toLowerCase();
+            const status = row.dataset.status;
+            const bowclass = row.dataset.bowclass;
+
+            const matchesSearch = name.includes(searchTerm);
+            const matchesStatus = !statusValue || status === statusValue;
+            const matchesBowClass = !bowclassValue || bowclass === bowclassValue;
+
+            row.style.display = matchesSearch && matchesStatus && matchesBowClass ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterArchers);
+    statusFilter.addEventListener('change', filterArchers);
+    bowclassFilter.addEventListener('change', filterArchers);
+
+    // Handle success message from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    if (success) {
+        // Remove the parameter from URL without refreshing
+        const url = new URL(window.location);
+        url.searchParams.delete('success');
+        window.history.replaceState({}, document.title, url);
+    }
+});
+</script>
+{{ end }}

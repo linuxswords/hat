@@ -49,6 +49,13 @@ func main() {
 		tournaments.GET("/:id/edit", handlers.TournamentsEdit)
 		tournaments.POST("/:id", handlers.TournamentsUpdate)
 		tournaments.POST("/:id/delete", handlers.TournamentsDelete)
+		
+		// Tournament archers routes
+		tournaments.GET("/:id/archers", handlers.TournamentArchersIndex)
+		tournaments.GET("/:id/archers/add", handlers.TournamentArchersAdd)
+		tournaments.POST("/:id/archers", handlers.TournamentArchersCreate)
+		tournaments.POST("/:id/archers/:archer_id/remove", handlers.TournamentArchersRemove)
+		tournaments.POST("/:id/archers/:archer_id/status", handlers.TournamentArchersUpdateStatus)
 	}
 
 	// Handicaps routes
