@@ -12,6 +12,7 @@ func RenderWithLayout(c *gin.Context, contentTemplate string, data interface{}) 
 		"contains": strings.Contains,
 		"add":      func(a, b int) int { return a + b },
 		"div":      func(a, b float64) float64 { return a / b },
+		"deref":    func(ptr *int) int { if ptr != nil { return *ptr } else { return 0 } },
 	}
 	tmpl, err := template.New("base").Funcs(templateFuncs).ParseFiles(
 		"templates/layouts/base.html",

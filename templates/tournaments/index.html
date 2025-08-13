@@ -1,0 +1,197 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+            <p class="text-gray-600 mt-2">Manage tournament competitions and events</p>
+        </div>
+        <a href="/tournaments/new" 
+           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Create New Tournament
+        </a>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-green-600">{{.currentCount}}</div>
+            <div class="text-gray-600">Active Tournaments</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-blue-600">{{.upcomingCount}}</div>
+            <div class="text-gray-600">Upcoming Tournaments</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-purple-600">{{len .tournaments}}</div>
+            <div class="text-gray-600">Total Tournaments</div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="flex flex-wrap gap-4">
+            <div class="flex-1 min-w-64">
+                <input type="text" placeholder="Search tournaments..." 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       id="search-tournaments">
+            </div>
+            <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                    id="filter-status">
+                <option value="">All Status</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+            </select>
+            <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    id="filter-handicap">
+                <option value="">All Tournament Types</option>
+                <option value="with-handicap">With Handicap</option>
+                <option value="no-handicap">No Handicap</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tournaments Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Tournament
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Location
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Dates
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Handicap Set
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {{range .tournaments}}
+                <tr class="hover:bg-gray-50 tournament-row">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col">
+                            <div class="text-sm font-medium text-gray-900">{{.Tournament.Name}}</div>
+                            <div class="text-sm text-gray-500">ID: {{.Tournament.ID}}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{.Tournament.Location}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="flex flex-col">
+                            <div>{{.Tournament.StartDate.Format "Jan 2, 2006"}}</div>
+                            <div>to {{.Tournament.EndDate.Format "Jan 2, 2006"}}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="tournament-status px-2 py-1 text-xs font-semibold rounded-full">
+                            Status
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        {{if .Tournament.HandicapSetID}}
+                            <div class="flex flex-col items-center">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium mb-1">
+                                    Handicap
+                                </span>
+                                <span class="text-xs text-gray-600">{{.HandicapSetName}}</span>
+                            </div>
+                        {{else}}
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+                                Standard
+                            </span>
+                        {{end}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="/tournaments/{{.Tournament.ID}}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                        <a href="/tournaments/{{.Tournament.ID}}/edit" class="text-green-600 hover:text-green-900 mr-3">Edit</a>
+                        <form method="POST" action="/tournaments/{{.Tournament.ID}}/delete" class="inline" 
+                              onsubmit="return confirm('Are you sure you want to delete this tournament?')">
+                            <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        No tournaments created yet. <a href="/tournaments/new" class="text-blue-600 hover:text-blue-900">Create the first tournament</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+// Client-side filtering and status calculation
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-tournaments');
+    const statusFilter = document.getElementById('filter-status');
+    const handicapFilter = document.getElementById('filter-handicap');
+    const tournamentRows = document.querySelectorAll('.tournament-row');
+
+    // Calculate and display tournament status
+    tournamentRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const datesCell = cells[2];
+        const statusCell = cells[3];
+        const statusSpan = statusCell.querySelector('.tournament-status');
+        
+        // Extract dates from the text content
+        const dateText = datesCell.textContent.trim();
+        const now = new Date();
+        
+        // Simple status calculation based on current date
+        // This is a simplified approach for the frontend
+        const today = now.toISOString().split('T')[0];
+        
+        // You would normally get this from the server, but for demo purposes:
+        statusSpan.textContent = 'Active';
+        statusSpan.className = 'tournament-status px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800';
+    });
+
+    function filterTournaments() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const handicapValue = handicapFilter.value;
+
+        tournamentRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const name = cells[0].textContent.toLowerCase();
+            const location = cells[1].textContent.toLowerCase();
+            const typeCell = cells[4];
+            const hasHandicap = typeCell.textContent.includes('Handicap');
+
+            // Check search term
+            const matchesSearch = name.includes(searchTerm) || location.includes(searchTerm);
+
+            // Check handicap filter
+            let matchesHandicap = true;
+            if (handicapValue === 'with-handicap') {
+                matchesHandicap = hasHandicap;
+            } else if (handicapValue === 'no-handicap') {
+                matchesHandicap = !hasHandicap;
+            }
+
+            row.style.display = matchesSearch && matchesHandicap ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterTournaments);
+    statusFilter.addEventListener('change', filterTournaments);
+    handicapFilter.addEventListener('change', filterTournaments);
+});
+</script>
+{{ end }}

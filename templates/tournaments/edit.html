@@ -1,0 +1,159 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <nav class="text-sm breadcrumbs mb-2">
+            <a href="/tournaments" class="text-blue-600 hover:text-blue-900">Tournaments</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <a href="/tournaments/{{.tournament.ID}}" class="text-blue-600 hover:text-blue-900">{{.tournament.Name}}</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <span class="text-gray-600">Edit</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+        <p class="text-gray-600 mt-2">Update tournament information</p>
+    </div>
+
+    <!-- Tournament Form -->
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="p-6">
+            <form method="POST" action="/tournaments/{{.tournament.ID}}" class="space-y-6">
+                <!-- Basic Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            Tournament Name *
+                        </label>
+                        <input type="text" 
+                               id="name" 
+                               name="name" 
+                               required
+                               value="{{.tournament.Name}}"
+                               placeholder="e.g., Spring Championship 2024"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
+                            Location *
+                        </label>
+                        <input type="text" 
+                               id="location" 
+                               name="location" 
+                               required
+                               value="{{.tournament.Location}}"
+                               placeholder="e.g., Central Park Archery Range"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- Dates -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
+                            Start Date *
+                        </label>
+                        <input type="date" 
+                               id="start_date" 
+                               name="start_date" 
+                               required
+                               value="{{.tournament.StartDate.Format "2006-01-02"}}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
+                            End Date *
+                        </label>
+                        <input type="date" 
+                               id="end_date" 
+                               name="end_date" 
+                               required
+                               value="{{.tournament.EndDate.Format "2006-01-02"}}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- Handicap Set Selection -->
+                <div>
+                    <label for="handicap_set_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Handicap Set (Optional)
+                    </label>
+                    <select id="handicap_set_id" 
+                            name="handicap_set_id"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="" {{if not .tournament.HandicapSetID}}selected{{end}}>No Handicap (Standard Tournament)</option>
+                        {{range .handicapSets}}
+                        <option value="{{.ID}}" {{if and $.tournament.HandicapSetID (eq .ID (deref $.tournament.HandicapSetID))}}selected{{end}}>
+                            {{.Name}} - {{.Description}}
+                        </option>
+                        {{end}}
+                    </select>
+                    <p class="text-sm text-gray-500 mt-1">
+                        Select a handicap set to enable fair competition across different bow classes
+                    </p>
+                </div>
+
+                <!-- Warning Box -->
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div class="flex">
+                        <div class="text-yellow-600 mr-3">⚠️</div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-yellow-900">Important Notice</h3>
+                            <p class="text-yellow-800 text-sm mt-1">
+                                Changing the handicap set will affect score calculations for this tournament. 
+                                Make sure all participants are aware of any changes to scoring rules.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <a href="/tournaments/{{.tournament.ID}}" 
+                       class="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                        Update Tournament
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form validation and UX improvements
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+
+    // Update end date minimum when start date changes
+    startDateInput.addEventListener('change', function() {
+        endDateInput.setAttribute('min', this.value);
+        if (endDateInput.value && endDateInput.value < this.value) {
+            endDateInput.value = this.value;
+        }
+    });
+
+    // Set initial minimum for end date
+    endDateInput.setAttribute('min', startDateInput.value);
+
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        if (endDate < startDate) {
+            e.preventDefault();
+            alert('End date must be after or equal to start date');
+            return false;
+        }
+
+        return true;
+    });
+});
+</script>
+{{ end }}

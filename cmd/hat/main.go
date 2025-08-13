@@ -39,6 +39,18 @@ func main() {
 		archers.POST("/:id/delete", handlers.ArchersDelete)
 	}
 
+	// Tournaments routes
+	tournaments := r.Group("/tournaments")
+	{
+		tournaments.GET("/", handlers.TournamentsList)
+		tournaments.GET("/new", handlers.TournamentsNew)
+		tournaments.POST("/", handlers.TournamentsCreate)
+		tournaments.GET("/:id", handlers.TournamentsShow)
+		tournaments.GET("/:id/edit", handlers.TournamentsEdit)
+		tournaments.POST("/:id", handlers.TournamentsUpdate)
+		tournaments.POST("/:id/delete", handlers.TournamentsDelete)
+	}
+
 	// Handicaps routes
 	handicaps := r.Group("/handicaps")
 	{
