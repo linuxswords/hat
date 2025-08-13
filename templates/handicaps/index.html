@@ -1,0 +1,114 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+            <p class="text-gray-600 mt-2">Manage handicap sets for fair tournament scoring across bow classes</p>
+        </div>
+    </div>
+
+    <!-- Handicap Sets Overview -->
+    <div class="space-y-6">
+        {{range .handicapSets}}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Set Header -->
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">{{.Set.Name}}</h2>
+                        <p class="text-blue-100 mt-1">{{.Set.Description}}</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        {{if .Set.IsActive}}
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                            Active Set
+                        </span>
+                        {{end}}
+                        <a href="/handicaps/{{.Set.ID}}" 
+                           class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded font-medium transition-colors">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Handicap Preview -->
+            <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {{range .Handicaps}}
+                    <div class="bg-gray-50 rounded-lg p-3 text-center">
+                        <div class="text-sm font-medium text-gray-700">{{.BowClassID}}</div>
+                        <div class="text-lg font-bold text-blue-600">{{printf "%.3f" .Factor}}</div>
+                    </div>
+                    {{end}}
+                </div>
+                
+                {{if gt (len .Handicaps) 18}}
+                <div class="mt-4 text-center">
+                    <span class="text-gray-500 text-sm">
+                        Showing first 18 of {{len .Handicaps}} handicap entries
+                    </span>
+                </div>
+                {{end}}
+            </div>
+        </div>
+        {{else}}
+        <!-- No Handicap Sets -->
+        <div class="bg-white rounded-lg shadow-md p-12 text-center">
+            <div class="text-gray-400 text-6xl mb-4">📊</div>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">No Handicap Sets Available</h3>
+            <p class="text-gray-500 mb-6">
+                Handicap sets are used to normalize scores across different bow classes for fair tournament competition.
+            </p>
+            <div class="text-sm text-gray-500">
+                <p class="mb-2">A handicap set should contain:</p>
+                <ul class="list-disc list-inside space-y-1 max-w-md mx-auto">
+                    <li>Handicap factors for all bow classes</li>
+                    <li>Factors typically range from 0.6 to 2.3</li>
+                    <li>Base class (usually AMHB) has factor of 1.0</li>
+                </ul>
+            </div>
+        </div>
+        {{end}}
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-blue-600">{{len .handicapSets}}</div>
+            <div class="text-gray-600">Handicap Sets</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-green-600">
+                {{$totalHandicaps := 0}}
+                {{range .handicapSets}}
+                    {{$totalHandicaps = add $totalHandicaps (len .Handicaps)}}
+                {{end}}
+                {{$totalHandicaps}}
+            </div>
+            <div class="text-gray-600">Total Handicaps</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-purple-600">
+                {{$activeCount := 0}}
+                {{range .handicapSets}}
+                    {{if .Set.IsActive}}{{$activeCount = add $activeCount 1}}{{end}}
+                {{end}}
+                {{$activeCount}}
+            </div>
+            <div class="text-gray-600">Active Sets</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-2xl font-bold text-orange-600">
+                {{if gt (len .handicapSets) 0}}
+                    {{$firstSet := index .handicapSets 0}}
+                    {{len $firstSet.Handicaps}}
+                {{else}}
+                    0
+                {{end}}
+            </div>
+            <div class="text-gray-600">Bow Classes Covered</div>
+        </div>
+    </div>
+</div>
+{{ end }}

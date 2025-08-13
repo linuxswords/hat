@@ -39,6 +39,13 @@ func main() {
 		archers.POST("/:id/delete", handlers.ArchersDelete)
 	}
 
+	// Handicaps routes
+	handicaps := r.Group("/handicaps")
+	{
+		handicaps.GET("/", handlers.HandicapsList)
+		handicaps.GET("/:id", handlers.HandicapsShow)
+	}
+
 	// Start server on port 8080
 	r.Run(":8080")
 }
