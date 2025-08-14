@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "archer_id": 10,
+        "tournament_id": 1,
+        "bow_class_id": "AFFU",
+        "raw_score": 350,
+        "adjusted_score": 239.75000000000003,
+        "entered_at": "2025-08-14T23:20:01.921341022+02:00",
+        "entered_by": "tournament_organizer"
+    }
+]

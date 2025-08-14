@@ -262,10 +262,18 @@ func TournamentScoresUpdate(c *gin.Context) {
 		return
 	}
 
+	// Parse form data
+	err = c.Request.ParseForm()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse form data"})
+		return
+	}
+
 	// Process each archer's score from form data
 	form := c.Request.Form
 	var errors []string
 	var successCount int
+
 
 	for key, values := range form {
 		// Skip non-score fields
