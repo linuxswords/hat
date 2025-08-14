@@ -171,7 +171,7 @@ func (r *TournamentRepository) GetByHandicapSet(handicapSetID int) []models.Tour
 	var result []models.Tournament
 	
 	for _, tournament := range r.tournaments {
-		if tournament.HandicapSetID != nil && *tournament.HandicapSetID == handicapSetID {
+		if tournament.HandicapSetID == handicapSetID {
 			result = append(result, tournament)
 		}
 	}

@@ -47,8 +47,8 @@ func TournamentsList(c *gin.Context) {
 		}
 		
 		// Get handicap set name if available
-		if tournament.HandicapSetID != nil {
-			handicapSet, err := handicapRepo.GetSetByID(*tournament.HandicapSetID)
+		if tournament.HandicapSetID != 0 {
+			handicapSet, err := handicapRepo.GetSetByID(tournament.HandicapSetID)
 			if err == nil {
 				tournamentData.HandicapSetName = handicapSet.Name
 			}
@@ -110,14 +110,14 @@ func TournamentsCreate(c *gin.Context) {
 	}
 
 	// Parse handicap set ID (optional)
-	var handicapSetID *int
+	var handicapSetID int
 	if handicapSetIDStr != "" && handicapSetIDStr != "0" {
 		id, err := strconv.Atoi(handicapSetIDStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid handicap set ID"})
 			return
 		}
-		handicapSetID = &id
+		handicapSetID = id
 	}
 
 	// Create new tournament
@@ -158,8 +158,8 @@ func TournamentsShow(c *gin.Context) {
 
 	// Get handicap set info if available
 	var handicapSetName string
-	if tournament.HandicapSetID != nil {
-		handicapSet, err := handicapRepo.GetSetByID(*tournament.HandicapSetID)
+	if tournament.HandicapSetID != 0 {
+		handicapSet, err := handicapRepo.GetSetByID(tournament.HandicapSetID)
 		if err == nil {
 			handicapSetName = handicapSet.Name
 		}
@@ -257,14 +257,14 @@ func TournamentsUpdate(c *gin.Context) {
 	}
 
 	// Parse handicap set ID (optional)
-	var handicapSetID *int
+	var handicapSetID int
 	if handicapSetIDStr != "" && handicapSetIDStr != "0" {
 		hsID, err := strconv.Atoi(handicapSetIDStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid handicap set ID"})
 			return
 		}
-		handicapSetID = &hsID
+		handicapSetID = hsID
 	}
 
 	// Update tournament

@@ -81,9 +81,9 @@
                     <select id="handicap_set_id" 
                             name="handicap_set_id"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="" {{if not .tournament.HandicapSetID}}selected{{end}}>No Handicap (Standard Tournament)</option>
+                        <option value="" {{if eq .tournament.HandicapSetID 0}}selected{{end}}>No Handicap (Standard Tournament)</option>
                         {{range .handicapSets}}
-                        <option value="{{.ID}}" {{if and $.tournament.HandicapSetID (eq .ID (deref $.tournament.HandicapSetID))}}selected{{end}}>
+                        <option value="{{.ID}}" {{if eq .ID $.tournament.HandicapSetID}}selected{{end}}>
                             {{.Name}} - {{.Description}}
                         </option>
                         {{end}}

@@ -1,0 +1,293 @@
+{{ define "content" }}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <nav class="text-sm breadcrumbs mb-2">
+            <a href="/tournaments" class="text-blue-600 hover:text-blue-900">Tournaments</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <a href="/tournaments/{{.tournament.ID}}" class="text-blue-600 hover:text-blue-900">{{.tournament.Name}}</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <a href="/tournaments/{{.tournament.ID}}/scores" class="text-blue-600 hover:text-blue-900">Scores</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <span class="text-gray-600">Edit</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-800">{{.title}}</h1>
+        <p class="text-gray-600 mt-2">Enter and update scores for {{.tournament.Name}}</p>
+    </div>
+
+    <!-- Tournament Type Info -->
+    {{if .handicapSet}}
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div class="flex items-center">
+            <div class="text-blue-600 mr-3">🎯</div>
+            <div>
+                <span class="font-semibold text-blue-900">Handicap Tournament</span>
+                <span class="text-blue-800"> - Adjusted scores will be calculated automatically using {{.handicapSet.Name}}</span>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+        <div class="flex items-center">
+            <div class="text-gray-600 mr-3">🎯</div>
+            <div>
+                <span class="font-semibold text-gray-900">Standard Tournament</span>
+                <span class="text-gray-800"> - Raw scores only, no handicap adjustments applied</span>
+            </div>
+        </div>
+    </div>
+    {{end}}
+
+    <!-- Error Messages -->
+    {{if .error}}
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div class="text-red-800">Failed to save scores. Please check your entries and try again.</div>
+    </div>
+    {{end}}
+
+    <!-- Score Entry Form -->
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="p-6">
+            {{if .editableScores}}
+            <form method="POST" action="/tournaments/{{.tournament.ID}}/scores" id="scores-form">
+                <!-- Quick Actions -->
+                <div class="mb-6 flex flex-wrap gap-4 items-center">
+                    <div class="flex items-center space-x-4">
+                        <button type="button" onclick="clearAllScores()" 
+                                class="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                            Clear All
+                        </button>
+                        <button type="button" onclick="fillSampleScores()" 
+                                class="text-blue-600 hover:text-blue-900 text-sm font-medium">
+                            Fill Sample Data
+                        </button>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="text-sm text-gray-600">
+                        <span id="filled-count">0</span> of {{len .editableScores}} scores entered
+                    </div>
+                </div>
+
+                <!-- Scores Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    {{range .editableScores}}
+                    <div class="border rounded-lg p-4 hover:border-blue-300 transition-colors">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900">{{.Archer.Name}}</h3>
+                                <div class="text-sm text-gray-600">{{.Archer.BowClass}}</div>
+                                {{if .BowClassName}}
+                                <div class="text-xs text-gray-500">{{.BowClassName}}</div>
+                                {{end}}
+                            </div>
+                            {{if and $.handicapSet (ne .HandicapFactor 0.0)}}
+                            <div class="text-right">
+                                <div class="text-xs text-gray-500">Handicap</div>
+                                <div class="text-sm font-medium text-blue-600">{{printf "%.3f" .HandicapFactor}}</div>
+                            </div>
+                            {{end}}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="score_{{.Archer.ID}}" class="block text-sm font-medium text-gray-700 mb-1">
+                                Raw Score
+                            </label>
+                            <input type="number" 
+                                   id="score_{{.Archer.ID}}" 
+                                   name="score_{{.Archer.ID}}" 
+                                   value="{{if .Score.ID}}{{.Score.RawScore}}{{end}}"
+                                   min="0" 
+                                   max="999999"
+                                   placeholder="Enter score..."
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-lg font-bold"
+                                   onchange="updateScorePreview(this, {{if ne .HandicapFactor 0.0}}{{.HandicapFactor}}{{else}}1{{end}}, '{{.Archer.ID}}')">
+                        </div>
+
+                        {{if and $.handicapSet (ne .HandicapFactor 0.0)}}
+                        <div class="text-center p-2 bg-green-50 rounded border">
+                            <div class="text-xs text-green-700 mb-1">Adjusted Score</div>
+                            <div id="adjusted_{{.Archer.ID}}" class="text-lg font-bold text-green-600">
+                                {{if and .Score.ID .Score.AdjustedScore}}{{printf "%.1f" .Score.AdjustedScore}}{{else}}—{{end}}
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                    {{end}}
+                </div>
+
+                <!-- Bulk Score Entry -->
+                <div class="border-t pt-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Bulk Score Entry</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="bulk-scores" class="block text-sm font-medium text-gray-700 mb-2">
+                                Paste Scores (one per line, format: "Archer Name: Score")
+                            </label>
+                            <textarea id="bulk-scores" 
+                                      rows="6" 
+                                      placeholder="John Doe: 580&#10;Jane Smith: 612&#10;..."
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                            <div class="space-y-2">
+                                <button type="button" onclick="parseBulkScores()" 
+                                        class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition-colors">
+                                    Apply Bulk Scores
+                                </button>
+                                <button type="button" onclick="document.getElementById('bulk-scores').value = ''" 
+                                        class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
+                                    Clear Text
+                                </button>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Tip: You can copy scores from a spreadsheet and paste them here.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <a href="/tournaments/{{.tournament.ID}}/scores" 
+                       class="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                        Save All Scores
+                    </button>
+                </div>
+            </form>
+            {{else}}
+            <!-- No Participants -->
+            <div class="text-center py-12">
+                <div class="text-gray-400 text-6xl mb-4">🎯</div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Participants</h3>
+                <p class="text-gray-500 mb-6">
+                    This tournament has no registered participants yet. Add archers to the tournament before entering scores.
+                </p>
+                <a href="/tournaments/{{.tournament.ID}}/archers/add" 
+                   class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+                    Add Participants
+                </a>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+<script>
+// Score management functions
+document.addEventListener('DOMContentLoaded', function() {
+    updateFilledCount();
+});
+
+function updateScorePreview(input, handicapFactor, archerId) {
+    const rawScore = parseInt(input.value) || 0;
+    const adjustedElement = document.getElementById('adjusted_' + archerId);
+    
+    if (adjustedElement && handicapFactor !== 1) {
+        if (rawScore > 0) {
+            const adjustedScore = rawScore * handicapFactor;
+            adjustedElement.textContent = adjustedScore.toFixed(1);
+        } else {
+            adjustedElement.textContent = '—';
+        }
+    }
+    
+    updateFilledCount();
+}
+
+function updateFilledCount() {
+    const scoreInputs = document.querySelectorAll('input[name^="score_"]');
+    const filledInputs = Array.from(scoreInputs).filter(input => input.value && parseInt(input.value) > 0);
+    const filledCount = document.getElementById('filled-count');
+    if (filledCount) {
+        filledCount.textContent = filledInputs.length;
+    }
+}
+
+function clearAllScores() {
+    if (!confirm('Are you sure you want to clear all scores?')) {
+        return;
+    }
+    
+    const scoreInputs = document.querySelectorAll('input[name^="score_"]');
+    scoreInputs.forEach(input => {
+        input.value = '';
+        input.dispatchEvent(new Event('change'));
+    });
+}
+
+function fillSampleScores() {
+    if (!confirm('Fill all empty fields with sample scores? This will not overwrite existing scores.')) {
+        return;
+    }
+    
+    const scoreInputs = document.querySelectorAll('input[name^="score_"]');
+    scoreInputs.forEach(input => {
+        if (!input.value) {
+            // Generate random score between 400-650
+            const sampleScore = Math.floor(Math.random() * 251) + 400;
+            input.value = sampleScore;
+            input.dispatchEvent(new Event('change'));
+        }
+    });
+}
+
+function parseBulkScores() {
+    const bulkText = document.getElementById('bulk-scores').value.trim();
+    if (!bulkText) {
+        alert('Please enter some scores in the bulk text area.');
+        return;
+    }
+    
+    const lines = bulkText.split('\n');
+    let matchedCount = 0;
+    
+    lines.forEach(line => {
+        const match = line.match(/^(.+?):\s*(\d+)\s*$/);
+        if (match) {
+            const name = match[1].trim().toLowerCase();
+            const score = parseInt(match[2]);
+            
+            // Find matching archer input by name
+            const scoreInputs = document.querySelectorAll('input[name^="score_"]');
+            scoreInputs.forEach(input => {
+                const archerCard = input.closest('.border');
+                const archerName = archerCard.querySelector('h3').textContent.toLowerCase();
+                
+                if (archerName.includes(name) || name.includes(archerName)) {
+                    input.value = score;
+                    input.dispatchEvent(new Event('change'));
+                    matchedCount++;
+                }
+            });
+        }
+    });
+    
+    if (matchedCount > 0) {
+        alert(`Successfully matched and filled ${matchedCount} score(s).`);
+        document.getElementById('bulk-scores').value = '';
+    } else {
+        alert('No matching archers found. Please check the format and archer names.');
+    }
+}
+
+// Form validation
+document.getElementById('scores-form')?.addEventListener('submit', function(e) {
+    const scoreInputs = document.querySelectorAll('input[name^="score_"]');
+    const hasAnyScore = Array.from(scoreInputs).some(input => input.value && parseInt(input.value) > 0);
+    
+    if (!hasAnyScore) {
+        if (!confirm('No scores have been entered. Do you want to continue anyway?')) {
+            e.preventDefault();
+            return false;
+        }
+    }
+    
+    return true;
+});
+</script>
+{{ end }}

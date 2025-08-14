@@ -44,7 +44,7 @@
                         <div>
                             <label class="text-sm font-medium text-gray-600">Tournament Type</label>
                             <div class="text-lg font-semibold text-gray-900">
-                                {{if .tournament.HandicapSetID}}
+                                {{if ne .tournament.HandicapSetID 0}}
                                     <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                                         Handicap Tournament
                                     </span>
@@ -135,7 +135,7 @@
                             <span class="text-gray-600">Bow Classes</span>
                             <span class="font-semibold text-gray-900">0</span>
                         </div>
-                        {{if .tournament.HandicapSetID}}
+                        {{if ne .tournament.HandicapSetID 0}}
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Handicap Applied</span>
                             <span class="font-semibold text-green-600">Yes</span>

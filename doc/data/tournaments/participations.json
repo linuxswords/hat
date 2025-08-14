@@ -33,5 +33,110 @@
         "archer_id": 2,
         "registered_at": "2025-08-13T17:41:55.499897232+02:00",
         "status": "registered"
+    },
+    {
+        "id": 6,
+        "tournament_id": 1,
+        "archer_id": 9,
+        "registered_at": "2025-08-13T22:17:08.951785189+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 7,
+        "tournament_id": 1,
+        "archer_id": 5,
+        "registered_at": "2025-08-13T22:17:08.952532298+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 8,
+        "tournament_id": 1,
+        "archer_id": 11,
+        "registered_at": "2025-08-13T23:34:57.929340206+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 9,
+        "tournament_id": 1,
+        "archer_id": 8,
+        "registered_at": "2025-08-13T23:34:57.929957094+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 10,
+        "tournament_id": 1,
+        "archer_id": 14,
+        "registered_at": "2025-08-13T23:34:57.931691149+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 11,
+        "tournament_id": 1,
+        "archer_id": 1,
+        "registered_at": "2025-08-13T23:34:57.932295943+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 12,
+        "tournament_id": 1,
+        "archer_id": 19,
+        "registered_at": "2025-08-13T23:34:57.932758921+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 13,
+        "tournament_id": 1,
+        "archer_id": 6,
+        "registered_at": "2025-08-13T23:34:57.933187288+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 14,
+        "tournament_id": 1,
+        "archer_id": 12,
+        "registered_at": "2025-08-13T23:34:57.933397288+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 15,
+        "tournament_id": 1,
+        "archer_id": 3,
+        "registered_at": "2025-08-13T23:34:57.933657922+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 16,
+        "tournament_id": 1,
+        "archer_id": 20,
+        "registered_at": "2025-08-13T23:34:57.933793797+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 17,
+        "tournament_id": 1,
+        "archer_id": 18,
+        "registered_at": "2025-08-13T23:34:57.933967721+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 18,
+        "tournament_id": 1,
+        "archer_id": 7,
+        "registered_at": "2025-08-13T23:34:57.934179518+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 19,
+        "tournament_id": 1,
+        "archer_id": 15,
+        "registered_at": "2025-08-13T23:34:57.934378646+02:00",
+        "status": "registered"
+    },
+    {
+        "id": 20,
+        "tournament_id": 1,
+        "archer_id": 13,
+        "registered_at": "2025-08-13T23:34:57.934583089+02:00",
+        "status": "registered"
     }
 ]
