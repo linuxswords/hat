@@ -133,8 +133,8 @@
                             {{end}}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            {{if .Score.AdjustedScore}}
-                                <span class="text-xl font-bold text-green-600">{{printf "%.1f" .Score.AdjustedScore}}</span>
+                            {{if .HasAdjustedScore}}
+                                <span class="text-xl font-bold text-green-600">{{printf "%.1f" .DisplayAdjustedScore}}</span>
                             {{else}}
                                 <span class="text-gray-400">N/A</span>
                             {{end}}
@@ -159,7 +159,7 @@
                     <div class="font-bold text-gray-800">{{(index .rankings 1).Archer.Name}}</div>
                     <div class="text-sm text-gray-600">
                         {{if $.handicapSet}}
-                            {{if (index .rankings 1).Score.AdjustedScore}}{{printf "%.1f" (index .rankings 1).Score.AdjustedScore}}{{end}}
+                            {{if (index .rankings 1).HasAdjustedScore}}{{printf "%.1f" (index .rankings 1).DisplayAdjustedScore}}{{end}}
                         {{else}}
                             {{(index .rankings 1).Score.RawScore}}
                         {{end}}
@@ -174,7 +174,7 @@
                     <div class="font-bold text-gray-800 text-lg">{{(index .rankings 0).Archer.Name}}</div>
                     <div class="text-sm text-gray-600">
                         {{if $.handicapSet}}
-                            {{if (index .rankings 0).Score.AdjustedScore}}{{printf "%.1f" (index .rankings 0).Score.AdjustedScore}}{{end}}
+                            {{if (index .rankings 0).HasAdjustedScore}}{{printf "%.1f" (index .rankings 0).DisplayAdjustedScore}}{{end}}
                         {{else}}
                             {{(index .rankings 0).Score.RawScore}}
                         {{end}}
@@ -190,7 +190,7 @@
                     <div class="font-bold text-gray-800">{{(index .rankings 2).Archer.Name}}</div>
                     <div class="text-sm text-gray-600">
                         {{if $.handicapSet}}
-                            {{if (index .rankings 2).Score.AdjustedScore}}{{printf "%.1f" (index .rankings 2).Score.AdjustedScore}}{{end}}
+                            {{if (index .rankings 2).HasAdjustedScore}}{{printf "%.1f" (index .rankings 2).DisplayAdjustedScore}}{{end}}
                         {{else}}
                             {{(index .rankings 2).Score.RawScore}}
                         {{end}}
@@ -230,8 +230,8 @@
         </div>
         <div class="bg-white rounded-lg shadow-md p-6 text-center">
             <div class="text-2xl font-bold text-orange-600">
-                {{if and .handicapSet .rankings (index .rankings 0).Score.AdjustedScore}}
-                    {{printf "%.1f" (index .rankings 0).Score.AdjustedScore}}
+                {{if and .handicapSet .rankings (index .rankings 0).HasAdjustedScore}}
+                    {{printf "%.1f" (index .rankings 0).DisplayAdjustedScore}}
                 {{else}}
                     —
                 {{end}}
@@ -243,11 +243,7 @@
         <div class="bg-white rounded-lg shadow-md p-6 text-center">
             <div class="text-2xl font-bold text-purple-600">
                 {{if .rankings}}
-                    {{$sum := 0}}
-                    {{range .rankings}}
-                        {{$sum = add $sum .Score.RawScore}}
-                    {{end}}
-                    {{div $sum (len .rankings)}}
+                    {{printf "%.0f" .avgRawScore}}
                 {{else}}
                     0
                 {{end}}

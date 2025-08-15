@@ -109,6 +109,11 @@ func TournamentScoresIndex(c *gin.Context) {
 		// Add score if exists
 		if score, exists := scoreMap[archer.ID]; exists {
 			scoreView.Score = score
+			// Set display fields for adjusted score
+			if score.AdjustedScore != nil {
+				scoreView.DisplayAdjustedScore = *score.AdjustedScore
+				scoreView.HasAdjustedScore = true
+			}
 		}
 
 		tournamentScores = append(tournamentScores, scoreView)
@@ -228,6 +233,11 @@ func TournamentScoresEdit(c *gin.Context) {
 		// Add existing score if available
 		if score, exists := scoreMap[archer.ID]; exists {
 			scoreView.Score = score
+			// Set display fields for adjusted score
+			if score.AdjustedScore != nil {
+				scoreView.DisplayAdjustedScore = *score.AdjustedScore
+				scoreView.HasAdjustedScore = true
+			}
 		}
 
 		editableScores = append(editableScores, scoreView)
@@ -416,15 +426,32 @@ func TournamentScoresRankings(c *gin.Context) {
 			HandicapFactor: handicapFactor,
 			Rank:           rank + 1,
 		}
+		
+		// Set display fields for adjusted score
+		if score.AdjustedScore != nil {
+			ranking.DisplayAdjustedScore = *score.AdjustedScore
+			ranking.HasAdjustedScore = true
+		}
 
 		rankings = append(rankings, ranking)
 	}
 
+	// Calculate average raw score
+	var avgRawScore float64
+	if len(rankings) > 0 {
+		sum := 0
+		for _, ranking := range rankings {
+			sum += ranking.Score.RawScore
+		}
+		avgRawScore = float64(sum) / float64(len(rankings))
+	}
+
 	RenderWithLayout(c, "tournaments/rankings", gin.H{
-		"title":       "Tournament Rankings",
-		"tournament":  tournament,
-		"handicapSet": handicapSet,
-		"rankings":    rankings,
+		"title":        "Tournament Rankings",
+		"tournament":   tournament,
+		"handicapSet":  handicapSet,
+		"rankings":     rankings,
+		"avgRawScore":  avgRawScore,
 	})
 }
 

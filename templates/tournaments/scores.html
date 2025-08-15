@@ -170,8 +170,8 @@
                         {{end}}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                        {{if and .Score.ID .Score.AdjustedScore}}
-                            <span class="text-lg font-bold text-green-600">{{printf "%.1f" .Score.AdjustedScore}}</span>
+                        {{if .HasAdjustedScore}}
+                            <span class="text-lg font-bold text-green-600">{{printf "%.1f" .DisplayAdjustedScore}}</span>
                         {{else if .Score.ID}}
                             <span class="text-gray-400 italic">No handicap</span>
                         {{else}}

@@ -4,9 +4,79 @@
         "archer_id": 10,
         "tournament_id": 1,
         "bow_class_id": "AFFU",
-        "raw_score": 350,
-        "adjusted_score": 239.75000000000003,
+        "raw_score": 100,
+        "adjusted_score": 68.5,
         "entered_at": "2025-08-14T23:20:01.921341022+02:00",
+        "entered_by": "tournament_organizer"
+    },
+    {
+        "id": 2,
+        "archer_id": 4,
+        "tournament_id": 1,
+        "bow_class_id": "AMBHR",
+        "raw_score": 100,
+        "adjusted_score": 82.39999999999999,
+        "entered_at": "2025-08-14T23:26:09.93948393+02:00",
+        "entered_by": "tournament_organizer"
+    },
+    {
+        "id": 3,
+        "archer_id": 11,
+        "tournament_id": 1,
+        "bow_class_id": "VMTR",
+        "raw_score": 100,
+        "adjusted_score": 88.6,
+        "entered_at": "2025-08-14T23:26:09.939925186+02:00",
+        "entered_by": "tournament_organizer"
+    },
+    {
+        "id": 4,
+        "archer_id": 8,
+        "tournament_id": 1,
+        "bow_class_id": "AFTR",
+        "raw_score": 100,
+        "adjusted_score": 110.4,
+        "entered_at": "2025-08-14T23:26:09.942869691+02:00",
+        "entered_by": "tournament_organizer"
+    },
+    {
+        "id": 5,
+        "archer_id": 9,
+        "tournament_id": 1,
+        "bow_class_id": "AMTR",
+        "raw_score": 100,
+        "adjusted_score": 82.69999999999999,
+        "entered_at": "2025-08-14T23:26:09.943108415+02:00",
+        "entered_by": "tournament_organizer"
+    },
+    {
+        "id": 6,
+        "archer_id": 16,
+        "tournament_id": 1,
+        "bow_class_id": "AFLB",
+        "raw_score": 100,
+        "adjusted_score": 131.8,
+        "entered_at": "2025-08-14T23:26:09.943364048+02:00",
+        "entered_by": "tournament_organizer"
+    },
+    {
+        "id": 7,
+        "archer_id": 14,
+        "tournament_id": 1,
+        "bow_class_id": "YAMTR",
+        "raw_score": 100,
+        "adjusted_score": 111.20000000000002,
+        "entered_at": "2025-08-14T23:26:09.943573016+02:00",
+        "entered_by": "tournament_organizer"
+    },
+    {
+        "id": 8,
+        "archer_id": 5,
+        "tournament_id": 1,
+        "bow_class_id": "AMTR",
+        "raw_score": 100,
+        "adjusted_score": 82.69999999999999,
+        "entered_at": "2025-08-14T23:26:09.944054078+02:00",
         "entered_by": "tournament_organizer"
     }
 ]

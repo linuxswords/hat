@@ -16,9 +16,11 @@ type Score struct {
 
 // TournamentScoreView represents a score with archer and bow class information for display
 type TournamentScoreView struct {
-	Score          Score    `json:"score"`
-	Archer         Archer   `json:"archer"`
-	BowClassName   string   `json:"bow_class_name,omitempty"`
-	HandicapFactor float64 `json:"handicap_factor,omitempty"`
-	Rank           int      `json:"rank,omitempty"`
+	Score                Score    `json:"score"`
+	Archer               Archer   `json:"archer"`
+	BowClassName         string   `json:"bow_class_name,omitempty"`
+	HandicapFactor       float64  `json:"handicap_factor,omitempty"`
+	Rank                 int      `json:"rank,omitempty"`
+	DisplayAdjustedScore float64  `json:"display_adjusted_score,omitempty"` // Dereferenced adjusted score for templates
+	HasAdjustedScore     bool     `json:"has_adjusted_score"`               // Whether adjusted score exists
 }
