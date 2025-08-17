@@ -69,6 +69,12 @@ func TestArchersNew(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
+
+	// Note: Testing the error case where loadBowClassesForArchers() fails
+	// would require mocking the file system or testing in an environment
+	// where the bow classes file doesn't exist. Since the function loads
+	// from a static file, we'd need to refactor it to be injectable
+	// to properly test the error case.
 }
 
 // Test ArchersCreate handler
