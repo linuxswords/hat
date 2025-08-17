@@ -2,12 +2,23 @@ package handlers
 
 import (
 	"fmt"
+	"path/filepath"
+	"runtime"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"strings"
 )
 
+// getProjectRoot returns the project root directory
+func getProjectRoot() string {
+	_, filename, _, _ := runtime.Caller(0)
+	// Navigate up from internal/handlers/ to project root
+	return filepath.Join(filepath.Dir(filename), "..", "..")
+}
+
 func RenderWithLayout(c *gin.Context, contentTemplate string, data interface{}) {
+	projectRoot := getProjectRoot()
+	
 	templateFuncs := map[string]any{
 		"contains": strings.Contains,
 		"add":      func(a, b int) int { return a + b },
@@ -16,10 +27,10 @@ func RenderWithLayout(c *gin.Context, contentTemplate string, data interface{}) 
 		"div":      func(a, b float64) float64 { return a / b },
 	}
 	tmpl, err := template.New("base").Funcs(templateFuncs).ParseFiles(
-		"templates/layouts/base.html",
-		"templates/partials/header.html",
-		"templates/partials/navigation.html",
-		fmt.Sprintf("templates/%s.html", contentTemplate),
+		filepath.Join(projectRoot, "templates/layouts/base.html"),
+		filepath.Join(projectRoot, "templates/partials/header.html"),
+		filepath.Join(projectRoot, "templates/partials/navigation.html"),
+		filepath.Join(projectRoot, fmt.Sprintf("templates/%s.html", contentTemplate)),
 	)
 	if err != nil {
 		fmt.Printf("Template parsing error: %v\n", err)

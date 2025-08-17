@@ -7,35 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
-	"github.com/linuxswords/hat/internal/repositories"
 )
 
-// ScoreRepository defines the contract for score operations
-type ScoreRepository interface {
-	GetAll() []models.Score
-	GetByTournamentID(tournamentID int) []models.Score
-	GetByTournamentIDSorted(tournamentID int) []models.Score
-	GetByArcherID(archerID int) []models.Score
-	GetByTournamentAndArcher(tournamentID int, archerID int) (*models.Score, error)
-	Create(score models.Score) (*models.Score, error)
-	Update(id int, score models.Score) (*models.Score, error)
-	UpdateByTournamentAndArcher(tournamentID int, archerID int, score models.Score) (*models.Score, error)
-	Delete(id int) error
-	DeleteByTournamentAndArcher(tournamentID int, archerID int) error
-	GetScoreCountByTournament(tournamentID int) int
-	CalculateAdjustedScore(rawScore int, handicapFactor float64) float64
-}
-
-var scoreRepo ScoreRepository = repositories.NewScoreRepository()
-
-// Repository instances (these may be duplicated across files, but Go will handle this)
-var tournamentScoresRepo TournamentRepository = repositories.NewTournamentRepository()
-var handicapScoresRepo HandicapRepository = repositories.NewHandicapRepository()
-var archerScoresRepo ArcherRepository = repositories.NewArcherRepository()
-var participationScoresRepo TournamentParticipationRepository = repositories.NewTournamentParticipationRepository()
-
 // TournamentScoresIndex handles GET /tournaments/:id/scores
-func TournamentScoresIndex(c *gin.Context) {
+func (h *TournamentScoreHandlers) TournamentScoresIndex(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	tournamentID, err := strconv.Atoi(tournamentIDParam)
 	if err != nil {
@@ -44,21 +19,21 @@ func TournamentScoresIndex(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := tournamentScoresRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(tournamentID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get tournament participants
-	participations := participationScoresRepo.GetByTournamentID(tournamentID)
+	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
 	participantMap := make(map[int]models.TournamentParticipation)
 	for _, p := range participations {
 		participantMap[p.ArcherID] = p
 	}
 
 	// Get scores for this tournament
-	scores := scoreRepo.GetByTournamentID(tournamentID)
+	scores := h.ScoreRepo.GetByTournamentID(tournamentID)
 	scoreMap := make(map[int]models.Score)
 	for _, s := range scores {
 		scoreMap[s.ArcherID] = s
@@ -67,13 +42,13 @@ func TournamentScoresIndex(c *gin.Context) {
 	// Get handicap set information
 	var handicapSet *models.HandicapSet
 	if tournament.HandicapSetID != 0 {
-		handicapSet, _ = handicapScoresRepo.GetSetByID(tournament.HandicapSetID)
+		handicapSet, _ = h.HandicapRepo.GetSetByID(tournament.HandicapSetID)
 	}
 
 	// Create tournament score views for all participants
 	var tournamentScores []models.TournamentScoreView
 	for _, participation := range participations {
-		archer, err := archerScoresRepo.GetByID(participation.ArcherID)
+		archer, err := h.ArcherRepo.GetByID(participation.ArcherID)
 		if err != nil {
 			continue
 		}
@@ -93,7 +68,7 @@ func TournamentScoresIndex(c *gin.Context) {
 		// Get handicap factor if handicap set is used
 		var handicapFactor float64
 		if handicapSet != nil {
-			handicap, err := handicapScoresRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
+			handicap, err := h.HandicapRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
 			if err == nil {
 				handicapFactor = handicap.Factor
 			}
@@ -164,7 +139,7 @@ func TournamentScoresIndex(c *gin.Context) {
 }
 
 // TournamentScoresEdit handles GET /tournaments/:id/scores/edit
-func TournamentScoresEdit(c *gin.Context) {
+func (h *TournamentScoreHandlers) TournamentScoresEdit(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	tournamentID, err := strconv.Atoi(tournamentIDParam)
 	if err != nil {
@@ -173,17 +148,17 @@ func TournamentScoresEdit(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := tournamentScoresRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(tournamentID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get tournament participants
-	participations := participationScoresRepo.GetByTournamentID(tournamentID)
+	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
 
 	// Get scores for this tournament
-	scores := scoreRepo.GetByTournamentID(tournamentID)
+	scores := h.ScoreRepo.GetByTournamentID(tournamentID)
 	scoreMap := make(map[int]models.Score)
 	for _, s := range scores {
 		scoreMap[s.ArcherID] = s
@@ -192,13 +167,13 @@ func TournamentScoresEdit(c *gin.Context) {
 	// Get handicap set information
 	var handicapSet *models.HandicapSet
 	if tournament.HandicapSetID != 0 {
-		handicapSet, _ = handicapScoresRepo.GetSetByID(tournament.HandicapSetID)
+		handicapSet, _ = h.HandicapRepo.GetSetByID(tournament.HandicapSetID)
 	}
 
 	// Create editable score entries
 	var editableScores []models.TournamentScoreView
 	for _, participation := range participations {
-		archer, err := archerScoresRepo.GetByID(participation.ArcherID)
+		archer, err := h.ArcherRepo.GetByID(participation.ArcherID)
 		if err != nil {
 			continue
 		}
@@ -218,7 +193,7 @@ func TournamentScoresEdit(c *gin.Context) {
 		// Get handicap factor if handicap set is used
 		var handicapFactor float64
 		if handicapSet != nil {
-			handicap, err := handicapScoresRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
+			handicap, err := h.HandicapRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
 			if err == nil {
 				handicapFactor = handicap.Factor
 			}
@@ -257,7 +232,7 @@ func TournamentScoresEdit(c *gin.Context) {
 }
 
 // TournamentScoresUpdate handles POST /tournaments/:id/scores
-func TournamentScoresUpdate(c *gin.Context) {
+func (h *TournamentScoreHandlers) TournamentScoresUpdate(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	tournamentID, err := strconv.Atoi(tournamentIDParam)
 	if err != nil {
@@ -266,7 +241,7 @@ func TournamentScoresUpdate(c *gin.Context) {
 	}
 
 	// Get tournament details for handicap calculations
-	tournament, err := tournamentScoresRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(tournamentID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -310,7 +285,7 @@ func TournamentScoresUpdate(c *gin.Context) {
 		}
 
 		// Get archer for bow class
-		archer, err := archerScoresRepo.GetByID(archerID)
+		archer, err := h.ArcherRepo.GetByID(archerID)
 		if err != nil {
 			errors = append(errors, "Archer not found: "+archerIDStr)
 			continue
@@ -327,18 +302,18 @@ func TournamentScoresUpdate(c *gin.Context) {
 
 		// Calculate adjusted score if handicap set is used
 		if tournament.HandicapSetID != 0 {
-			handicap, err := handicapScoresRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
+			handicap, err := h.HandicapRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
 			if err == nil {
-				adjustedScore := scoreRepo.CalculateAdjustedScore(rawScore, handicap.Factor)
+				adjustedScore := h.ScoreRepo.CalculateAdjustedScore(rawScore, handicap.Factor)
 				score.AdjustedScore = &adjustedScore
 			}
 		}
 
 		// Try to update existing score first
-		_, err = scoreRepo.GetByTournamentAndArcher(tournamentID, archerID)
+		_, err = h.ScoreRepo.GetByTournamentAndArcher(tournamentID, archerID)
 		if err == nil {
 			// Update existing score
-			_, err = scoreRepo.UpdateByTournamentAndArcher(tournamentID, archerID, score)
+			_, err = h.ScoreRepo.UpdateByTournamentAndArcher(tournamentID, archerID, score)
 			if err != nil {
 				errors = append(errors, "Failed to update score for archer ID "+archerIDStr+": "+err.Error())
 			} else {
@@ -346,7 +321,7 @@ func TournamentScoresUpdate(c *gin.Context) {
 			}
 		} else {
 			// Create new score
-			_, err = scoreRepo.Create(score)
+			_, err = h.ScoreRepo.Create(score)
 			if err != nil {
 				errors = append(errors, "Failed to create score for archer ID "+archerIDStr+": "+err.Error())
 			} else {
@@ -366,7 +341,7 @@ func TournamentScoresUpdate(c *gin.Context) {
 }
 
 // TournamentScoresRankings handles GET /tournaments/:id/rankings
-func TournamentScoresRankings(c *gin.Context) {
+func (h *TournamentScoreHandlers) TournamentScoresRankings(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	tournamentID, err := strconv.Atoi(tournamentIDParam)
 	if err != nil {
@@ -375,25 +350,25 @@ func TournamentScoresRankings(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := tournamentScoresRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(tournamentID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get sorted scores for ranking
-	scores := scoreRepo.GetByTournamentIDSorted(tournamentID)
+	scores := h.ScoreRepo.GetByTournamentIDSorted(tournamentID)
 
 	// Get handicap set information
 	var handicapSet *models.HandicapSet
 	if tournament.HandicapSetID != 0 {
-		handicapSet, _ = handicapScoresRepo.GetSetByID(tournament.HandicapSetID)
+		handicapSet, _ = h.HandicapRepo.GetSetByID(tournament.HandicapSetID)
 	}
 
 	// Create ranking list
 	var rankings []models.TournamentScoreView
 	for rank, score := range scores {
-		archer, err := archerScoresRepo.GetByID(score.ArcherID)
+		archer, err := h.ArcherRepo.GetByID(score.ArcherID)
 		if err != nil {
 			continue
 		}
@@ -413,7 +388,7 @@ func TournamentScoresRankings(c *gin.Context) {
 		// Get handicap factor
 		var handicapFactor float64
 		if handicapSet != nil {
-			handicap, err := handicapScoresRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
+			handicap, err := h.HandicapRepo.GetHandicapByBowClass(tournament.HandicapSetID, archer.BowClass)
 			if err == nil {
 				handicapFactor = handicap.Factor
 			}

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +17,11 @@ type BowClass struct {
 
 // loadBowClassesFromJSON loads bow classes from the JSON file
 func loadBowClassesFromJSON() ([]BowClass, error) {
-	data, err := os.ReadFile("doc/data/bowclasses/bowclasses.json")
+	_, filename, _, _ := runtime.Caller(0)
+	projectRoot := filepath.Join(filepath.Dir(filename), "..", "..")
+	dataPath := filepath.Join(projectRoot, "doc/data/bowclasses/bowclasses.json")
+	
+	data, err := os.ReadFile(dataPath)
 	if err != nil {
 		return nil, err
 	}

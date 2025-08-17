@@ -1,4 +1,4 @@
-.PHONY: build clean run dev css
+.PHONY: build clean run dev css test test-verbose test-coverage test-coverage-html test-ci test-handlers
 
 # Build the application
 build: css
@@ -26,3 +26,30 @@ dev:
 deps:
 	go mod tidy
 	npm install
+
+# Run tests
+test:
+	go test ./...
+
+# Run tests with verbose output  
+test-verbose:
+	go test -v ./...
+
+# Run tests with coverage
+test-coverage:
+	go test -cover ./...
+
+# Run tests with coverage report
+test-coverage-html:
+	go test -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+	@echo "Coverage report generated: coverage.html"
+
+# Run tests for CI
+test-ci:
+	@echo "Running full test suite for CI"
+	go test ./...
+
+# Run only handler tests
+test-handlers:
+	go test ./internal/handlers/...

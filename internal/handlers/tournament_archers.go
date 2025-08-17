@@ -7,27 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
-	"github.com/linuxswords/hat/internal/repositories"
 )
 
-// TournamentParticipationRepository defines the contract for tournament participation operations
-type TournamentParticipationRepository interface {
-	GetAll() []models.TournamentParticipation
-	GetByTournamentID(tournamentID int) []models.TournamentParticipation
-	GetByArcherID(archerID int) []models.TournamentParticipation
-	GetByTournamentAndArcher(tournamentID int, archerID int) (*models.TournamentParticipation, error)
-	Create(participation models.TournamentParticipation) (*models.TournamentParticipation, error)
-	Update(id int, participation models.TournamentParticipation) (*models.TournamentParticipation, error)
-	Delete(id int) error
-	DeleteByTournamentAndArcher(tournamentID int, archerID int) error
-	GetArcherCountByTournament(tournamentID int) int
-	GetTournamentCountByArcher(archerID int) int
-}
-
-var participationRepo TournamentParticipationRepository = repositories.NewTournamentParticipationRepository()
-
 // TournamentArchersIndex handles GET /tournaments/:id/archers
-func TournamentArchersIndex(c *gin.Context) {
+func (h *TournamentArcherHandlers) TournamentArchersIndex(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	tournamentID, err := strconv.Atoi(tournamentIDParam)
 	if err != nil {
@@ -36,19 +19,19 @@ func TournamentArchersIndex(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := tournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(tournamentID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get participations for this tournament
-	participations := participationRepo.GetByTournamentID(tournamentID)
+	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
 
 	// Get archer details and bow class names
 	var tournamentArchers []models.TournamentArcherView
 	for _, participation := range participations {
-		archer, err := archerRepo.GetByID(participation.ArcherID)
+		archer, err := h.ArcherRepo.GetByID(participation.ArcherID)
 		if err != nil {
 			continue // Skip if archer not found
 		}
@@ -94,7 +77,7 @@ func TournamentArchersIndex(c *gin.Context) {
 }
 
 // TournamentArchersAdd handles GET /tournaments/:id/archers/add
-func TournamentArchersAdd(c *gin.Context) {
+func (h *TournamentArcherHandlers) TournamentArchersAdd(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	tournamentID, err := strconv.Atoi(tournamentIDParam)
 	if err != nil {
@@ -103,17 +86,17 @@ func TournamentArchersAdd(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := tournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(tournamentID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get all archers
-	allArchers := archerRepo.GetAll()
+	allArchers := h.ArcherRepo.GetAll()
 
 	// Get already registered archer IDs
-	participations := participationRepo.GetByTournamentID(tournamentID)
+	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
 	registeredArcherIDs := make(map[int]bool)
 	for _, participation := range participations {
 		registeredArcherIDs[participation.ArcherID] = true
@@ -148,7 +131,7 @@ func TournamentArchersAdd(c *gin.Context) {
 }
 
 // TournamentArchersCreate handles POST /tournaments/:id/archers
-func TournamentArchersCreate(c *gin.Context) {
+func (h *TournamentArcherHandlers) TournamentArchersCreate(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	tournamentID, err := strconv.Atoi(tournamentIDParam)
 	if err != nil {
@@ -181,7 +164,7 @@ func TournamentArchersCreate(c *gin.Context) {
 			Status:       "registered",
 		}
 
-		_, err = participationRepo.Create(participation)
+		_, err = h.ParticipationRepo.Create(participation)
 		if err != nil {
 			errors = append(errors, "Failed to register archer ID "+archerIDStr+": "+err.Error())
 		} else {
@@ -198,7 +181,7 @@ func TournamentArchersCreate(c *gin.Context) {
 }
 
 // TournamentArchersRemove handles POST /tournaments/:id/archers/:archer_id/remove
-func TournamentArchersRemove(c *gin.Context) {
+func (h *TournamentArcherHandlers) TournamentArchersRemove(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	archerIDParam := c.Param("archer_id")
 
@@ -215,7 +198,7 @@ func TournamentArchersRemove(c *gin.Context) {
 	}
 
 	// Remove participation
-	err = participationRepo.DeleteByTournamentAndArcher(tournamentID, archerID)
+	err = h.ParticipationRepo.DeleteByTournamentAndArcher(tournamentID, archerID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Participation not found"})
 		return
@@ -226,7 +209,7 @@ func TournamentArchersRemove(c *gin.Context) {
 }
 
 // TournamentArchersUpdateStatus handles POST /tournaments/:id/archers/:archer_id/status
-func TournamentArchersUpdateStatus(c *gin.Context) {
+func (h *TournamentArcherHandlers) TournamentArchersUpdateStatus(c *gin.Context) {
 	tournamentIDParam := c.Param("id")
 	archerIDParam := c.Param("archer_id")
 
@@ -257,7 +240,7 @@ func TournamentArchersUpdateStatus(c *gin.Context) {
 	}
 
 	// Get existing participation
-	participation, err := participationRepo.GetByTournamentAndArcher(tournamentID, archerID)
+	participation, err := h.ParticipationRepo.GetByTournamentAndArcher(tournamentID, archerID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Participation not found"})
 		return
@@ -265,7 +248,7 @@ func TournamentArchersUpdateStatus(c *gin.Context) {
 
 	// Update status
 	participation.Status = newStatus
-	_, err = participationRepo.Update(participation.ID, *participation)
+	_, err = h.ParticipationRepo.Update(participation.ID, *participation)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update status"})
 		return

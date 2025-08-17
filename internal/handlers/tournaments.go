@@ -7,22 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
-	"github.com/linuxswords/hat/internal/repositories"
 )
-
-// TournamentRepository defines the contract for tournament data operations
-type TournamentRepository interface {
-	GetAll() []models.Tournament
-	GetByID(id int) (*models.Tournament, error)
-	Create(tournament models.Tournament) (*models.Tournament, error)
-	Update(id int, tournament models.Tournament) (*models.Tournament, error)
-	Delete(id int) error
-	GetUpcoming() []models.Tournament
-	GetCurrent() []models.Tournament
-	GetByHandicapSet(handicapSetID int) []models.Tournament
-}
-
-var tournamentRepo TournamentRepository = repositories.NewTournamentRepository()
 
 // TournamentWithHandicap represents a tournament with its handicap set information
 type TournamentWithHandicap struct {
@@ -31,12 +16,12 @@ type TournamentWithHandicap struct {
 }
 
 // TournamentsList handles GET /tournaments
-func TournamentsList(c *gin.Context) {
-	tournaments := tournamentRepo.GetAll()
+func (h *TournamentHandlers) TournamentsList(c *gin.Context) {
+	tournaments := h.TournamentRepo.GetAll()
 	
 	// Get current and upcoming tournaments for stats
-	current := tournamentRepo.GetCurrent()
-	upcoming := tournamentRepo.GetUpcoming()
+	current := h.TournamentRepo.GetCurrent()
+	upcoming := h.TournamentRepo.GetUpcoming()
 
 	// Create tournaments with handicap set names
 	var tournamentsWithHandicap []TournamentWithHandicap
@@ -48,7 +33,7 @@ func TournamentsList(c *gin.Context) {
 		
 		// Get handicap set name if available
 		if tournament.HandicapSetID != 0 {
-			handicapSet, err := handicapRepo.GetSetByID(tournament.HandicapSetID)
+			handicapSet, err := h.HandicapRepo.GetSetByID(tournament.HandicapSetID)
 			if err == nil {
 				tournamentData.HandicapSetName = handicapSet.Name
 			}
@@ -66,9 +51,9 @@ func TournamentsList(c *gin.Context) {
 }
 
 // TournamentsNew handles GET /tournaments/new
-func TournamentsNew(c *gin.Context) {
+func (h *TournamentHandlers) TournamentsNew(c *gin.Context) {
 	// Get handicap sets for selection
-	handicapSets := handicapRepo.GetAllSets()
+	handicapSets := h.HandicapRepo.GetAllSets()
 
 	RenderWithLayout(c, "tournaments/new", gin.H{
 		"title":        "Create New Tournament",
@@ -77,7 +62,7 @@ func TournamentsNew(c *gin.Context) {
 }
 
 // TournamentsCreate handles POST /tournaments
-func TournamentsCreate(c *gin.Context) {
+func (h *TournamentHandlers) TournamentsCreate(c *gin.Context) {
 	name := c.PostForm("name")
 	location := c.PostForm("location")
 	startDateStr := c.PostForm("start_date")
@@ -130,7 +115,7 @@ func TournamentsCreate(c *gin.Context) {
 	}
 
 	// Add to repository
-	_, err = tournamentRepo.Create(tournament)
+	_, err = h.TournamentRepo.Create(tournament)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tournament"})
 		return
@@ -141,7 +126,7 @@ func TournamentsCreate(c *gin.Context) {
 }
 
 // TournamentsShow handles GET /tournaments/:id
-func TournamentsShow(c *gin.Context) {
+func (h *TournamentHandlers) TournamentsShow(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -150,7 +135,7 @@ func TournamentsShow(c *gin.Context) {
 	}
 
 	// Find tournament by ID
-	tournament, err := tournamentRepo.GetByID(id)
+	tournament, err := h.TournamentRepo.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -159,7 +144,7 @@ func TournamentsShow(c *gin.Context) {
 	// Get handicap set info if available
 	var handicapSetName string
 	if tournament.HandicapSetID != 0 {
-		handicapSet, err := handicapRepo.GetSetByID(tournament.HandicapSetID)
+		handicapSet, err := h.HandicapRepo.GetSetByID(tournament.HandicapSetID)
 		if err == nil {
 			handicapSetName = handicapSet.Name
 		}
@@ -191,7 +176,7 @@ func TournamentsShow(c *gin.Context) {
 }
 
 // TournamentsEdit handles GET /tournaments/:id/edit
-func TournamentsEdit(c *gin.Context) {
+func (h *TournamentHandlers) TournamentsEdit(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -200,14 +185,14 @@ func TournamentsEdit(c *gin.Context) {
 	}
 
 	// Find tournament by ID
-	tournament, err := tournamentRepo.GetByID(id)
+	tournament, err := h.TournamentRepo.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get handicap sets for selection
-	handicapSets := handicapRepo.GetAllSets()
+	handicapSets := h.HandicapRepo.GetAllSets()
 
 	RenderWithLayout(c, "tournaments/edit", gin.H{
 		"title":        "Edit Tournament",
@@ -217,7 +202,7 @@ func TournamentsEdit(c *gin.Context) {
 }
 
 // TournamentsUpdate handles POST /tournaments/:id
-func TournamentsUpdate(c *gin.Context) {
+func (h *TournamentHandlers) TournamentsUpdate(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -276,7 +261,7 @@ func TournamentsUpdate(c *gin.Context) {
 		HandicapSetID: handicapSetID,
 	}
 
-	_, err = tournamentRepo.Update(id, updatedTournament)
+	_, err = h.TournamentRepo.Update(id, updatedTournament)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -287,7 +272,7 @@ func TournamentsUpdate(c *gin.Context) {
 }
 
 // TournamentsDelete handles POST /tournaments/:id/delete
-func TournamentsDelete(c *gin.Context) {
+func (h *TournamentHandlers) TournamentsDelete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -296,7 +281,7 @@ func TournamentsDelete(c *gin.Context) {
 	}
 
 	// Delete tournament from repository
-	err = tournamentRepo.Delete(id)
+	err = h.TournamentRepo.Delete(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return

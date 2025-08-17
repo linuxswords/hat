@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/handlers"
+	"github.com/linuxswords/hat/internal/repositories"
 )
 
 func main() {
@@ -11,6 +12,41 @@ func main() {
 
 	// Serve static files (CSS, JS, images)
 	r.Static("/static", "./static")
+
+	// Initialize repositories
+	archerRepo := repositories.NewArcherRepository()
+	tournamentRepo := repositories.NewTournamentRepository()
+	handicapRepo := repositories.NewHandicapRepository()
+	scoreRepo := repositories.NewScoreRepository()
+	participationRepo := repositories.NewTournamentParticipationRepository()
+
+	// Initialize handler structs with injected dependencies
+	archerHandlers := &handlers.ArcherHandlers{
+		ArcherRepo: archerRepo,
+	}
+
+	tournamentHandlers := &handlers.TournamentHandlers{
+		TournamentRepo: tournamentRepo,
+		HandicapRepo:   handicapRepo,
+	}
+
+	tournamentScoreHandlers := &handlers.TournamentScoreHandlers{
+		ScoreRepo:         scoreRepo,
+		TournamentRepo:    tournamentRepo,
+		ArcherRepo:        archerRepo,
+		HandicapRepo:      handicapRepo,
+		ParticipationRepo: participationRepo,
+	}
+
+	tournamentArcherHandlers := &handlers.TournamentArcherHandlers{
+		TournamentRepo:    tournamentRepo,
+		ArcherRepo:        archerRepo,
+		ParticipationRepo: participationRepo,
+	}
+
+	handicapHandlers := &handlers.HandicapHandlers{
+		HandicapRepo: handicapRepo,
+	}
 
 	// Routes
 	r.GET("/", func(c *gin.Context) {
@@ -30,45 +66,45 @@ func main() {
 	// Archers routes
 	archers := r.Group("/archers")
 	{
-		archers.GET("/", handlers.ArchersList)
-		archers.GET("/new", handlers.ArchersNew)
-		archers.POST("/", handlers.ArchersCreate)
-		archers.GET("/:id", handlers.ArchersShow)
-		archers.GET("/:id/edit", handlers.ArchersEdit)
-		archers.POST("/:id", handlers.ArchersUpdate)
-		archers.POST("/:id/delete", handlers.ArchersDelete)
+		archers.GET("/", archerHandlers.ArchersList)
+		archers.GET("/new", archerHandlers.ArchersNew)
+		archers.POST("/", archerHandlers.ArchersCreate)
+		archers.GET("/:id", archerHandlers.ArchersShow)
+		archers.GET("/:id/edit", archerHandlers.ArchersEdit)
+		archers.POST("/:id", archerHandlers.ArchersUpdate)
+		archers.POST("/:id/delete", archerHandlers.ArchersDelete)
 	}
 
 	// Tournaments routes
 	tournaments := r.Group("/tournaments")
 	{
-		tournaments.GET("/", handlers.TournamentsList)
-		tournaments.GET("/new", handlers.TournamentsNew)
-		tournaments.POST("/", handlers.TournamentsCreate)
-		tournaments.GET("/:id", handlers.TournamentsShow)
-		tournaments.GET("/:id/edit", handlers.TournamentsEdit)
-		tournaments.POST("/:id", handlers.TournamentsUpdate)
-		tournaments.POST("/:id/delete", handlers.TournamentsDelete)
+		tournaments.GET("/", tournamentHandlers.TournamentsList)
+		tournaments.GET("/new", tournamentHandlers.TournamentsNew)
+		tournaments.POST("/", tournamentHandlers.TournamentsCreate)
+		tournaments.GET("/:id", tournamentHandlers.TournamentsShow)
+		tournaments.GET("/:id/edit", tournamentHandlers.TournamentsEdit)
+		tournaments.POST("/:id", tournamentHandlers.TournamentsUpdate)
+		tournaments.POST("/:id/delete", tournamentHandlers.TournamentsDelete)
 		
 		// Tournament archers routes
-		tournaments.GET("/:id/archers", handlers.TournamentArchersIndex)
-		tournaments.GET("/:id/archers/add", handlers.TournamentArchersAdd)
-		tournaments.POST("/:id/archers", handlers.TournamentArchersCreate)
-		tournaments.POST("/:id/archers/:archer_id/remove", handlers.TournamentArchersRemove)
-		tournaments.POST("/:id/archers/:archer_id/status", handlers.TournamentArchersUpdateStatus)
+		tournaments.GET("/:id/archers", tournamentArcherHandlers.TournamentArchersIndex)
+		tournaments.GET("/:id/archers/add", tournamentArcherHandlers.TournamentArchersAdd)
+		tournaments.POST("/:id/archers", tournamentArcherHandlers.TournamentArchersCreate)
+		tournaments.POST("/:id/archers/:archer_id/remove", tournamentArcherHandlers.TournamentArchersRemove)
+		tournaments.POST("/:id/archers/:archer_id/status", tournamentArcherHandlers.TournamentArchersUpdateStatus)
 		
 		// Tournament scores routes
-		tournaments.GET("/:id/scores", handlers.TournamentScoresIndex)
-		tournaments.GET("/:id/scores/edit", handlers.TournamentScoresEdit)
-		tournaments.POST("/:id/scores", handlers.TournamentScoresUpdate)
-		tournaments.GET("/:id/rankings", handlers.TournamentScoresRankings)
+		tournaments.GET("/:id/scores", tournamentScoreHandlers.TournamentScoresIndex)
+		tournaments.GET("/:id/scores/edit", tournamentScoreHandlers.TournamentScoresEdit)
+		tournaments.POST("/:id/scores", tournamentScoreHandlers.TournamentScoresUpdate)
+		tournaments.GET("/:id/rankings", tournamentScoreHandlers.TournamentScoresRankings)
 	}
 
 	// Handicaps routes
 	handicaps := r.Group("/handicaps")
 	{
-		handicaps.GET("/", handlers.HandicapsList)
-		handicaps.GET("/:id", handlers.HandicapsShow)
+		handicaps.GET("/", handicapHandlers.HandicapsList)
+		handicaps.GET("/:id", handicapHandlers.HandicapsShow)
 	}
 
 	// Start server on port 8080

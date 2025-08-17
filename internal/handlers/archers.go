@@ -6,21 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
-	"github.com/linuxswords/hat/internal/repositories"
 )
-
-// ArcherRepository defines the contract for archer data operations
-type ArcherRepository interface {
-	GetAll() []models.Archer
-	GetByID(id int) (*models.Archer, error)
-	Create(archer models.Archer) (*models.Archer, error)
-	Update(id int, archer models.Archer) (*models.Archer, error)
-	Delete(id int) error
-	GetByBowClass(bowClass string) []models.Archer
-	GetByGender(gender string) []models.Archer
-}
-
-var archerRepo ArcherRepository = repositories.NewArcherRepository()
 
 // loadBowClassesForArchers loads bow classes for dropdowns in archer forms
 func loadBowClassesForArchers() ([]BowClass, error) {
@@ -28,8 +14,8 @@ func loadBowClassesForArchers() ([]BowClass, error) {
 }
 
 // ArchersList handles GET /archers
-func ArchersList(c *gin.Context) {
-	archers := archerRepo.GetAll()
+func (h *ArcherHandlers) ArchersList(c *gin.Context) {
+	archers := h.ArcherRepo.GetAll()
 	RenderWithLayout(c, "archers/index", gin.H{
 		"title":   "Archers",
 		"archers": archers,
@@ -37,7 +23,7 @@ func ArchersList(c *gin.Context) {
 }
 
 // ArchersNew handles GET /archers/new
-func ArchersNew(c *gin.Context) {
+func (h *ArcherHandlers) ArchersNew(c *gin.Context) {
 	bowClasses, err := loadBowClassesForArchers()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load bow classes"})
@@ -51,7 +37,7 @@ func ArchersNew(c *gin.Context) {
 }
 
 // ArchersCreate handles POST /archers
-func ArchersCreate(c *gin.Context) {
+func (h *ArcherHandlers) ArchersCreate(c *gin.Context) {
 	name := c.PostForm("name")
 	gender := c.PostForm("gender")
 	bowClass := c.PostForm("bow_class")
@@ -72,7 +58,7 @@ func ArchersCreate(c *gin.Context) {
 	}
 
 	// Add to repository
-	_, err := archerRepo.Create(archer)
+	_, err := h.ArcherRepo.Create(archer)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create archer"})
 		return
@@ -83,7 +69,7 @@ func ArchersCreate(c *gin.Context) {
 }
 
 // ArchersShow handles GET /archers/:id
-func ArchersShow(c *gin.Context) {
+func (h *ArcherHandlers) ArchersShow(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -92,7 +78,7 @@ func ArchersShow(c *gin.Context) {
 	}
 
 	// Find archer by ID
-	archer, err := archerRepo.GetByID(id)
+	archer, err := h.ArcherRepo.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return
@@ -105,7 +91,7 @@ func ArchersShow(c *gin.Context) {
 }
 
 // ArchersEdit handles GET /archers/:id/edit
-func ArchersEdit(c *gin.Context) {
+func (h *ArcherHandlers) ArchersEdit(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -114,7 +100,7 @@ func ArchersEdit(c *gin.Context) {
 	}
 
 	// Find archer by ID
-	archer, err := archerRepo.GetByID(id)
+	archer, err := h.ArcherRepo.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return
@@ -134,7 +120,7 @@ func ArchersEdit(c *gin.Context) {
 }
 
 // ArchersUpdate handles POST /archers/:id (with _method=PUT)
-func ArchersUpdate(c *gin.Context) {
+func (h *ArcherHandlers) ArchersUpdate(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -161,7 +147,7 @@ func ArchersUpdate(c *gin.Context) {
 		Email:    email,
 	}
 
-	_, err = archerRepo.Update(id, updatedArcher)
+	_, err = h.ArcherRepo.Update(id, updatedArcher)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return
@@ -172,7 +158,7 @@ func ArchersUpdate(c *gin.Context) {
 }
 
 // ArchersDelete handles POST /archers/:id/delete
-func ArchersDelete(c *gin.Context) {
+func (h *ArcherHandlers) ArchersDelete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -181,7 +167,7 @@ func ArchersDelete(c *gin.Context) {
 	}
 
 	// Delete archer from repository
-	err = archerRepo.Delete(id)
+	err = h.ArcherRepo.Delete(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return

@@ -7,19 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
-	"github.com/linuxswords/hat/internal/repositories"
 )
-
-// HandicapRepository defines the contract for handicap data operations
-type HandicapRepository interface {
-	GetAllSets() []models.HandicapSet
-	GetSetByID(id int) (*models.HandicapSet, error)
-	GetHandicapsBySetID(setID int) []models.Handicap
-	GetHandicapByBowClass(setID int, bowClassID string) (*models.Handicap, error)
-	GetActiveSet() (*models.HandicapSet, error)
-}
-
-var handicapRepo HandicapRepository = repositories.NewHandicapRepository()
 
 // HandicapSetData represents a handicap set with its handicaps for template rendering
 type HandicapSetData struct {
@@ -28,13 +16,13 @@ type HandicapSetData struct {
 }
 
 // HandicapsList handles GET /handicaps
-func HandicapsList(c *gin.Context) {
-	handicapSets := handicapRepo.GetAllSets()
+func (h *HandicapHandlers) HandicapsList(c *gin.Context) {
+	handicapSets := h.HandicapRepo.GetAllSets()
 	
 	// Get handicaps for each set
 	var setsData []HandicapSetData
 	for _, set := range handicapSets {
-		handicaps := handicapRepo.GetHandicapsBySetID(set.ID)
+		handicaps := h.HandicapRepo.GetHandicapsBySetID(set.ID)
 		// Sort handicaps by bow class ID for consistent display
 		sort.Slice(handicaps, func(i, j int) bool {
 			return handicaps[i].BowClassID < handicaps[j].BowClassID
@@ -53,7 +41,7 @@ func HandicapsList(c *gin.Context) {
 }
 
 // HandicapsShow handles GET /handicaps/:id
-func HandicapsShow(c *gin.Context) {
+func (h *HandicapHandlers) HandicapsShow(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -62,14 +50,14 @@ func HandicapsShow(c *gin.Context) {
 	}
 
 	// Find handicap set by ID
-	handicapSet, err := handicapRepo.GetSetByID(id)
+	handicapSet, err := h.HandicapRepo.GetSetByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Handicap set not found"})
 		return
 	}
 
 	// Get all handicaps for this set
-	handicaps := handicapRepo.GetHandicapsBySetID(id)
+	handicaps := h.HandicapRepo.GetHandicapsBySetID(id)
 	
 	// Sort handicaps by bow class ID for consistent display
 	sort.Slice(handicaps, func(i, j int) bool {

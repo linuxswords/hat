@@ -45,6 +45,23 @@ make clean       # Remove build artifacts
 make deps        # Install Go and npm dependencies
 ```
 
+### Testing
+```bash
+make test                # Run all tests
+make test-verbose        # Run tests with verbose output
+make test-coverage       # Run tests with coverage report
+make test-coverage-html  # Generate HTML coverage report
+make test-ci             # Run tests for CI environments
+make test-handlers       # Run only handler tests
+```
+
+**Test Coverage**: The test suite provides comprehensive coverage of handler business logic including:
+- CRUD operations for archers, tournaments, and scores
+- Input validation and error handling
+- Template rendering and form processing
+- Repository integration with mocks
+- HTTP status codes and redirects
+
 ### CSS Development
 ```bash
 npx tailwindcss -i ./static/css/styles.css -o ./static/css/output.css --watch
