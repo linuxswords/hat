@@ -6,3 +6,9 @@ node_modules
 hat
 coverage.html
 coverage.out
+
+# Playwright
+test-results.json
+test-results/
+playwright-report/
+playwright/.cache/

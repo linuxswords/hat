@@ -1,4 +1,4 @@
-.PHONY: build clean run dev css test test-verbose test-coverage test-coverage-html test-ci test-handlers
+.PHONY: build clean run dev css test test-verbose test-coverage test-coverage-html test-ci test-handlers test-e2e test-e2e-ui test-e2e-debug test-all
 
 # Build the application
 build: css
@@ -53,3 +53,28 @@ test-ci:
 # Run only handler tests
 test-handlers:
 	go test ./internal/handlers/...
+
+# Frontend/E2E Tests
+test-e2e:
+	@echo "Running Playwright E2E tests"
+	npm run test:e2e
+
+# Run E2E tests with UI mode
+test-e2e-ui:
+	@echo "Running Playwright E2E tests in UI mode"
+	npm run test:e2e:ui
+
+# Debug E2E tests
+test-e2e-debug:
+	@echo "Running Playwright E2E tests in debug mode"
+	npm run test:e2e:debug
+
+# Run all tests (backend + frontend)
+test-all: test test-e2e
+	@echo "All tests completed successfully"
+
+# Setup Playwright for first time
+test-e2e-setup:
+	@echo "Setting up Playwright for E2E testing"
+	npm install
+	npm run playwright:install
