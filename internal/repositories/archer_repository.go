@@ -6,25 +6,25 @@ import (
 	"github.com/linuxswords/hat/internal/models"
 )
 
-// DBArcherRepository implements ArcherRepository using GORM
-type DBArcherRepository struct {
+// ArcherRepo implements ArcherRepository using GORM
+type ArcherRepo struct {
 	db *gorm.DB
 }
 
-// NewDBArcherRepository creates a new database-backed archer repository
-func NewDBArcherRepository(db *gorm.DB) *DBArcherRepository {
-	return &DBArcherRepository{db: db}
+// NewArcherRepository creates a new database-backed archer repository
+func NewArcherRepository(db *gorm.DB) *ArcherRepo {
+	return &ArcherRepo{db: db}
 }
 
 // GetAll returns all archers
-func (r *DBArcherRepository) GetAll() []models.Archer {
+func (r *ArcherRepo) GetAll() []models.Archer {
 	var archers []models.Archer
 	r.db.Find(&archers)
 	return archers
 }
 
 // GetByID returns an archer by ID
-func (r *DBArcherRepository) GetByID(id uint) (*models.Archer, error) {
+func (r *ArcherRepo) GetByID(id uint) (*models.Archer, error) {
 	var archer models.Archer
 	result := r.db.First(&archer, id)
 	if result.Error != nil {
@@ -37,7 +37,7 @@ func (r *DBArcherRepository) GetByID(id uint) (*models.Archer, error) {
 }
 
 // Create creates a new archer
-func (r *DBArcherRepository) Create(archer models.Archer) (*models.Archer, error) {
+func (r *ArcherRepo) Create(archer models.Archer) (*models.Archer, error) {
 	result := r.db.Create(&archer)
 	if result.Error != nil {
 		return nil, result.Error
@@ -46,7 +46,7 @@ func (r *DBArcherRepository) Create(archer models.Archer) (*models.Archer, error
 }
 
 // Update updates an existing archer
-func (r *DBArcherRepository) Update(id uint, updatedArcher models.Archer) (*models.Archer, error) {
+func (r *ArcherRepo) Update(id uint, updatedArcher models.Archer) (*models.Archer, error) {
 	var archer models.Archer
 	result := r.db.First(&archer, id)
 	if result.Error != nil {
@@ -71,7 +71,7 @@ func (r *DBArcherRepository) Update(id uint, updatedArcher models.Archer) (*mode
 }
 
 // Delete deletes an archer by ID
-func (r *DBArcherRepository) Delete(id uint) error {
+func (r *ArcherRepo) Delete(id uint) error {
 	result := r.db.Delete(&models.Archer{}, id)
 	if result.Error != nil {
 		return result.Error
@@ -83,14 +83,14 @@ func (r *DBArcherRepository) Delete(id uint) error {
 }
 
 // GetByBowClass returns archers filtered by bow class
-func (r *DBArcherRepository) GetByBowClass(bowClass string) []models.Archer {
+func (r *ArcherRepo) GetByBowClass(bowClass string) []models.Archer {
 	var archers []models.Archer
 	r.db.Where("bow_class = ?", bowClass).Find(&archers)
 	return archers
 }
 
 // GetByGender returns archers filtered by gender
-func (r *DBArcherRepository) GetByGender(gender string) []models.Archer {
+func (r *ArcherRepo) GetByGender(gender string) []models.Archer {
 	var archers []models.Archer
 	r.db.Where("gender = ?", gender).Find(&archers)
 	return archers

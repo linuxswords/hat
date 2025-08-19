@@ -6,25 +6,25 @@ import (
 	"github.com/linuxswords/hat/internal/models"
 )
 
-// DBTournamentParticipationRepository implements TournamentParticipationRepository using GORM
-type DBTournamentParticipationRepository struct {
+// TournamentParticipationRepo implements TournamentParticipationRepository using GORM
+type TournamentParticipationRepo struct {
 	db *gorm.DB
 }
 
-// NewDBTournamentParticipationRepository creates a new database-backed tournament participation repository
-func NewDBTournamentParticipationRepository(db *gorm.DB) *DBTournamentParticipationRepository {
-	return &DBTournamentParticipationRepository{db: db}
+// NewTournamentParticipationRepository creates a new database-backed tournament participation repository
+func NewTournamentParticipationRepository(db *gorm.DB) *TournamentParticipationRepo {
+	return &TournamentParticipationRepo{db: db}
 }
 
 // GetAll returns all tournament participations
-func (r *DBTournamentParticipationRepository) GetAll() []models.TournamentParticipation {
+func (r *TournamentParticipationRepo) GetAll() []models.TournamentParticipation {
 	var participations []models.TournamentParticipation
 	r.db.Preload("Tournament").Preload("Archer").Order("created_at DESC").Find(&participations)
 	return participations
 }
 
 // GetByTournamentID returns all participations for a tournament
-func (r *DBTournamentParticipationRepository) GetByTournamentID(tournamentID uint) []models.TournamentParticipation {
+func (r *TournamentParticipationRepo) GetByTournamentID(tournamentID uint) []models.TournamentParticipation {
 	var participations []models.TournamentParticipation
 	r.db.Where("tournament_id = ?", tournamentID).
 		Preload("Tournament").
@@ -35,7 +35,7 @@ func (r *DBTournamentParticipationRepository) GetByTournamentID(tournamentID uin
 }
 
 // GetByArcherID returns all participations for an archer
-func (r *DBTournamentParticipationRepository) GetByArcherID(archerID uint) []models.TournamentParticipation {
+func (r *TournamentParticipationRepo) GetByArcherID(archerID uint) []models.TournamentParticipation {
 	var participations []models.TournamentParticipation
 	r.db.Where("archer_id = ?", archerID).
 		Preload("Tournament").
@@ -46,7 +46,7 @@ func (r *DBTournamentParticipationRepository) GetByArcherID(archerID uint) []mod
 }
 
 // GetByTournamentAndArcher returns a specific participation
-func (r *DBTournamentParticipationRepository) GetByTournamentAndArcher(tournamentID, archerID uint) (*models.TournamentParticipation, error) {
+func (r *TournamentParticipationRepo) GetByTournamentAndArcher(tournamentID, archerID uint) (*models.TournamentParticipation, error) {
 	var participation models.TournamentParticipation
 	result := r.db.Where("tournament_id = ? AND archer_id = ?", tournamentID, archerID).
 		Preload("Tournament").
@@ -63,7 +63,7 @@ func (r *DBTournamentParticipationRepository) GetByTournamentAndArcher(tournamen
 }
 
 // Create creates a new tournament participation
-func (r *DBTournamentParticipationRepository) Create(participation models.TournamentParticipation) (*models.TournamentParticipation, error) {
+func (r *TournamentParticipationRepo) Create(participation models.TournamentParticipation) (*models.TournamentParticipation, error) {
 	// Check if participation already exists
 	var existing models.TournamentParticipation
 	result := r.db.Where("tournament_id = ? AND archer_id = ?", participation.TournamentID, participation.ArcherID).First(&existing)
@@ -82,7 +82,7 @@ func (r *DBTournamentParticipationRepository) Create(participation models.Tourna
 }
 
 // Update updates an existing tournament participation
-func (r *DBTournamentParticipationRepository) Update(id uint, updatedParticipation models.TournamentParticipation) (*models.TournamentParticipation, error) {
+func (r *TournamentParticipationRepo) Update(id uint, updatedParticipation models.TournamentParticipation) (*models.TournamentParticipation, error) {
 	var participation models.TournamentParticipation
 	result := r.db.First(&participation, id)
 	if result.Error != nil {
@@ -106,7 +106,7 @@ func (r *DBTournamentParticipationRepository) Update(id uint, updatedParticipati
 }
 
 // Delete deletes a tournament participation by ID
-func (r *DBTournamentParticipationRepository) Delete(id uint) error {
+func (r *TournamentParticipationRepo) Delete(id uint) error {
 	result := r.db.Delete(&models.TournamentParticipation{}, id)
 	if result.Error != nil {
 		return result.Error
@@ -118,7 +118,7 @@ func (r *DBTournamentParticipationRepository) Delete(id uint) error {
 }
 
 // DeleteByTournamentAndArcher deletes a participation by tournament and archer IDs
-func (r *DBTournamentParticipationRepository) DeleteByTournamentAndArcher(tournamentID, archerID uint) error {
+func (r *TournamentParticipationRepo) DeleteByTournamentAndArcher(tournamentID, archerID uint) error {
 	result := r.db.Where("tournament_id = ? AND archer_id = ?", tournamentID, archerID).Delete(&models.TournamentParticipation{})
 	if result.Error != nil {
 		return result.Error
@@ -130,14 +130,14 @@ func (r *DBTournamentParticipationRepository) DeleteByTournamentAndArcher(tourna
 }
 
 // GetArcherCountByTournament returns the number of archers in a tournament
-func (r *DBTournamentParticipationRepository) GetArcherCountByTournament(tournamentID uint) int64 {
+func (r *TournamentParticipationRepo) GetArcherCountByTournament(tournamentID uint) int64 {
 	var count int64
 	r.db.Model(&models.TournamentParticipation{}).Where("tournament_id = ?", tournamentID).Count(&count)
 	return count
 }
 
 // GetTournamentCountByArcher returns the number of tournaments an archer has participated in
-func (r *DBTournamentParticipationRepository) GetTournamentCountByArcher(archerID uint) int64 {
+func (r *TournamentParticipationRepo) GetTournamentCountByArcher(archerID uint) int64 {
 	var count int64
 	r.db.Model(&models.TournamentParticipation{}).Where("archer_id = ?", archerID).Count(&count)
 	return count

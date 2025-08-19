@@ -6,25 +6,25 @@ import (
 	"github.com/linuxswords/hat/internal/models"
 )
 
-// DBScoreRepository implements ScoreRepository using GORM
-type DBScoreRepository struct {
+// ScoreRepo implements ScoreRepository using GORM
+type ScoreRepo struct {
 	db *gorm.DB
 }
 
-// NewDBScoreRepository creates a new database-backed score repository
-func NewDBScoreRepository(db *gorm.DB) *DBScoreRepository {
-	return &DBScoreRepository{db: db}
+// NewScoreRepository creates a new database-backed score repository
+func NewScoreRepository(db *gorm.DB) *ScoreRepo {
+	return &ScoreRepo{db: db}
 }
 
 // GetAll returns all scores
-func (r *DBScoreRepository) GetAll() []models.Score {
+func (r *ScoreRepo) GetAll() []models.Score {
 	var scores []models.Score
 	r.db.Preload("Archer").Preload("Tournament").Order("created_at DESC").Find(&scores)
 	return scores
 }
 
 // GetByTournamentID returns all scores for a tournament
-func (r *DBScoreRepository) GetByTournamentID(tournamentID uint) []models.Score {
+func (r *ScoreRepo) GetByTournamentID(tournamentID uint) []models.Score {
 	var scores []models.Score
 	r.db.Where("tournament_id = ?", tournamentID).
 		Preload("Archer").
@@ -35,7 +35,7 @@ func (r *DBScoreRepository) GetByTournamentID(tournamentID uint) []models.Score 
 }
 
 // GetByTournamentIDSorted returns scores for a tournament sorted by adjusted score (or raw score if no handicap)
-func (r *DBScoreRepository) GetByTournamentIDSorted(tournamentID uint) []models.Score {
+func (r *ScoreRepo) GetByTournamentIDSorted(tournamentID uint) []models.Score {
 	var scores []models.Score
 	r.db.Where("tournament_id = ?", tournamentID).
 		Preload("Archer").
@@ -46,7 +46,7 @@ func (r *DBScoreRepository) GetByTournamentIDSorted(tournamentID uint) []models.
 }
 
 // GetByArcherID returns all scores for an archer
-func (r *DBScoreRepository) GetByArcherID(archerID uint) []models.Score {
+func (r *ScoreRepo) GetByArcherID(archerID uint) []models.Score {
 	var scores []models.Score
 	r.db.Where("archer_id = ?", archerID).
 		Preload("Archer").
@@ -57,7 +57,7 @@ func (r *DBScoreRepository) GetByArcherID(archerID uint) []models.Score {
 }
 
 // GetByTournamentAndArcher returns a score for a specific archer in a tournament
-func (r *DBScoreRepository) GetByTournamentAndArcher(tournamentID, archerID uint) (*models.Score, error) {
+func (r *ScoreRepo) GetByTournamentAndArcher(tournamentID, archerID uint) (*models.Score, error) {
 	var score models.Score
 	result := r.db.Where("tournament_id = ? AND archer_id = ?", tournamentID, archerID).
 		Preload("Archer").
@@ -74,7 +74,7 @@ func (r *DBScoreRepository) GetByTournamentAndArcher(tournamentID, archerID uint
 }
 
 // Create creates a new score
-func (r *DBScoreRepository) Create(score models.Score) (*models.Score, error) {
+func (r *ScoreRepo) Create(score models.Score) (*models.Score, error) {
 	result := r.db.Create(&score)
 	if result.Error != nil {
 		return nil, result.Error
@@ -86,7 +86,7 @@ func (r *DBScoreRepository) Create(score models.Score) (*models.Score, error) {
 }
 
 // Update updates an existing score
-func (r *DBScoreRepository) Update(id uint, updatedScore models.Score) (*models.Score, error) {
+func (r *ScoreRepo) Update(id uint, updatedScore models.Score) (*models.Score, error) {
 	var score models.Score
 	result := r.db.First(&score, id)
 	if result.Error != nil {
@@ -113,7 +113,7 @@ func (r *DBScoreRepository) Update(id uint, updatedScore models.Score) (*models.
 }
 
 // UpdateByTournamentAndArcher updates a score by tournament and archer IDs
-func (r *DBScoreRepository) UpdateByTournamentAndArcher(tournamentID, archerID uint, updatedScore models.Score) (*models.Score, error) {
+func (r *ScoreRepo) UpdateByTournamentAndArcher(tournamentID, archerID uint, updatedScore models.Score) (*models.Score, error) {
 	var score models.Score
 	result := r.db.Where("tournament_id = ? AND archer_id = ?", tournamentID, archerID).First(&score)
 	if result.Error != nil {
@@ -140,7 +140,7 @@ func (r *DBScoreRepository) UpdateByTournamentAndArcher(tournamentID, archerID u
 }
 
 // Delete deletes a score by ID
-func (r *DBScoreRepository) Delete(id uint) error {
+func (r *ScoreRepo) Delete(id uint) error {
 	result := r.db.Delete(&models.Score{}, id)
 	if result.Error != nil {
 		return result.Error
@@ -152,7 +152,7 @@ func (r *DBScoreRepository) Delete(id uint) error {
 }
 
 // DeleteByTournamentAndArcher deletes a score by tournament and archer IDs
-func (r *DBScoreRepository) DeleteByTournamentAndArcher(tournamentID, archerID uint) error {
+func (r *ScoreRepo) DeleteByTournamentAndArcher(tournamentID, archerID uint) error {
 	result := r.db.Where("tournament_id = ? AND archer_id = ?", tournamentID, archerID).Delete(&models.Score{})
 	if result.Error != nil {
 		return result.Error
@@ -164,13 +164,13 @@ func (r *DBScoreRepository) DeleteByTournamentAndArcher(tournamentID, archerID u
 }
 
 // GetScoreCountByTournament returns the number of scores for a tournament
-func (r *DBScoreRepository) GetScoreCountByTournament(tournamentID uint) int64 {
+func (r *ScoreRepo) GetScoreCountByTournament(tournamentID uint) int64 {
 	var count int64
 	r.db.Model(&models.Score{}).Where("tournament_id = ?", tournamentID).Count(&count)
 	return count
 }
 
 // CalculateAdjustedScore calculates adjusted score using handicap factor
-func (r *DBScoreRepository) CalculateAdjustedScore(rawScore int, handicapFactor float64) float64 {
+func (r *ScoreRepo) CalculateAdjustedScore(rawScore int, handicapFactor float64) float64 {
 	return float64(rawScore) * handicapFactor
 }

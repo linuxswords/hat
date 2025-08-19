@@ -29,11 +29,11 @@ func main() {
 	r.Static("/static", "./static")
 
 	// Initialize database repositories
-	archerRepo := repositories.NewDBArcherRepository(database.DB)
-	tournamentRepo := repositories.NewDBTournamentRepository(database.DB)
-	handicapRepo := repositories.NewDBHandicapRepository(database.DB)
-	scoreRepo := repositories.NewDBScoreRepository(database.DB)
-	participationRepo := repositories.NewDBTournamentParticipationRepository(database.DB)
+	archerRepo := repositories.NewArcherRepository(database.DB)
+	tournamentRepo := repositories.NewTournamentRepository(database.DB)
+	handicapRepo := repositories.NewHandicapRepository(database.DB)
+	scoreRepo := repositories.NewScoreRepository(database.DB)
+	participationRepo := repositories.NewTournamentParticipationRepository(database.DB)
 
 	// Initialize handler structs with injected dependencies
 	archerHandlers := &handlers.ArcherHandlers{
