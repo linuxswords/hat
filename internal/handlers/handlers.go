@@ -7,59 +7,60 @@ import (
 // Repository interfaces
 type ArcherRepository interface {
 	GetAll() []models.Archer
-	GetByID(id int) (*models.Archer, error)
+	GetByID(id uint) (*models.Archer, error)
 	Create(archer models.Archer) (*models.Archer, error)
-	Update(id int, archer models.Archer) (*models.Archer, error)
-	Delete(id int) error
+	Update(id uint, archer models.Archer) (*models.Archer, error)
+	Delete(id uint) error
 	GetByBowClass(bowClass string) []models.Archer
 	GetByGender(gender string) []models.Archer
 }
 
 type TournamentRepository interface {
 	GetAll() []models.Tournament
-	GetByID(id int) (*models.Tournament, error)
+	GetByID(id uint) (*models.Tournament, error)
 	Create(tournament models.Tournament) (*models.Tournament, error)
-	Update(id int, tournament models.Tournament) (*models.Tournament, error)
-	Delete(id int) error
+	Update(id uint, tournament models.Tournament) (*models.Tournament, error)
+	Delete(id uint) error
 	GetUpcoming() []models.Tournament
 	GetCurrent() []models.Tournament
-	GetByHandicapSet(handicapSetID int) []models.Tournament
+	GetByHandicapSet(handicapSetID uint) []models.Tournament
 }
 
 type HandicapRepository interface {
 	GetAllSets() []models.HandicapSet
-	GetSetByID(id int) (*models.HandicapSet, error)
-	GetHandicapsBySetID(setID int) []models.Handicap
-	GetHandicapByBowClass(setID int, bowClassID string) (*models.Handicap, error)
+	GetSetByID(id uint) (*models.HandicapSet, error)
+	GetHandicapsBySetID(setID uint) []models.Handicap
+	GetHandicapByBowClass(setID uint, bowClassID string) (*models.Handicap, error)
 	GetActiveSet() (*models.HandicapSet, error)
+	CalculateAdjustedScore(rawScore int, handicapFactor float64) float64
 }
 
 type ScoreRepository interface {
 	GetAll() []models.Score
-	GetByTournamentID(tournamentID int) []models.Score
-	GetByTournamentIDSorted(tournamentID int) []models.Score
-	GetByArcherID(archerID int) []models.Score
-	GetByTournamentAndArcher(tournamentID int, archerID int) (*models.Score, error)
+	GetByTournamentID(tournamentID uint) []models.Score
+	GetByTournamentIDSorted(tournamentID uint) []models.Score
+	GetByArcherID(archerID uint) []models.Score
+	GetByTournamentAndArcher(tournamentID uint, archerID uint) (*models.Score, error)
 	Create(score models.Score) (*models.Score, error)
-	Update(id int, score models.Score) (*models.Score, error)
-	UpdateByTournamentAndArcher(tournamentID int, archerID int, score models.Score) (*models.Score, error)
-	Delete(id int) error
-	DeleteByTournamentAndArcher(tournamentID int, archerID int) error
-	GetScoreCountByTournament(tournamentID int) int
+	Update(id uint, score models.Score) (*models.Score, error)
+	UpdateByTournamentAndArcher(tournamentID uint, archerID uint, score models.Score) (*models.Score, error)
+	Delete(id uint) error
+	DeleteByTournamentAndArcher(tournamentID uint, archerID uint) error
+	GetScoreCountByTournament(tournamentID uint) int64
 	CalculateAdjustedScore(rawScore int, handicapFactor float64) float64
 }
 
 type TournamentParticipationRepository interface {
 	GetAll() []models.TournamentParticipation
-	GetByTournamentID(tournamentID int) []models.TournamentParticipation
-	GetByArcherID(archerID int) []models.TournamentParticipation
-	GetByTournamentAndArcher(tournamentID int, archerID int) (*models.TournamentParticipation, error)
+	GetByTournamentID(tournamentID uint) []models.TournamentParticipation
+	GetByArcherID(archerID uint) []models.TournamentParticipation
+	GetByTournamentAndArcher(tournamentID uint, archerID uint) (*models.TournamentParticipation, error)
 	Create(participation models.TournamentParticipation) (*models.TournamentParticipation, error)
-	Update(id int, participation models.TournamentParticipation) (*models.TournamentParticipation, error)
-	Delete(id int) error
-	DeleteByTournamentAndArcher(tournamentID int, archerID int) error
-	GetArcherCountByTournament(tournamentID int) int
-	GetTournamentCountByArcher(archerID int) int
+	Update(id uint, participation models.TournamentParticipation) (*models.TournamentParticipation, error)
+	Delete(id uint) error
+	DeleteByTournamentAndArcher(tournamentID uint, archerID uint) error
+	GetArcherCountByTournament(tournamentID uint) int64
+	GetTournamentCountByArcher(archerID uint) int64
 }
 
 // Handler structs with injected dependencies

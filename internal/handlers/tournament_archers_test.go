@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 // Setup test helpers for tournament archers
@@ -43,7 +44,7 @@ func TestTournamentArchersIndex(t *testing.T) {
 	t.Run("successful index", func(t *testing.T) {
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:        1,
+			Model:     gorm.Model{ID: 1},
 			Name:      "Test Tournament",
 			Location:  "Test Location",
 			StartDate: time.Now(),
@@ -52,19 +53,19 @@ func TestTournamentArchersIndex(t *testing.T) {
 
 		// Mock participations
 		participations := []models.TournamentParticipation{
-			{ID: 1, TournamentID: 1, ArcherID: 1, Status: "registered"},
-			{ID: 2, TournamentID: 1, ArcherID: 2, Status: "checked_in"},
+			{Model: gorm.Model{ID: 1}, TournamentID: 1, ArcherID: 1, Status: "registered"},
+			{Model: gorm.Model{ID: 2}, TournamentID: 1, ArcherID: 2, Status: "checked_in"},
 		}
 
 		// Mock archers
-		archer1 := &models.Archer{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
-		archer2 := &models.Archer{ID: 2, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"}
+		archer1 := &models.Archer{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
+		archer2 := &models.Archer{Model: gorm.Model{ID: 2}, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"}
 
 		// Set up expectations
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
-		mockParticipationRepo.On("GetByTournamentID", 1).Return(participations)
-		mockArcherRepo.On("GetByID", 1).Return(archer1, nil)
-		mockArcherRepo.On("GetByID", 2).Return(archer2, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
+		mockParticipationRepo.On("GetByTournamentID", uint(1)).Return(participations)
+		mockArcherRepo.On("GetByID", uint(1)).Return(archer1, nil)
+		mockArcherRepo.On("GetByID", uint(2)).Return(archer2, nil)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1/archers", nil)
 		w := httptest.NewRecorder()
@@ -85,7 +86,7 @@ func TestTournamentArchersIndex(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/999/archers", nil)
 		w := httptest.NewRecorder()
@@ -102,7 +103,7 @@ func TestTournamentArchersIndex(t *testing.T) {
 
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:        1,
+			Model:     gorm.Model{ID: 1},
 			Name:      "Test Tournament",
 			Location:  "Test Location",
 			StartDate: time.Now(),
@@ -111,16 +112,16 @@ func TestTournamentArchersIndex(t *testing.T) {
 
 		// Mock participations with one valid and one invalid archer
 		participations := []models.TournamentParticipation{
-			{ID: 1, TournamentID: 1, ArcherID: 1, Status: "registered"},
-			{ID: 2, TournamentID: 1, ArcherID: 999, Status: "registered"}, // This archer doesn't exist
+			{Model: gorm.Model{ID: 1}, TournamentID: 1, ArcherID: 1, Status: "registered"},
+			{Model: gorm.Model{ID: 2}, TournamentID: 1, ArcherID: 999, Status: "registered"}, // This archer doesn't exist
 		}
 
-		archer1 := &models.Archer{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
+		archer1 := &models.Archer{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
 
-		subMockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
-		subMockParticipationRepo.On("GetByTournamentID", 1).Return(participations)
-		subMockArcherRepo.On("GetByID", 1).Return(archer1, nil)
-		subMockArcherRepo.On("GetByID", 999).Return(nil, errors.New("archer not found"))
+		subMockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
+		subMockParticipationRepo.On("GetByTournamentID", uint(1)).Return(participations)
+		subMockArcherRepo.On("GetByID", uint(1)).Return(archer1, nil)
+		subMockArcherRepo.On("GetByID", uint(999)).Return(nil, errors.New("archer not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/1/archers", nil)
 		w := httptest.NewRecorder()
@@ -142,7 +143,7 @@ func TestTournamentArchersAdd(t *testing.T) {
 	t.Run("successful add form", func(t *testing.T) {
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:        1,
+			Model:     gorm.Model{ID: 1},
 			Name:      "Test Tournament",
 			Location:  "Test Location",
 			StartDate: time.Now(),
@@ -151,19 +152,19 @@ func TestTournamentArchersAdd(t *testing.T) {
 
 		// Mock all archers
 		allArchers := []models.Archer{
-			{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"},
-			{ID: 2, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"},
-			{ID: 3, Name: "Bob Wilson", BowClass: "longbow", Gender: "Male", Email: "bob@example.com"},
+			{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"},
+			{Model: gorm.Model{ID: 2}, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"},
+			{Model: gorm.Model{ID: 3}, Name: "Bob Wilson", BowClass: "longbow", Gender: "Male", Email: "bob@example.com"},
 		}
 
 		// Mock existing participations (archer 1 is already registered)
 		participations := []models.TournamentParticipation{
-			{ID: 1, TournamentID: 1, ArcherID: 1, Status: "registered"},
+			{Model: gorm.Model{ID: 1}, TournamentID: 1, ArcherID: 1, Status: "registered"},
 		}
 
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
 		mockArcherRepo.On("GetAll").Return(allArchers)
-		mockParticipationRepo.On("GetByTournamentID", 1).Return(participations)
+		mockParticipationRepo.On("GetByTournamentID", uint(1)).Return(participations)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1/archers/add", nil)
 		w := httptest.NewRecorder()
@@ -184,7 +185,7 @@ func TestTournamentArchersAdd(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/999/archers/add", nil)
 		w := httptest.NewRecorder()
@@ -330,7 +331,7 @@ func TestTournamentArchersRemove(t *testing.T) {
 	router.POST("/tournaments/:id/archers/:archer_id/remove", handlers.TournamentArchersRemove)
 
 	t.Run("successful removal", func(t *testing.T) {
-		mockParticipationRepo.On("DeleteByTournamentAndArcher", 1, 2).Return(nil)
+		mockParticipationRepo.On("DeleteByTournamentAndArcher", uint(1), uint(2)).Return(nil)
 
 		req, _ := http.NewRequest("POST", "/tournaments/1/archers/2/remove", nil)
 		w := httptest.NewRecorder()
@@ -358,7 +359,7 @@ func TestTournamentArchersRemove(t *testing.T) {
 	})
 
 	t.Run("participation not found", func(t *testing.T) {
-		mockParticipationRepo.On("DeleteByTournamentAndArcher", 1, 999).Return(errors.New("participation not found"))
+		mockParticipationRepo.On("DeleteByTournamentAndArcher", uint(1), uint(999)).Return(errors.New("participation not found"))
 
 		req, _ := http.NewRequest("POST", "/tournaments/1/archers/999/remove", nil)
 		w := httptest.NewRecorder()
@@ -377,21 +378,21 @@ func TestTournamentArchersUpdateStatus(t *testing.T) {
 
 	t.Run("successful status update", func(t *testing.T) {
 		existingParticipation := &models.TournamentParticipation{
-			ID:           1,
+			Model:        gorm.Model{ID: 1},
 			TournamentID: 1,
 			ArcherID:     2,
 			Status:       "registered",
 		}
 
 		updatedParticipation := models.TournamentParticipation{
-			ID:           1,
+			Model:        gorm.Model{ID: 1},
 			TournamentID: 1,
 			ArcherID:     2,
 			Status:       "checked_in",
 		}
 
-		mockParticipationRepo.On("GetByTournamentAndArcher", 1, 2).Return(existingParticipation, nil)
-		mockParticipationRepo.On("Update", 1, updatedParticipation).Return(&updatedParticipation, nil)
+		mockParticipationRepo.On("GetByTournamentAndArcher", uint(1), uint(2)).Return(existingParticipation, nil)
+		mockParticipationRepo.On("Update", uint(1), updatedParticipation).Return(&updatedParticipation, nil)
 
 		formData := url.Values{}
 		formData.Set("status", "checked_in")
@@ -443,7 +444,7 @@ func TestTournamentArchersUpdateStatus(t *testing.T) {
 	})
 
 	t.Run("participation not found", func(t *testing.T) {
-		mockParticipationRepo.On("GetByTournamentAndArcher", 1, 999).Return(nil, errors.New("participation not found"))
+		mockParticipationRepo.On("GetByTournamentAndArcher", uint(1), uint(999)).Return(nil, errors.New("participation not found"))
 
 		formData := url.Values{}
 		formData.Set("status", "checked_in")
@@ -463,21 +464,21 @@ func TestTournamentArchersUpdateStatus(t *testing.T) {
 		subRouter.POST("/tournaments/:id/archers/:archer_id/status", subHandlers.TournamentArchersUpdateStatus)
 
 		existingParticipation := &models.TournamentParticipation{
-			ID:           1,
+			Model:        gorm.Model{ID: 1},
 			TournamentID: 1,
 			ArcherID:     2,
 			Status:       "registered",
 		}
 
 		updatedParticipation := models.TournamentParticipation{
-			ID:           1,
+			Model:        gorm.Model{ID: 1},
 			TournamentID: 1,
 			ArcherID:     2,
 			Status:       "checked_in",
 		}
 
-		subMockParticipationRepo.On("GetByTournamentAndArcher", 1, 2).Return(existingParticipation, nil)
-		subMockParticipationRepo.On("Update", 1, updatedParticipation).Return(nil, errors.New("database error"))
+		subMockParticipationRepo.On("GetByTournamentAndArcher", uint(1), uint(2)).Return(existingParticipation, nil)
+		subMockParticipationRepo.On("Update", uint(1), updatedParticipation).Return(nil, errors.New("database error"))
 
 		formData := url.Values{}
 		formData.Set("status", "checked_in")

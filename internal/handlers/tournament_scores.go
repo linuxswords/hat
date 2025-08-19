@@ -19,22 +19,22 @@ func (h *TournamentScoreHandlers) TournamentScoresIndex(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := h.TournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(uint(tournamentID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get tournament participants
-	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
-	participantMap := make(map[int]models.TournamentParticipation)
+	participations := h.ParticipationRepo.GetByTournamentID(uint(tournamentID))
+	participantMap := make(map[uint]models.TournamentParticipation)
 	for _, p := range participations {
 		participantMap[p.ArcherID] = p
 	}
 
 	// Get scores for this tournament
-	scores := h.ScoreRepo.GetByTournamentID(tournamentID)
-	scoreMap := make(map[int]models.Score)
+	scores := h.ScoreRepo.GetByTournamentID(uint(tournamentID))
+	scoreMap := make(map[uint]models.Score)
 	for _, s := range scores {
 		scoreMap[s.ArcherID] = s
 	}
@@ -148,18 +148,18 @@ func (h *TournamentScoreHandlers) TournamentScoresEdit(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := h.TournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(uint(tournamentID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get tournament participants
-	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
+	participations := h.ParticipationRepo.GetByTournamentID(uint(tournamentID))
 
 	// Get scores for this tournament
-	scores := h.ScoreRepo.GetByTournamentID(tournamentID)
-	scoreMap := make(map[int]models.Score)
+	scores := h.ScoreRepo.GetByTournamentID(uint(tournamentID))
+	scoreMap := make(map[uint]models.Score)
 	for _, s := range scores {
 		scoreMap[s.ArcherID] = s
 	}
@@ -241,7 +241,7 @@ func (h *TournamentScoreHandlers) TournamentScoresUpdate(c *gin.Context) {
 	}
 
 	// Get tournament details for handicap calculations
-	tournament, err := h.TournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(uint(tournamentID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -285,7 +285,7 @@ func (h *TournamentScoreHandlers) TournamentScoresUpdate(c *gin.Context) {
 		}
 
 		// Get archer for bow class
-		archer, err := h.ArcherRepo.GetByID(archerID)
+		archer, err := h.ArcherRepo.GetByID(uint(archerID))
 		if err != nil {
 			errors = append(errors, "Archer not found: "+archerIDStr)
 			continue
@@ -293,8 +293,8 @@ func (h *TournamentScoreHandlers) TournamentScoresUpdate(c *gin.Context) {
 
 		// Create or update score
 		score := models.Score{
-			ArcherID:     archerID,
-			TournamentID: tournamentID,
+			ArcherID:     uint(archerID),
+			TournamentID: uint(tournamentID),
 			BowClassID:   archer.BowClass,
 			RawScore:     rawScore,
 			EnteredBy:    "tournament_organizer", // Could be enhanced with user management
@@ -310,10 +310,10 @@ func (h *TournamentScoreHandlers) TournamentScoresUpdate(c *gin.Context) {
 		}
 
 		// Try to update existing score first
-		_, err = h.ScoreRepo.GetByTournamentAndArcher(tournamentID, archerID)
+		_, err = h.ScoreRepo.GetByTournamentAndArcher(uint(tournamentID), uint(archerID))
 		if err == nil {
 			// Update existing score
-			_, err = h.ScoreRepo.UpdateByTournamentAndArcher(tournamentID, archerID, score)
+			_, err = h.ScoreRepo.UpdateByTournamentAndArcher(uint(tournamentID), uint(archerID), score)
 			if err != nil {
 				errors = append(errors, "Failed to update score for archer ID "+archerIDStr+": "+err.Error())
 			} else {
@@ -350,14 +350,14 @@ func (h *TournamentScoreHandlers) TournamentScoresRankings(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := h.TournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(uint(tournamentID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get sorted scores for ranking
-	scores := h.ScoreRepo.GetByTournamentIDSorted(tournamentID)
+	scores := h.ScoreRepo.GetByTournamentIDSorted(uint(tournamentID))
 
 	// Get handicap set information
 	var handicapSet *models.HandicapSet

@@ -95,14 +95,14 @@ func (h *TournamentHandlers) TournamentsCreate(c *gin.Context) {
 	}
 
 	// Parse handicap set ID (optional)
-	var handicapSetID int
+	var handicapSetID uint
 	if handicapSetIDStr != "" && handicapSetIDStr != "0" {
 		id, err := strconv.Atoi(handicapSetIDStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid handicap set ID"})
 			return
 		}
-		handicapSetID = id
+		handicapSetID = uint(id)
 	}
 
 	// Create new tournament
@@ -135,7 +135,7 @@ func (h *TournamentHandlers) TournamentsShow(c *gin.Context) {
 	}
 
 	// Find tournament by ID
-	tournament, err := h.TournamentRepo.GetByID(id)
+	tournament, err := h.TournamentRepo.GetByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -185,7 +185,7 @@ func (h *TournamentHandlers) TournamentsEdit(c *gin.Context) {
 	}
 
 	// Find tournament by ID
-	tournament, err := h.TournamentRepo.GetByID(id)
+	tournament, err := h.TournamentRepo.GetByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -242,14 +242,14 @@ func (h *TournamentHandlers) TournamentsUpdate(c *gin.Context) {
 	}
 
 	// Parse handicap set ID (optional)
-	var handicapSetID int
+	var handicapSetID uint
 	if handicapSetIDStr != "" && handicapSetIDStr != "0" {
 		hsID, err := strconv.Atoi(handicapSetIDStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid handicap set ID"})
 			return
 		}
-		handicapSetID = hsID
+		handicapSetID = uint(hsID)
 	}
 
 	// Update tournament
@@ -261,7 +261,7 @@ func (h *TournamentHandlers) TournamentsUpdate(c *gin.Context) {
 		HandicapSetID: handicapSetID,
 	}
 
-	_, err = h.TournamentRepo.Update(id, updatedTournament)
+	_, err = h.TournamentRepo.Update(uint(id), updatedTournament)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -281,7 +281,7 @@ func (h *TournamentHandlers) TournamentsDelete(c *gin.Context) {
 	}
 
 	// Delete tournament from repository
-	err = h.TournamentRepo.Delete(id)
+	err = h.TournamentRepo.Delete(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return

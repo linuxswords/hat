@@ -78,7 +78,7 @@ func (h *ArcherHandlers) ArchersShow(c *gin.Context) {
 	}
 
 	// Find archer by ID
-	archer, err := h.ArcherRepo.GetByID(id)
+	archer, err := h.ArcherRepo.GetByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return
@@ -100,7 +100,7 @@ func (h *ArcherHandlers) ArchersEdit(c *gin.Context) {
 	}
 
 	// Find archer by ID
-	archer, err := h.ArcherRepo.GetByID(id)
+	archer, err := h.ArcherRepo.GetByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return
@@ -147,7 +147,7 @@ func (h *ArcherHandlers) ArchersUpdate(c *gin.Context) {
 		Email:    email,
 	}
 
-	_, err = h.ArcherRepo.Update(id, updatedArcher)
+	_, err = h.ArcherRepo.Update(uint(id), updatedArcher)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return
@@ -167,7 +167,7 @@ func (h *ArcherHandlers) ArchersDelete(c *gin.Context) {
 	}
 
 	// Delete archer from repository
-	err = h.ArcherRepo.Delete(id)
+	err = h.ArcherRepo.Delete(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Archer not found"})
 		return

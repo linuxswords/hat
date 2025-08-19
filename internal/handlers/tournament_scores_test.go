@@ -13,6 +13,7 @@ import (
 	"github.com/linuxswords/hat/internal/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 // Setup test helpers for tournament scores
@@ -48,7 +49,7 @@ func TestTournamentScoresIndex(t *testing.T) {
 	t.Run("successful scores index with handicap", func(t *testing.T) {
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:            1,
+			Model:         gorm.Model{ID: 1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     time.Now(),
@@ -63,29 +64,29 @@ func TestTournamentScoresIndex(t *testing.T) {
 		}
 
 		// Mock archers
-		archer1 := &models.Archer{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
-		archer2 := &models.Archer{ID: 2, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"}
+		archer1 := &models.Archer{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
+		archer2 := &models.Archer{Model: gorm.Model{ID: 2}, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"}
 
 		// Mock scores
 		adjustedScore1 := 285.5
 		scores := []models.Score{
-			{ID: 1, ArcherID: 1, TournamentID: 1, RawScore: 280, AdjustedScore: &adjustedScore1},
+			{Model: gorm.Model{ID: 1}, ArcherID: 1, TournamentID: 1, RawScore: 280, AdjustedScore: &adjustedScore1},
 		}
 
 		// Mock handicap set and handicaps
-		handicapSet := &models.HandicapSet{ID: 1, Name: "NFAA Indoor"}
+		handicapSet := &models.HandicapSet{Model: gorm.Model{ID: 1}, Name: "NFAA Indoor"}
 		handicap1 := &models.Handicap{Factor: 1.02}
 		handicap2 := &models.Handicap{Factor: 0.95}
 
 		// Set up expectations
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
-		mockParticipationRepo.On("GetByTournamentID", 1).Return(participations)
-		mockScoreRepo.On("GetByTournamentID", 1).Return(scores)
-		mockHandicapRepo.On("GetSetByID", 1).Return(handicapSet, nil)
-		mockArcherRepo.On("GetByID", 1).Return(archer1, nil)
-		mockArcherRepo.On("GetByID", 2).Return(archer2, nil)
-		mockHandicapRepo.On("GetHandicapByBowClass", 1, "recurve").Return(handicap1, nil)
-		mockHandicapRepo.On("GetHandicapByBowClass", 1, "compound").Return(handicap2, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
+		mockParticipationRepo.On("GetByTournamentID", uint(1)).Return(participations)
+		mockScoreRepo.On("GetByTournamentID", uint(1)).Return(scores)
+		mockHandicapRepo.On("GetSetByID", uint(1)).Return(handicapSet, nil)
+		mockArcherRepo.On("GetByID", uint(1)).Return(archer1, nil)
+		mockArcherRepo.On("GetByID", uint(2)).Return(archer2, nil)
+		mockHandicapRepo.On("GetHandicapByBowClass", uint(1), "recurve").Return(handicap1, nil)
+		mockHandicapRepo.On("GetHandicapByBowClass", uint(1), "compound").Return(handicap2, nil)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1/scores", nil)
 		w := httptest.NewRecorder()
@@ -108,7 +109,7 @@ func TestTournamentScoresIndex(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/999/scores", nil)
 		w := httptest.NewRecorder()
@@ -128,7 +129,7 @@ func TestTournamentScoresEdit(t *testing.T) {
 	t.Run("successful scores edit", func(t *testing.T) {
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:            1,
+			Model:         gorm.Model{ID: 1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     time.Now(),
@@ -142,25 +143,25 @@ func TestTournamentScoresEdit(t *testing.T) {
 		}
 
 		// Mock archer
-		archer1 := &models.Archer{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
+		archer1 := &models.Archer{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
 
 		// Mock existing score
 		adjustedScore := 285.5
 		scores := []models.Score{
-			{ID: 1, ArcherID: 1, TournamentID: 1, RawScore: 280, AdjustedScore: &adjustedScore},
+			{Model: gorm.Model{ID: 1}, ArcherID: 1, TournamentID: 1, RawScore: 280, AdjustedScore: &adjustedScore},
 		}
 
 		// Mock handicap set and handicap
-		handicapSet := &models.HandicapSet{ID: 1, Name: "NFAA Indoor"}
+		handicapSet := &models.HandicapSet{Model: gorm.Model{ID: 1}, Name: "NFAA Indoor"}
 		handicap := &models.Handicap{Factor: 1.02}
 
 		// Set up expectations
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
-		mockParticipationRepo.On("GetByTournamentID", 1).Return(participations)
-		mockScoreRepo.On("GetByTournamentID", 1).Return(scores)
-		mockHandicapRepo.On("GetSetByID", 1).Return(handicapSet, nil)
-		mockArcherRepo.On("GetByID", 1).Return(archer1, nil)
-		mockHandicapRepo.On("GetHandicapByBowClass", 1, "recurve").Return(handicap, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
+		mockParticipationRepo.On("GetByTournamentID", uint(1)).Return(participations)
+		mockScoreRepo.On("GetByTournamentID", uint(1)).Return(scores)
+		mockHandicapRepo.On("GetSetByID", uint(1)).Return(handicapSet, nil)
+		mockArcherRepo.On("GetByID", uint(1)).Return(archer1, nil)
+		mockHandicapRepo.On("GetHandicapByBowClass", uint(1), "recurve").Return(handicap, nil)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1/scores/edit", nil)
 		w := httptest.NewRecorder()
@@ -183,7 +184,7 @@ func TestTournamentScoresEdit(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/999/scores/edit", nil)
 		w := httptest.NewRecorder()
@@ -203,7 +204,7 @@ func TestTournamentScoresUpdate(t *testing.T) {
 	t.Run("successful scores update - create new score", func(t *testing.T) {
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:            1,
+			Model:         gorm.Model{ID: 1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     time.Now(),
@@ -212,7 +213,7 @@ func TestTournamentScoresUpdate(t *testing.T) {
 		}
 
 		// Mock archer
-		archer := &models.Archer{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
+		archer := &models.Archer{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
 
 		// Mock handicap
 		handicap := &models.Handicap{Factor: 1.02}
@@ -228,14 +229,14 @@ func TestTournamentScoresUpdate(t *testing.T) {
 			EnteredBy:     "tournament_organizer",
 		}
 		createdScore := expectedScore
-		createdScore.ID = 1
+		createdScore.Model.ID = 1
 
 		// Set up expectations
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
-		mockArcherRepo.On("GetByID", 1).Return(archer, nil)
-		mockHandicapRepo.On("GetHandicapByBowClass", 1, "recurve").Return(handicap, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
+		mockArcherRepo.On("GetByID", uint(1)).Return(archer, nil)
+		mockHandicapRepo.On("GetHandicapByBowClass", uint(1), "recurve").Return(handicap, nil)
 		mockScoreRepo.On("CalculateAdjustedScore", 280, 1.02).Return(285.6)
-		mockScoreRepo.On("GetByTournamentAndArcher", 1, 1).Return(nil, errors.New("not found"))
+		mockScoreRepo.On("GetByTournamentAndArcher", uint(1), uint(1)).Return(nil, errors.New("not found"))
 		mockScoreRepo.On("Create", mock.MatchedBy(func(score models.Score) bool {
 			return score.ArcherID == 1 && score.TournamentID == 1 && score.RawScore == 280
 		})).Return(&createdScore, nil)
@@ -267,7 +268,7 @@ func TestTournamentScoresUpdate_UpdateExistingScore(t *testing.T) {
 	t.Run("successful scores update - update existing score", func(t *testing.T) {
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:            1,
+			Model:         gorm.Model{ID: 1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     time.Now(),
@@ -276,13 +277,13 @@ func TestTournamentScoresUpdate_UpdateExistingScore(t *testing.T) {
 		}
 
 		// Mock archer
-		archer := &models.Archer{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
+		archer := &models.Archer{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
 
 		// Mock handicap
 		handicap := &models.Handicap{Factor: 1.02}
 
 		// Existing score
-		existingScore := &models.Score{ID: 1, ArcherID: 1, TournamentID: 1, RawScore: 275}
+		existingScore := &models.Score{Model: gorm.Model{ID: 1}, ArcherID: 1, TournamentID: 1, RawScore: 275}
 
 		// Expected updated score
 		adjustedScore := 285.6
@@ -295,15 +296,15 @@ func TestTournamentScoresUpdate_UpdateExistingScore(t *testing.T) {
 			EnteredBy:     "tournament_organizer",
 		}
 		updatedScore := expectedScore
-		updatedScore.ID = 1
+		updatedScore.Model.ID = 1
 
 		// Set up expectations
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
-		mockArcherRepo.On("GetByID", 1).Return(archer, nil)
-		mockHandicapRepo.On("GetHandicapByBowClass", 1, "recurve").Return(handicap, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
+		mockArcherRepo.On("GetByID", uint(1)).Return(archer, nil)
+		mockHandicapRepo.On("GetHandicapByBowClass", uint(1), "recurve").Return(handicap, nil)
 		mockScoreRepo.On("CalculateAdjustedScore", 280, 1.02).Return(285.6)
-		mockScoreRepo.On("GetByTournamentAndArcher", 1, 1).Return(existingScore, nil)
-		mockScoreRepo.On("UpdateByTournamentAndArcher", 1, 1, mock.MatchedBy(func(score models.Score) bool {
+		mockScoreRepo.On("GetByTournamentAndArcher", uint(1), uint(1)).Return(existingScore, nil)
+		mockScoreRepo.On("UpdateByTournamentAndArcher", uint(1), uint(1), mock.MatchedBy(func(score models.Score) bool {
 			return score.ArcherID == 1 && score.TournamentID == 1 && score.RawScore == 280
 		})).Return(&updatedScore, nil)
 
@@ -336,7 +337,7 @@ func TestTournamentScoresUpdate_UpdateExistingScore(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		formData := url.Values{}
 		formData.Set("score_1", "280")
@@ -352,7 +353,7 @@ func TestTournamentScoresUpdate_UpdateExistingScore(t *testing.T) {
 
 	t.Run("invalid score value", func(t *testing.T) {
 		tournament := &models.Tournament{
-			ID:            1,
+			Model: gorm.Model{ID:            1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     time.Now(),
@@ -360,7 +361,7 @@ func TestTournamentScoresUpdate_UpdateExistingScore(t *testing.T) {
 			HandicapSetID: 0,
 		}
 
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
 
 		formData := url.Values{}
 		formData.Set("score_1", "invalid")
@@ -385,7 +386,7 @@ func TestTournamentScoresRankings(t *testing.T) {
 	t.Run("successful rankings", func(t *testing.T) {
 		// Mock tournament
 		tournament := &models.Tournament{
-			ID:            1,
+			Model:         gorm.Model{ID: 1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     time.Now(),
@@ -397,27 +398,27 @@ func TestTournamentScoresRankings(t *testing.T) {
 		adjustedScore1 := 290.0
 		adjustedScore2 := 285.5
 		scores := []models.Score{
-			{ID: 1, ArcherID: 1, TournamentID: 1, RawScore: 285, AdjustedScore: &adjustedScore1},
-			{ID: 2, ArcherID: 2, TournamentID: 1, RawScore: 280, AdjustedScore: &adjustedScore2},
+			{Model: gorm.Model{ID: 1}, ArcherID: 1, TournamentID: 1, RawScore: 285, AdjustedScore: &adjustedScore1},
+			{Model: gorm.Model{ID: 2}, ArcherID: 2, TournamentID: 1, RawScore: 280, AdjustedScore: &adjustedScore2},
 		}
 
 		// Mock archers
-		archer1 := &models.Archer{ID: 1, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
-		archer2 := &models.Archer{ID: 2, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"}
+		archer1 := &models.Archer{Model: gorm.Model{ID: 1}, Name: "John Doe", BowClass: "recurve", Gender: "Male", Email: "john@example.com"}
+		archer2 := &models.Archer{Model: gorm.Model{ID: 2}, Name: "Jane Smith", BowClass: "compound", Gender: "Female", Email: "jane@example.com"}
 
 		// Mock handicap set and handicaps
-		handicapSet := &models.HandicapSet{ID: 1, Name: "NFAA Indoor"}
+		handicapSet := &models.HandicapSet{Model: gorm.Model{ID: 1}, Name: "NFAA Indoor"}
 		handicap1 := &models.Handicap{Factor: 1.02}
 		handicap2 := &models.Handicap{Factor: 0.95}
 
 		// Set up expectations
-		mockTournamentRepo.On("GetByID", 1).Return(tournament, nil)
-		mockScoreRepo.On("GetByTournamentIDSorted", 1).Return(scores)
-		mockHandicapRepo.On("GetSetByID", 1).Return(handicapSet, nil)
-		mockArcherRepo.On("GetByID", 1).Return(archer1, nil)
-		mockArcherRepo.On("GetByID", 2).Return(archer2, nil)
-		mockHandicapRepo.On("GetHandicapByBowClass", 1, "recurve").Return(handicap1, nil)
-		mockHandicapRepo.On("GetHandicapByBowClass", 1, "compound").Return(handicap2, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(tournament, nil)
+		mockScoreRepo.On("GetByTournamentIDSorted", uint(1)).Return(scores)
+		mockHandicapRepo.On("GetSetByID", uint(1)).Return(handicapSet, nil)
+		mockArcherRepo.On("GetByID", uint(1)).Return(archer1, nil)
+		mockArcherRepo.On("GetByID", uint(2)).Return(archer2, nil)
+		mockHandicapRepo.On("GetHandicapByBowClass", uint(1), "recurve").Return(handicap1, nil)
+		mockHandicapRepo.On("GetHandicapByBowClass", uint(1), "compound").Return(handicap2, nil)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1/rankings", nil)
 		w := httptest.NewRecorder()
@@ -439,7 +440,7 @@ func TestTournamentScoresRankings(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/999/rankings", nil)
 		w := httptest.NewRecorder()

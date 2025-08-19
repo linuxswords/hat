@@ -50,14 +50,14 @@ func (h *HandicapHandlers) HandicapsShow(c *gin.Context) {
 	}
 
 	// Find handicap set by ID
-	handicapSet, err := h.HandicapRepo.GetSetByID(id)
+	handicapSet, err := h.HandicapRepo.GetSetByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Handicap set not found"})
 		return
 	}
 
 	// Get all handicaps for this set
-	handicaps := h.HandicapRepo.GetHandicapsBySetID(id)
+	handicaps := h.HandicapRepo.GetHandicapsBySetID(uint(id))
 	
 	// Sort handicaps by bow class ID for consistent display
 	sort.Slice(handicaps, func(i, j int) bool {

@@ -19,14 +19,14 @@ func (h *TournamentArcherHandlers) TournamentArchersIndex(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := h.TournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(uint(tournamentID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
 	}
 
 	// Get participations for this tournament
-	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
+	participations := h.ParticipationRepo.GetByTournamentID(uint(tournamentID))
 
 	// Get archer details and bow class names
 	var tournamentArchers []models.TournamentArcherView
@@ -86,7 +86,7 @@ func (h *TournamentArcherHandlers) TournamentArchersAdd(c *gin.Context) {
 	}
 
 	// Get tournament details
-	tournament, err := h.TournamentRepo.GetByID(tournamentID)
+	tournament, err := h.TournamentRepo.GetByID(uint(tournamentID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tournament not found"})
 		return
@@ -96,8 +96,8 @@ func (h *TournamentArcherHandlers) TournamentArchersAdd(c *gin.Context) {
 	allArchers := h.ArcherRepo.GetAll()
 
 	// Get already registered archer IDs
-	participations := h.ParticipationRepo.GetByTournamentID(tournamentID)
-	registeredArcherIDs := make(map[int]bool)
+	participations := h.ParticipationRepo.GetByTournamentID(uint(tournamentID))
+	registeredArcherIDs := make(map[uint]bool)
 	for _, participation := range participations {
 		registeredArcherIDs[participation.ArcherID] = true
 	}
@@ -159,8 +159,8 @@ func (h *TournamentArcherHandlers) TournamentArchersCreate(c *gin.Context) {
 
 		// Create participation
 		participation := models.TournamentParticipation{
-			TournamentID: tournamentID,
-			ArcherID:     archerID,
+			TournamentID: uint(tournamentID),
+			ArcherID:     uint(archerID),
 			Status:       "registered",
 		}
 
@@ -198,7 +198,7 @@ func (h *TournamentArcherHandlers) TournamentArchersRemove(c *gin.Context) {
 	}
 
 	// Remove participation
-	err = h.ParticipationRepo.DeleteByTournamentAndArcher(tournamentID, archerID)
+	err = h.ParticipationRepo.DeleteByTournamentAndArcher(uint(tournamentID), uint(archerID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Participation not found"})
 		return
@@ -240,7 +240,7 @@ func (h *TournamentArcherHandlers) TournamentArchersUpdateStatus(c *gin.Context)
 	}
 
 	// Get existing participation
-	participation, err := h.ParticipationRepo.GetByTournamentAndArcher(tournamentID, archerID)
+	participation, err := h.ParticipationRepo.GetByTournamentAndArcher(uint(tournamentID), uint(archerID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Participation not found"})
 		return

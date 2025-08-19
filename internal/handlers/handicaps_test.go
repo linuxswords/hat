@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 // Setup test helpers for handicaps
@@ -36,23 +37,23 @@ func TestHandicapsList(t *testing.T) {
 	t.Run("successful list", func(t *testing.T) {
 		// Mock data
 		mockHandicapSets := []models.HandicapSet{
-			{ID: 1, Name: "NFAA Indoor"},
-			{ID: 2, Name: "NFAA Outdoor"},
+			{Model: gorm.Model{ID: 1}, Name: "NFAA Indoor"},
+			{Model: gorm.Model{ID: 2}, Name: "NFAA Outdoor"},
 		}
 		
 		mockHandicaps1 := []models.Handicap{
-			{ID: 1, SetID: 1, BowClassID: "recurve", Factor: 1.0},
-			{ID: 2, SetID: 1, BowClassID: "compound", Factor: 0.8},
+			{Model: gorm.Model{ID: 1}, SetID: 1, BowClassID: "recurve", Factor: 1.0},
+			{Model: gorm.Model{ID: 2}, SetID: 1, BowClassID: "compound", Factor: 0.8},
 		}
 		
 		mockHandicaps2 := []models.Handicap{
-			{ID: 3, SetID: 2, BowClassID: "recurve", Factor: 1.1},
-			{ID: 4, SetID: 2, BowClassID: "compound", Factor: 0.9},
+			{Model: gorm.Model{ID: 3}, SetID: 2, BowClassID: "recurve", Factor: 1.1},
+			{Model: gorm.Model{ID: 4}, SetID: 2, BowClassID: "compound", Factor: 0.9},
 		}
 
 		mockRepo.On("GetAllSets").Return(mockHandicapSets)
-		mockRepo.On("GetHandicapsBySetID", 1).Return(mockHandicaps1)
-		mockRepo.On("GetHandicapsBySetID", 2).Return(mockHandicaps2)
+		mockRepo.On("GetHandicapsBySetID", uint(1)).Return(mockHandicaps1)
+		mockRepo.On("GetHandicapsBySetID", uint(2)).Return(mockHandicaps2)
 
 		req, _ := http.NewRequest("GET", "/handicaps", nil)
 		w := httptest.NewRecorder()
@@ -71,18 +72,18 @@ func TestHandicapsShow(t *testing.T) {
 
 	t.Run("successful show", func(t *testing.T) {
 		mockHandicapSet := &models.HandicapSet{
-			ID:   1,
+			Model: gorm.Model{ID: 1},
 			Name: "NFAA Indoor",
 		}
 		
 		mockHandicaps := []models.Handicap{
-			{ID: 1, SetID: 1, BowClassID: "recurve", Factor: 1.0},
-			{ID: 2, SetID: 1, BowClassID: "compound", Factor: 0.8},
-			{ID: 3, SetID: 1, BowClassID: "longbow", Factor: 1.2},
+			{Model: gorm.Model{ID: 1}, SetID: 1, BowClassID: "recurve", Factor: 1.0},
+			{Model: gorm.Model{ID: 2}, SetID: 1, BowClassID: "compound", Factor: 0.8},
+			{Model: gorm.Model{ID: 3}, SetID: 1, BowClassID: "longbow", Factor: 1.2},
 		}
 
-		mockRepo.On("GetSetByID", 1).Return(mockHandicapSet, nil)
-		mockRepo.On("GetHandicapsBySetID", 1).Return(mockHandicaps)
+		mockRepo.On("GetSetByID", uint(1)).Return(mockHandicapSet, nil)
+		mockRepo.On("GetHandicapsBySetID", uint(1)).Return(mockHandicaps)
 
 		req, _ := http.NewRequest("GET", "/handicaps/1", nil)
 		w := httptest.NewRecorder()
@@ -101,7 +102,7 @@ func TestHandicapsShow(t *testing.T) {
 	})
 
 	t.Run("handicap set not found", func(t *testing.T) {
-		mockRepo.On("GetSetByID", 999).Return(nil, errors.New("handicap set not found"))
+		mockRepo.On("GetSetByID", uint(999)).Return(nil, errors.New("handicap set not found"))
 
 		req, _ := http.NewRequest("GET", "/handicaps/999", nil)
 		w := httptest.NewRecorder()

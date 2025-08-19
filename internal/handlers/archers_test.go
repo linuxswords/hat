@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 // setupArcherTest creates a fresh test environment for each test
@@ -39,8 +40,8 @@ func TestArchersList(t *testing.T) {
 	t.Run("successful list", func(t *testing.T) {
 		// Mock data
 		mockArchers := []models.Archer{
-			{ID: 1, Name: "John Doe", Gender: "Male", BowClass: "recurve", Email: "john@example.com"},
-			{ID: 2, Name: "Jane Smith", Gender: "Female", BowClass: "compound", Email: "jane@example.com"},
+			{Model: gorm.Model{ID: 1}, Name: "John Doe", Gender: "Male", BowClass: "recurve", Email: "john@example.com"},
+			{Model: gorm.Model{ID: 2}, Name: "Jane Smith", Gender: "Female", BowClass: "compound", Email: "jane@example.com"},
 		}
 
 		mockRepo.On("GetAll").Return(mockArchers)
@@ -164,14 +165,14 @@ func TestArchersShow(t *testing.T) {
 
 	t.Run("successful show", func(t *testing.T) {
 		mockArcher := &models.Archer{
-			ID:       1,
+			Model:    gorm.Model{ID: 1},
 			Name:     "John Doe",
 			Gender:   "Male",
 			BowClass: "recurve",
 			Email:    "john@example.com",
 		}
 
-		mockRepo.On("GetByID", 1).Return(mockArcher, nil)
+		mockRepo.On("GetByID", uint(1)).Return(mockArcher, nil)
 
 		req, _ := http.NewRequest("GET", "/archers/1", nil)
 		w := httptest.NewRecorder()
@@ -190,7 +191,7 @@ func TestArchersShow(t *testing.T) {
 	})
 
 	t.Run("archer not found", func(t *testing.T) {
-		mockRepo.On("GetByID", 999).Return(nil, errors.New("archer not found"))
+		mockRepo.On("GetByID", uint(999)).Return(nil, errors.New("archer not found"))
 
 		req, _ := http.NewRequest("GET", "/archers/999", nil)
 		w := httptest.NewRecorder()
@@ -209,14 +210,14 @@ func TestArchersEdit(t *testing.T) {
 
 	t.Run("successful edit form", func(t *testing.T) {
 		mockArcher := &models.Archer{
-			ID:       1,
+			Model:    gorm.Model{ID: 1},
 			Name:     "John Doe",
 			Gender:   "Male",
 			BowClass: "recurve",
 			Email:    "john@example.com",
 		}
 
-		mockRepo.On("GetByID", 1).Return(mockArcher, nil)
+		mockRepo.On("GetByID", uint(1)).Return(mockArcher, nil)
 
 		req, _ := http.NewRequest("GET", "/archers/1/edit", nil)
 		w := httptest.NewRecorder()
@@ -235,7 +236,7 @@ func TestArchersEdit(t *testing.T) {
 	})
 
 	t.Run("archer not found", func(t *testing.T) {
-		mockRepo.On("GetByID", 999).Return(nil, errors.New("archer not found"))
+		mockRepo.On("GetByID", uint(999)).Return(nil, errors.New("archer not found"))
 
 		req, _ := http.NewRequest("GET", "/archers/999/edit", nil)
 		w := httptest.NewRecorder()
@@ -262,7 +263,7 @@ func TestArchersUpdate(t *testing.T) {
 		returnArcher := updatedArcher
 		returnArcher.ID = 1
 
-		mockRepo.On("Update", 1, updatedArcher).Return(&returnArcher, nil)
+		mockRepo.On("Update", uint(1), updatedArcher).Return(&returnArcher, nil)
 
 		formData := url.Values{}
 		formData.Set("name", "John Doe Updated")
@@ -316,7 +317,7 @@ func TestArchersUpdate(t *testing.T) {
 			Email:    "john@example.com",
 		}
 
-		mockRepo.On("Update", 999, updatedArcher).Return(nil, errors.New("archer not found"))
+		mockRepo.On("Update", uint(999), updatedArcher).Return(nil, errors.New("archer not found"))
 
 		formData := url.Values{}
 		formData.Set("name", "John Doe")
@@ -341,7 +342,7 @@ func TestArchersDelete(t *testing.T) {
 	router.POST("/archers/:id/delete", handlers.ArchersDelete)
 
 	t.Run("successful delete", func(t *testing.T) {
-		mockRepo.On("Delete", 1).Return(nil)
+		mockRepo.On("Delete", uint(1)).Return(nil)
 
 		req, _ := http.NewRequest("POST", "/archers/1/delete", nil)
 		w := httptest.NewRecorder()
@@ -361,7 +362,7 @@ func TestArchersDelete(t *testing.T) {
 	})
 
 	t.Run("archer not found", func(t *testing.T) {
-		mockRepo.On("Delete", 999).Return(errors.New("archer not found"))
+		mockRepo.On("Delete", uint(999)).Return(errors.New("archer not found"))
 
 		req, _ := http.NewRequest("POST", "/archers/999/delete", nil)
 		w := httptest.NewRecorder()

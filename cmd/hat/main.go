@@ -1,24 +1,39 @@
 package main
 
 import (
+	"log"
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/handlers"
 	"github.com/linuxswords/hat/internal/repositories"
+	"github.com/linuxswords/hat/internal/database"
 )
 
 func main() {
+	// Initialize database
+	err := database.Initialize()
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer database.Close()
+
+	// Run migrations and seed data
+	err = database.Bootstrap(database.DB)
+	if err != nil {
+		log.Fatalf("Failed to bootstrap database: %v", err)
+	}
+
 	// Create Gin router
 	r := gin.Default()
 
 	// Serve static files (CSS, JS, images)
 	r.Static("/static", "./static")
 
-	// Initialize repositories
-	archerRepo := repositories.NewArcherRepository()
-	tournamentRepo := repositories.NewTournamentRepository()
-	handicapRepo := repositories.NewHandicapRepository()
-	scoreRepo := repositories.NewScoreRepository()
-	participationRepo := repositories.NewTournamentParticipationRepository()
+	// Initialize database repositories
+	archerRepo := repositories.NewDBArcherRepository(database.DB)
+	tournamentRepo := repositories.NewDBTournamentRepository(database.DB)
+	handicapRepo := repositories.NewDBHandicapRepository(database.DB)
+	scoreRepo := repositories.NewDBScoreRepository(database.DB)
+	participationRepo := repositories.NewDBTournamentParticipationRepository(database.DB)
 
 	// Initialize handler structs with injected dependencies
 	archerHandlers := &handlers.ArcherHandlers{

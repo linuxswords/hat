@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/linuxswords/hat/internal/models"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 // Setup test helpers for tournaments
@@ -43,7 +44,7 @@ func TestTournamentsList(t *testing.T) {
 		now := time.Now()
 		mockTournaments := []models.Tournament{
 			{
-				ID:            1,
+				Model: gorm.Model{ID:            1},
 				Name:          "Spring Championship",
 				Location:      "Central Park",
 				StartDate:     now.AddDate(0, 0, 10),
@@ -51,7 +52,7 @@ func TestTournamentsList(t *testing.T) {
 				HandicapSetID: 1,
 			},
 			{
-				ID:        2,
+				Model: gorm.Model{ID:        2},
 				Name:      "Summer Open",
 				Location:  "Sport Center",
 				StartDate: now.AddDate(0, 0, -5),
@@ -63,14 +64,14 @@ func TestTournamentsList(t *testing.T) {
 		mockUpcoming := []models.Tournament{mockTournaments[0]}
 
 		mockHandicapSet := &models.HandicapSet{
-			ID:   1,
+			Model: gorm.Model{ID:   1},
 			Name: "NFAA Indoor",
 		}
 
 		mockTournamentRepo.On("GetAll").Return(mockTournaments)
 		mockTournamentRepo.On("GetCurrent").Return(mockCurrent)
 		mockTournamentRepo.On("GetUpcoming").Return(mockUpcoming)
-		mockHandicapRepo.On("GetSetByID", 1).Return(mockHandicapSet, nil)
+		mockHandicapRepo.On("GetSetByID", uint(1)).Return(mockHandicapSet, nil)
 
 		req, _ := http.NewRequest("GET", "/tournaments", nil)
 		w := httptest.NewRecorder()
@@ -90,8 +91,8 @@ func TestTournamentsNew(t *testing.T) {
 
 	t.Run("successful new form", func(t *testing.T) {
 		mockHandicapSets := []models.HandicapSet{
-			{ID: 1, Name: "NFAA Indoor"},
-			{ID: 2, Name: "NFAA Outdoor"},
+			{Model: gorm.Model{ID: 1}, Name: "NFAA Indoor"},
+			{Model: gorm.Model{ID: 2}, Name: "NFAA Outdoor"},
 		}
 
 		mockHandicapRepo.On("GetAllSets").Return(mockHandicapSets)
@@ -123,7 +124,7 @@ func TestTournamentsCreate(t *testing.T) {
 			HandicapSetID: 1,
 		}
 		createdTournament := expectedTournament
-		createdTournament.ID = 1
+		createdTournament.Model.ID = 1
 
 		mockTournamentRepo.On("Create", expectedTournament).Return(&createdTournament, nil)
 
@@ -241,7 +242,7 @@ func TestTournamentsShow(t *testing.T) {
 	t.Run("successful show with handicap set", func(t *testing.T) {
 		now := time.Now()
 		mockTournament := &models.Tournament{
-			ID:            1,
+			Model: gorm.Model{ID:            1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     now.AddDate(0, 0, 1),
@@ -250,12 +251,12 @@ func TestTournamentsShow(t *testing.T) {
 		}
 
 		mockHandicapSet := &models.HandicapSet{
-			ID:   1,
+			Model: gorm.Model{ID:   1},
 			Name: "NFAA Indoor",
 		}
 
-		mockTournamentRepo.On("GetByID", 1).Return(mockTournament, nil)
-		mockHandicapRepo.On("GetSetByID", 1).Return(mockHandicapSet, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(mockTournament, nil)
+		mockHandicapRepo.On("GetSetByID", uint(1)).Return(mockHandicapSet, nil)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1", nil)
 		w := httptest.NewRecorder()
@@ -269,7 +270,7 @@ func TestTournamentsShow(t *testing.T) {
 	t.Run("successful show without handicap set", func(t *testing.T) {
 		now := time.Now()
 		mockTournament := &models.Tournament{
-			ID:            1,
+			Model: gorm.Model{ID:            1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     now.AddDate(0, 0, 1),
@@ -277,7 +278,7 @@ func TestTournamentsShow(t *testing.T) {
 			HandicapSetID: 0,
 		}
 
-		mockTournamentRepo.On("GetByID", 1).Return(mockTournament, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(mockTournament, nil)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1", nil)
 		w := httptest.NewRecorder()
@@ -296,7 +297,7 @@ func TestTournamentsShow(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/999", nil)
 		w := httptest.NewRecorder()
@@ -316,7 +317,7 @@ func TestTournamentsEdit(t *testing.T) {
 	t.Run("successful edit form", func(t *testing.T) {
 		now := time.Now()
 		mockTournament := &models.Tournament{
-			ID:            1,
+			Model: gorm.Model{ID:            1},
 			Name:          "Test Tournament",
 			Location:      "Test Location",
 			StartDate:     now.AddDate(0, 0, 1),
@@ -325,11 +326,11 @@ func TestTournamentsEdit(t *testing.T) {
 		}
 
 		mockHandicapSets := []models.HandicapSet{
-			{ID: 1, Name: "NFAA Indoor"},
-			{ID: 2, Name: "NFAA Outdoor"},
+			{Model: gorm.Model{ID: 1}, Name: "NFAA Indoor"},
+			{Model: gorm.Model{ID: 2}, Name: "NFAA Outdoor"},
 		}
 
-		mockTournamentRepo.On("GetByID", 1).Return(mockTournament, nil)
+		mockTournamentRepo.On("GetByID", uint(1)).Return(mockTournament, nil)
 		mockHandicapRepo.On("GetAllSets").Return(mockHandicapSets)
 
 		req, _ := http.NewRequest("GET", "/tournaments/1/edit", nil)
@@ -350,7 +351,7 @@ func TestTournamentsEdit(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("GetByID", 999).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("GetByID", uint(999)).Return(nil, errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("GET", "/tournaments/999/edit", nil)
 		w := httptest.NewRecorder()
@@ -379,9 +380,9 @@ func TestTournamentsUpdate(t *testing.T) {
 			HandicapSetID: 2,
 		}
 		returnTournament := updatedTournament
-		returnTournament.ID = 1
+		returnTournament.Model.ID = 1
 
-		mockTournamentRepo.On("Update", 1, updatedTournament).Return(&returnTournament, nil)
+		mockTournamentRepo.On("Update", uint(1), updatedTournament).Return(&returnTournament, nil)
 
 		formData := url.Values{}
 		formData.Set("name", "Updated Tournament")
@@ -427,7 +428,7 @@ func TestTournamentsUpdate(t *testing.T) {
 			HandicapSetID: 0,
 		}
 
-		mockTournamentRepo.On("Update", 999, updatedTournament).Return(nil, errors.New("tournament not found"))
+		mockTournamentRepo.On("Update", uint(999), updatedTournament).Return(nil, errors.New("tournament not found"))
 
 		formData := url.Values{}
 		formData.Set("name", "Updated Tournament")
@@ -452,7 +453,7 @@ func TestTournamentsDelete(t *testing.T) {
 	router.POST("/tournaments/:id/delete", handlers.TournamentsDelete)
 
 	t.Run("successful delete", func(t *testing.T) {
-		mockTournamentRepo.On("Delete", 1).Return(nil)
+		mockTournamentRepo.On("Delete", uint(1)).Return(nil)
 
 		req, _ := http.NewRequest("POST", "/tournaments/1/delete", nil)
 		w := httptest.NewRecorder()
@@ -472,7 +473,7 @@ func TestTournamentsDelete(t *testing.T) {
 	})
 
 	t.Run("tournament not found", func(t *testing.T) {
-		mockTournamentRepo.On("Delete", 999).Return(errors.New("tournament not found"))
+		mockTournamentRepo.On("Delete", uint(999)).Return(errors.New("tournament not found"))
 
 		req, _ := http.NewRequest("POST", "/tournaments/999/delete", nil)
 		w := httptest.NewRecorder()
